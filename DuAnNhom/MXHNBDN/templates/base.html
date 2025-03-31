@@ -1,0 +1,278 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vietnamese Web Application</title>
+    <style>
+        /* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', Arial, sans-serif;
+  color: #000000;
+  background-color: #ffffff;
+}
+
+/* App container */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  background-color: #5858fa;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.logo-icon {
+  color: white;
+}
+
+/* Main container */
+.main-container {
+  display: flex;
+  flex: 1;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 200px;
+  border-right: 1px solid #e4e4e4;
+  display: flex;
+  flex-direction: column;
+}
+
+.profile {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
+}
+
+.profile-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.profile-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nav-menu {
+  flex: 1;
+}
+
+.nav-menu ul {
+  list-style: none;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  text-decoration: none;
+  color: #000000;
+  font-size: 14px;
+}
+
+.nav-item:hover {
+  background-color: #f1f1f1;
+}
+
+.nav-icon {
+  color: #a8a8a8;
+  width: 18px;
+  height: 18px;
+}
+
+/* Main content */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-container {
+  padding: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.search-box {
+  width: 180px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #e4e4e4;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.content-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Footer */
+.footer {
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.footer-content {
+  text-align: center;
+}
+
+.footer-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.footer-text {
+  font-size: 12px;
+  color: #a8a8a8;
+}
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logo-icon">
+                    <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                    <path d="M7 10h10"></path>
+                    <path d="M7 14h10"></path>
+                </svg>
+            </div>
+        </header>
+
+        <div class="main-container">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="profile">
+                    <div class="profile-image">
+                        <img src="img/avatar_tm.jpg" alt="Profile">
+                    </div>
+                </div>
+
+                <nav class="nav-menu">
+                    <ul>
+                        <li>
+                            <a href="#" class="nav-item">
+                                <i data-lucide="home" class="nav-icon"></i>
+                                <span>Trang chủ</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-item">
+                                <i data-lucide="search" class="nav-icon"></i>
+                                <span>Tìm kiếm</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-item">
+                                <i data-lucide="message-square" class="nav-icon"></i>
+                                <span>Tin nhắn</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-item">
+                                <i data-lucide="file-text" class="nav-icon"></i>
+                                <span>Tạo bài viết</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-item">
+                                <i data-lucide="help-circle" class="nav-icon"></i>
+                                <span>Hỏi đáp</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-item">
+                                <i data-lucide="user" class="nav-icon"></i>
+                                <span>Hồ sơ</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-item">
+                                <i data-lucide="bar-chart-2" class="nav-icon"></i>
+                                <span>Tạo bình chọn</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-item">
+                                <i data-lucide="user-plus" class="nav-icon"></i>
+                                <span>Tạo tài khoản</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-item">
+                                <i data-lucide="log-out" class="nav-icon"></i>
+                                <span>Đăng xuất</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <div class="search-container">
+                    <div class="search-box">
+                        <input type="text" placeholder="Tìm kiếm" class="search-input">
+                    </div>
+                </div>
+
+                <div class="content-area">
+                    {% block content %}
+                        <h1>Welcome to Bookr!</h1>
+                    {% endblock %}
+                </div>
+
+                <!-- Footer -->
+                <footer class="footer">
+                    <div class="footer-content">
+                        <div class="footer-logo">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#5858fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                                <path d="M7 10h10"></path>
+                                <path d="M7 14h10"></path>
+                            </svg>
+                        </div>
+                        <p class="footer-text">Hoangdaiviet@.com</p>
+                    </div>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
