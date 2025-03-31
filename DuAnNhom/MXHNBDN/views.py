@@ -1,3 +1,3 @@
-from django.http import HttpResponse
-def index(request):
-    return HttpResponse("Hello, world!")
+from django.shortcuts import render
+def base(request):
+    return render(request, 'base.html')
