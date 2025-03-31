@@ -1,5 +1,6 @@
 
 <!DOCTYPE html>
+{% load static %}
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -162,11 +163,7 @@ body {
         <!-- Header -->
         <header class="header">
             <div class="logo">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logo-icon">
-                    <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
-                    <path d="M7 10h10"></path>
-                    <path d="M7 14h10"></path>
-                </svg>
+                <img src="{% static 'img/logo_hd.png' %}" alt="logo" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logo-icon">
             </div>
         </header>
 
@@ -175,7 +172,8 @@ body {
             <aside class="sidebar">
                 <div class="profile">
                     <div class="profile-image">
-                        <img src="img/avatar_tm.jpg" alt="Profile">
+
+                        <img src="{% static 'img/avatar_tm.jpg' %}" alt="Profile">
                     </div>
                 </div>
 
@@ -257,11 +255,7 @@ body {
                 <footer class="footer">
                     <div class="footer-content">
                         <div class="footer-logo">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#5858fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
-                                <path d="M7 10h10"></path>
-                                <path d="M7 14h10"></path>
-                            </svg>
+                            <img src="{% static 'img/logo_hd.png' %}" alt="logo" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#5858fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         </div>
                         <p class="footer-text">Hoangdaiviet@.com</p>
                     </div>
