@@ -1,0 +1,398 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="profile-page">
+    <div class="profile-header">
+        <a href="#" class="back-button">
+            <i data-lucide="arrow-left"></i>
+            <span>Trà My</span>
+        </a>
+        <span class="post-count">33 posts</span>
+    </div>
+    <div class="cover-photo">
+        <button class="add-cover-btn">
+            <i data-lucide="camera"></i>
+            <span>Add Cover Photo</span>
+        </button>
+    </div>
+
+    <div class="profile-info">
+        <div class="profile-avatar">
+            <img src="{% static 'img/avatar_tm.jpg' %}" alt="Profile">
+        </div>
+        <div class="profile-details">
+            <div class="profile-name">
+                <h2>Trà My</h2>
+                <span class="username">@my</span>
+            </div>
+        </div>
+        <div class="profile-actions">
+            <button class="save-btn">Lưu</button>
+            <button class="share-btn">
+                <i data-lucide="share-2"></i>
+                Chia sẻ
+            </button>
+        </div>
+    </div>
+
+<div class="bio-section">
+    <h3>Mô tả thông tin cá nhân</h3>
+    <textarea id="bioTextarea" placeholder="Viết ở đây"></textarea>
+    <div class="bio-footer">
+        <span class="char-count" id="charCount">0/888</span>
+        <button class="save-btn">Lưu</button>
+    </div>
+    <div id="warningMessage" style="color: red; display: none; font-size: 12px; margin-top: 5px;">
+        Chỉ có thể viết tối đa 888 chữ.
+    </div>
+</div>
+
+
+
+
+    <!-- Form Sections -->
+    <div class="form-sections">
+        <!-- Name Section -->
+        <div class="form-section">
+            <h3>Đổi họ tên</h3>
+            <div class="form-row">
+                <input type="text" value="Jessica Alba">
+                <button class="change-btn">Đổi</button>
+            </div>
+        </div>
+
+        <!-- Username Section -->
+        <div class="form-section">
+            <h3>Đổi tên đăng nhập</h3>
+            <div class="form-row">
+                <input type="text" value="jessicaalba">
+                <button class="change-btn">Đổi</button>
+            </div>
+        </div>
+
+        <!-- Email Section -->
+        <div class="form-section">
+            <h3>Đổi email</h3>
+            <div class="form-row">
+                <input type="email" value="johndoe@gmail.com">
+                <button class="change-btn">Đổi</button>
+            </div>
+        </div>
+
+        <!-- Password Section -->
+        <div class="form-section">
+            <h3>Đổi mật khẩu</h3>
+            <div class="password-fields">
+                <input type="password" placeholder="Nhập mật khẩu cũ">
+                <input type="password" placeholder="Nhập mật khẩu mới">
+                <div class="form-row">
+                    <input type="password" placeholder="Xác nhận mật khẩu mới">
+                    <button class="change-btn">Đổi</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phone Section -->
+        <div class="form-section">
+            <h3>Đổi số điện thoại</h3>
+            <div class="form-row">
+                <input type="tel" value="112321213132">
+                <button class="change-btn">Đổi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Log Out -->
+    <div class="logout-section">
+        <button class="logout-btn">Log Out</button>
+    </div>
+</div>
+
+<!-- Add search box to the right side -->
+<div class="search-container">
+    <div class="search-box">
+        <input type="text" class="search-input" placeholder="Tìm kiếm">
+    </div>
+</div>
+
+
+<style>
+    /* Profile Page Styles */
+    .profile-page {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        font-family: "Times New Roman", serif; /* Thêm font Times New Roman */
+    }
+
+    .profile-header {
+        padding: 16px;
+        border-bottom: 1px solid #e4e4e4;
+        display: flex;
+        align-items: center;
+    }
+
+    .back-button {
+        display: flex;
+        align-items: center;
+        color: #5858fa;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .back-button i {
+        margin-right: 8px;
+    }
+
+    .post-count {
+        color: #686868;
+        font-size: 14px;
+        margin-left: 8px;
+    }
+
+    .cover-photo {
+        height: 128px;
+        background-color: #f1f1ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .add-cover-btn {
+        display: flex;
+        align-items: center;
+        background: none;
+        border: none;
+        color: #5858fa;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .add-cover-btn i {
+        margin-right: 8px;
+    }
+
+    .profile-info {
+        padding: 16px 24px;
+        display: flex;
+        align-items: center;
+    }
+
+    .profile-avatar {
+        position: relative;
+        margin-top: -48px;
+    }
+
+    .profile-avatar img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 4px solid #ffffff;
+    }
+
+    .profile-details {
+        flex: 1;
+        margin-left: 16px;
+    }
+
+    .profile-name {
+        display: flex;
+        align-items: center;
+    }
+
+    .profile-name h2 {
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .username {
+        color: #686868;
+        margin-left: 8px;
+        font-size: 14px;
+    }
+
+    .profile-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .save-btn {
+        background-color: #150aa1;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 8px 16px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .share-btn {
+        display: flex;
+        align-items: center;
+        background-color: white;
+        color: #686868;
+        border: 1px solid #e4e4e4;
+        border-radius: 4px;
+        padding: 8px 16px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .share-btn i {
+        margin-right: 8px;
+    }
+
+    .bio-section {
+        padding: 16px 24px;
+        border-top: 1px solid #e4e4e4;
+    }
+
+    /* Thay đổi cỡ chữ và màu chữ cho h3 trong bio-section */
+    .bio-section h3 {
+        font-size: 18px;   /* Cỡ chữ lớn hơn */
+        font-weight: 600;  /* Đậm hơn */
+        color: #2C3E50;    /* Màu tối đậm */
+        margin-bottom: 12px;
+        text-transform: uppercase; /* Chữ in hoa */
+        letter-spacing: 1px; /* Khoảng cách giữa các chữ */
+    }
+
+    .bio-section textarea {
+        width: 100%;
+        height: 100px;
+        padding: 12px;
+        border: 1px solid #e4e4e4;
+        border-radius: 4px;
+        resize: none;
+        font-family: "Times New Roman", serif; /* Thêm font Times New Roman */
+        font-size: 14px;
+    }
+
+    .bio-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 8px;
+    }
+
+    .char-count {
+        font-size: 12px;
+        color: #a8a8a8;
+    }
+
+    .form-sections {
+        padding: 16px 24px;
+        border-top: 1px solid #e4e4e4;
+    }
+
+    .form-section {
+        margin-bottom: 16px;
+    }
+
+    /* Thay đổi cỡ chữ và màu chữ cho h3 trong form-section */
+    .form-section h3,.bio-section h3 {
+        font-size: 12px;   /* Cỡ chữ lớn hơn */
+        font-weight: 600;  /* Đậm hơn */
+        color: #2C3E50;    /* Màu tối đậm */
+        margin-bottom: 12px;
+        text-transform: uppercase; /* Chữ in hoa */
+        letter-spacing: 1px; /* Khoảng cách giữa các chữ */
+    }
+
+    .form-row {
+        display: flex;
+        gap: 8px;
+    }
+
+    .form-row input {
+        flex: 1;
+        padding: 8px 12px;
+        border: 1px solid #e4e4e4;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .change-btn {
+        background-color: #150aa1;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 8px 16px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .password-fields {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .password-fields input {
+        padding: 8px 12px;
+        border: 1px solid #e4e4e4;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .logout-section {
+        padding: 24px;
+        border-top: 1px solid #e4e4e4;
+        display: flex;
+        justify-content: center;
+    }
+
+    .logout-btn {
+        background-color: white;
+        color: #686868;
+        border: 1px solid #d9d9d9;
+        border-radius: 4px;
+        padding: 8px 32px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    /* Override search container position */
+    .search-container {
+        position: absolute;
+        top: 64px;
+        right: 16px;
+    }
+
+    /* Override content area */
+    .content-area {
+        display: block;
+        padding: 16px;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Lucide icons
+        lucide.createIcons();
+    });
+    const textarea = document.getElementById("bioTextarea");
+    const charCount = document.getElementById("charCount");
+    const MAX_CHARS = 888;
+    const warningMessage = document.getElementById("warningMessage");
+
+    textarea.addEventListener("input", function () {
+    let content = textarea.value;
+
+    // Kiểm tra số ký tự
+    if (content.length > MAX_CHARS) {
+      content = content.substring(0, MAX_CHARS);
+      textarea.value = content;
+      warningMessage.style.display = 'block';  // Hiện thông báo
+    } else {
+      warningMessage.style.display = 'none';  // Ẩn thông báo nếu dưới giới hạn
+    }
+
+    // Cập nhật hiển thị số ký tự
+    charCount.textContent = `${textarea.value.length}/${MAX_CHARS}`;
+    });
+</script>
+{% endblock %}
