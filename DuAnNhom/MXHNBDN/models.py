@@ -1,7 +1,7 @@
-
-from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
+from django.contrib.auth.models import AbstractUser, Group, Permission
 
+# Người dùng
 class NguoiDung(AbstractUser):
     so_dien_thoai = models.CharField(max_length=15, unique=True)
     email = models.EmailField(unique=True)
@@ -23,15 +23,22 @@ class NguoiDung(AbstractUser):
         verbose_name='user permissions',
     )
 
-# Tài khoản (đã gộp vào AbstractUser)
+    def __str__(self):
+        return self.username
 
 # Vai trò và quyền hạn
 class VaiTro(models.Model):
     ten_vai_tro = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.ten_vai_tro
+
 class PhanQuyen(models.Model):
     nguoi_dung = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)
     vai_tro = models.ForeignKey(VaiTro, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.nguoi_dung} - {self.vai_tro}'
 
 # Bài viết
 class BaiViet(models.Model):
@@ -41,6 +48,9 @@ class BaiViet(models.Model):
     tep_dinh_kem = models.FileField(upload_to='files/', null=True, blank=True)
     ngay_tao = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f'Bài viết của {self.nguoi_dung.username} - {self.ngay_tao.strftime("%d/%m/%Y %H:%M")}'
+
 # Bình luận
 class BinhLuan(models.Model):
     bai_viet = models.ForeignKey(BaiViet, on_delete=models.CASCADE)
@@ -48,10 +58,18 @@ class BinhLuan(models.Model):
     noi_dung = models.TextField()
     ngay_tao = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f'{self.nguoi_dung.username} bình luận: {self.noi_dung[:30]}...'
+
 # Nhắn tin
 class CuocTroChuyen(models.Model):
     ten_nhom = models.CharField(max_length=255, null=True, blank=True)
     thanh_vien = models.ManyToManyField(NguoiDung)
+
+    def __str__(self):
+        if self.ten_nhom:
+            return f'Nhóm: {self.ten_nhom}'
+        return f'Cuộc trò chuyện #{self.pk}'
 
 class TinNhan(models.Model):
     cuoc_tro_chuyen = models.ForeignKey(CuocTroChuyen, on_delete=models.CASCADE)
@@ -62,6 +80,9 @@ class TinNhan(models.Model):
     bieu_tuong_cam_xuc = models.CharField(max_length=10, null=True, blank=True)
     ngay_tao = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f'{self.nguoi_gui.username}: {self.noi_dung[:30]}...'
+
 # Bình chọn
 class BinhChon(models.Model):
     nguoi_tao = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)
@@ -69,13 +90,22 @@ class BinhChon(models.Model):
     ten_tieu_de = models.CharField(max_length=255)
     thoi_gian_ket_thuc = models.DateTimeField()
 
+    def __str__(self):
+        return self.ten_tieu_de
+
 class LuaChonBinhChon(models.Model):
     binh_chon = models.ForeignKey(BinhChon, on_delete=models.CASCADE)
     noi_dung = models.CharField(max_length=255)
 
+    def __str__(self):
+        return f'{self.binh_chon.ten_tieu_de} - {self.noi_dung}'
+
 class BinhChonNguoiDung(models.Model):
     nguoi_dung = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)
     lua_chon = models.ForeignKey(LuaChonBinhChon, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.nguoi_dung.username} chọn {self.lua_chon.noi_dung}'
 
 # Nhóm
 class Nhom(models.Model):
@@ -83,10 +113,16 @@ class Nhom(models.Model):
     hinh_anh_nhom = models.ImageField(upload_to='nhom/', null=True, blank=True)
     ngay_tao = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.ten_nhom
+
 class ThanhVienNhom(models.Model):
     nhom = models.ForeignKey(Nhom, on_delete=models.CASCADE)
     nguoi_dung = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)
     ngay_gia_nhap = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.nguoi_dung.username} trong {self.nhom.ten_nhom}'
 
 # Thông báo
 class ThongBao(models.Model):
@@ -96,4 +132,5 @@ class ThongBao(models.Model):
     da_xem = models.BooleanField(default=False)
     ngay_tao = models.DateTimeField(auto_now_add=True)
 
-# Create your models here.
+    def __str__(self):
+        return f'Thông báo đến {self.nguoi_nhan.username}: {self.noi_dung[:40]}...'
