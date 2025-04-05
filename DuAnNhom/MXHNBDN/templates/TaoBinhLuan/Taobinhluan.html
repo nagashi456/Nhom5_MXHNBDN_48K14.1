@@ -48,11 +48,13 @@
             <div class="image-grid">
                 <div class="main-image">
                     <img src="{% static 'img/trucks1.jpg' %}" alt="Trucks" class="post-image">
+
                 </div>
                 <div class="side-images">
                     <img src="{% static 'img/trucks2.jpg' %}" alt="Trucks" class="post-image">
                     <img src="{% static 'img/trucks3.jpg' %}" alt="Trucks" class="post-image">
                 </div>
+
             </div>
         </div>
 
@@ -80,7 +82,7 @@
     <!-- Comments Section -->
     <div class="comments-section">
         <h3 class="comments-title">Tất cả bình luận</h3>
-        
+
         <div class="comments-list">
             <div class="comment">
                 <img src="{% static 'img/avatar_quang.jpg' %}" alt="QuangCenter" class="comment-avatar">
@@ -89,7 +91,7 @@
                     <div class="comment-text">Đã nhận thông báo ạ TrầnAnh</div>
                 </div>
             </div>
-            
+
             <div class="comment">
                 <img src="{% static 'img/avatar_le.jpg' %}" alt="LêVietA" class="comment-avatar">
                 <div class="comment-content">
@@ -97,7 +99,7 @@
                     <div class="comment-text">vậy là bữa này không đỗ bãi A nữa à chị</div>
                 </div>
             </div>
-            
+
             <div class="comment">
                 <img src="{% static 'img/avatar_dat.jpg' %}" alt="Quang Đạt_PNS" class="comment-avatar">
                 <div class="comment-content">
@@ -106,7 +108,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="comment-form">
             <input type="text" class="comment-input" placeholder="Nhập bình luận...">
             <button class="comment-submit">Đăng</button>
@@ -123,17 +125,67 @@
 </div>
 
 <style>
-/* Feed Container */
+/* Override base styles to make content area take full width */
+.main-content {
+    display: flex !important;
+    flex: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.content-area {
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Sidebar - Keep narrow */
+.sidebar {
+    width: 180px !important;
+    min-width: 180px !important;
+    flex-shrink: 0 !important;
+}
+
+/* Feed Container - Made much wider */
 .feed-container {
-    flex: 1;
-    max-width: 600px;
+    flex: 1 !important;
+    max-width: none !important; /* Remove max-width constraint */
     border-right: 1px solid #e4e4e4;
 }
 
-/* Right Sidebar */
+/* Right Sidebar - Made very narrow */
 .right-sidebar {
-    width: 300px;
+    width: 180px !important;
+    min-width: 180px !important;
     padding: 16px;
+    flex-shrink: 0 !important;
+}
+
+/* Search Container - Made smaller */
+.search-container {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.search-input {
+    width: 150px !important; /* Decreased width */
+    padding: 8px 8px 8px 32px;
+    border: 1px solid #e4e4e4;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: #787878;
 }
 
 /* Feed Header */
@@ -258,6 +310,8 @@
     display: flex;
     gap: 24px;
     margin-top: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f1f1f1;
 }
 
 .action-button {
@@ -284,7 +338,7 @@
     color: #787878;
 }
 
-/* Comments Section */
+/* Comments Section - Ensured it's below the post */
 .comments-section {
     padding: 16px;
 }
@@ -353,48 +407,16 @@
     background-color: #4646e8;
 }
 
-/* Search Container */
-.search-container {
-    position: relative;
-    margin-bottom: 16px;
-}
-
-.search-icon {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 16px;
-    height: 16px;
-    color: #787878;
-}
-
-.search-input {
-    width: 100%;
-    padding: 8px 8px 8px 32px;
-    border: 1px solid #e4e4e4;
-    border-radius: 20px;
-    font-size: 14px;
-}
-
-/* Make the content area display flex */
-.content-area {
-    display: flex !important;
-    justify-content: flex-start !important;
-    align-items: flex-start !important;
-    padding: 0 !important;
-}
-
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .right-sidebar {
         display: none;
     }
-    
+
     .image-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .side-images {
         grid-template-columns: 1fr 1fr;
         grid-template-rows: auto;
