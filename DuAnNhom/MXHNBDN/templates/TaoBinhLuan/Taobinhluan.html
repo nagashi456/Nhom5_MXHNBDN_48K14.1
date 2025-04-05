@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-
+<!--Check lại reponsitive hoặc flex grid có thể sai style dẫn tới màn hình lớn bị hư ảnh-->
 {% block content %}
 <div class="feed-container">
     <!-- Header with title -->
@@ -15,7 +15,7 @@
     <div class="post">
         <div class="post-header">
             <div class="post-author">
-                <img src="{% static 'img/avatar_tramanh.jpg' %}" alt="Trần Anh" class="author-avatar">
+                <img src="{% static 'img/avatar_ta.jpg' %}" alt="Trần Anh" class="author-avatar">
                 <div class="author-info">
                     <div class="author-name">Trần Anh_QLB</div>
                     <div class="author-username">@tramanh</div>
@@ -85,7 +85,7 @@
 
         <div class="comments-list">
             <div class="comment">
-                <img src="{% static 'img/avatar_quang.jpg' %}" alt="QuangCenter" class="comment-avatar">
+                <img src="{% static 'img/user_1.jpg' %}" alt="QuangCenter" class="comment-avatar">
                 <div class="comment-content">
                     <div class="comment-author">QuangCenter</div>
                     <div class="comment-text">Đã nhận thông báo ạ TrầnAnh</div>
@@ -93,7 +93,7 @@
             </div>
 
             <div class="comment">
-                <img src="{% static 'img/avatar_le.jpg' %}" alt="LêVietA" class="comment-avatar">
+                <img src="{% static 'img/user_2.jpg' %}" alt="LêVietA" class="comment-avatar">
                 <div class="comment-content">
                     <div class="comment-author">LêVietA</div>
                     <div class="comment-text">vậy là bữa này không đỗ bãi A nữa à chị</div>
@@ -101,7 +101,7 @@
             </div>
 
             <div class="comment">
-                <img src="{% static 'img/avatar_dat.jpg' %}" alt="Quang Đạt_PNS" class="comment-avatar">
+                <img src="{% static 'img/user_3.jpg' %}" alt="Quang Đạt_PNS" class="comment-avatar">
                 <div class="comment-content">
                     <div class="comment-author">Quang Đạt_PNS</div>
                     <div class="comment-text">Thông báo bổ ích</div>
