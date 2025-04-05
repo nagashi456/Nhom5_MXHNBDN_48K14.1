@@ -1,0 +1,405 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="feed-container">
+    <!-- Header with title -->
+    <div class="feed-header">
+        <h1 class="feed-title">Trang chủ</h1>
+        <button class="filter-button">
+            <i data-lucide="filter" class="filter-icon"></i>
+        </button>
+    </div>
+
+    <!-- Post -->
+    <div class="post">
+        <div class="post-header">
+            <div class="post-author">
+                <img src="{% static 'img/avatar_tramanh.jpg' %}" alt="Trần Anh" class="author-avatar">
+                <div class="author-info">
+                    <div class="author-name">Trần Anh_QLB</div>
+                    <div class="author-username">@tramanh</div>
+                </div>
+            </div>
+            <div class="post-options">
+                <button class="options-button">
+                    <i data-lucide="more-horizontal" class="options-icon"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="post-content">
+            <p>🚨 THÔNG BÁO: BÃI ĐỖ XE MỚI TẠI ĐÀ NẴNG 🇻🇳🚛</p>
+            <p>Kính gửi bằng hữu và các nhà vận chuyển!</p>
+            <p>Nhằm hỗ trợ tốt hơn cho việc đỗ xe và vận chuyển vận tải, công ty xin thông báo về bãi đỗ xe mới vừa được đưa vào sử dụng tại Đà Nẵng. Đây là địa điểm thuận tiện giúp tất cả việc đỗ, bảo trì và xuất bến.</p>
+            <p>📍 Địa chỉ bãi đỗ xe mới: [Cập nhật địa chỉ cụ thể]</p>
+            <p>✅ Thời gian hoạt động 24/7</p>
+            <p>✅ Có bảo vệ tuần tra</p>
+            <p>✅ Khu vực rộng rãi, an toàn</p>
+            <p>✅ Có bãi vệ tục trực</p>
+            <p>✅ Hỗ trợ dịch vụ sửa chữa cơ bản</p>
+            <p>Anh em có thể liên hệ số dưới đây để biết thêm về tuần thủ quy định khi sử dụng bãi đỗ. Mọi thắc mắc xin liên hệ phòng điều phối để được hỗ trợ.</p>
+            <p>Cảm ơn anh em đã hợp tác! 🇻🇳</p>
+        </div>
+
+        <div class="post-date">March 24</div>
+
+        <div class="post-images">
+            <div class="image-grid">
+                <div class="main-image">
+                    <img src="{% static 'img/trucks1.jpg' %}" alt="Trucks" class="post-image">
+                </div>
+                <div class="side-images">
+                    <img src="{% static 'img/trucks2.jpg' %}" alt="Trucks" class="post-image">
+                    <img src="{% static 'img/trucks3.jpg' %}" alt="Trucks" class="post-image">
+                </div>
+            </div>
+        </div>
+
+        <div class="post-actions">
+            <div class="action-button">
+                <button class="like-button">
+                    <i data-lucide="thumbs-up" class="action-icon"></i>
+                </button>
+                <span class="action-count">122</span>
+            </div>
+            <div class="action-button">
+                <button class="comment-button">
+                    <i data-lucide="message-square" class="action-icon"></i>
+                </button>
+                <span class="action-count">3</span>
+            </div>
+            <div class="action-button">
+                <button class="share-button">
+                    <i data-lucide="share-2" class="action-icon"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="comments-section">
+        <h3 class="comments-title">Tất cả bình luận</h3>
+        
+        <div class="comments-list">
+            <div class="comment">
+                <img src="{% static 'img/avatar_quang.jpg' %}" alt="QuangCenter" class="comment-avatar">
+                <div class="comment-content">
+                    <div class="comment-author">QuangCenter</div>
+                    <div class="comment-text">Đã nhận thông báo ạ TrầnAnh</div>
+                </div>
+            </div>
+            
+            <div class="comment">
+                <img src="{% static 'img/avatar_le.jpg' %}" alt="LêVietA" class="comment-avatar">
+                <div class="comment-content">
+                    <div class="comment-author">LêVietA</div>
+                    <div class="comment-text">vậy là bữa này không đỗ bãi A nữa à chị</div>
+                </div>
+            </div>
+            
+            <div class="comment">
+                <img src="{% static 'img/avatar_dat.jpg' %}" alt="Quang Đạt_PNS" class="comment-avatar">
+                <div class="comment-content">
+                    <div class="comment-author">Quang Đạt_PNS</div>
+                    <div class="comment-text">Thông báo bổ ích</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="comment-form">
+            <input type="text" class="comment-input" placeholder="Nhập bình luận...">
+            <button class="comment-submit">Đăng</button>
+        </div>
+    </div>
+</div>
+
+<!-- Right Sidebar with Search -->
+<div class="right-sidebar">
+    <div class="search-container">
+        <i data-lucide="search" class="search-icon"></i>
+        <input type="text" class="search-input" placeholder="Tìm kiếm">
+    </div>
+</div>
+
+<style>
+/* Feed Container */
+.feed-container {
+    flex: 1;
+    max-width: 600px;
+    border-right: 1px solid #e4e4e4;
+}
+
+/* Right Sidebar */
+.right-sidebar {
+    width: 300px;
+    padding: 16px;
+}
+
+/* Feed Header */
+.feed-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid #e4e4e4;
+}
+
+.feed-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #050041;
+}
+
+.filter-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #787878;
+}
+
+.filter-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* Post Styles */
+.post {
+    padding: 16px;
+    border-bottom: 1px solid #e4e4e4;
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.post-author {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.author-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.author-name {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.author-username {
+    font-size: 12px;
+    color: #787878;
+}
+
+.options-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #787878;
+}
+
+.options-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.post-content {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+.post-content p {
+    margin-bottom: 8px;
+}
+
+.post-date {
+    font-size: 12px;
+    color: #787878;
+    margin-bottom: 12px;
+    text-align: right;
+}
+
+/* Image Grid */
+.image-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.main-image {
+    height: 250px;
+}
+
+.side-images {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 4px;
+    height: 250px;
+}
+
+.post-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* Post Actions */
+.post-actions {
+    display: flex;
+    gap: 24px;
+    margin-top: 12px;
+}
+
+.action-button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.like-button, .comment-button, .share-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #787878;
+    padding: 4px;
+}
+
+.action-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.action-count {
+    font-size: 14px;
+    color: #787878;
+}
+
+/* Comments Section */
+.comments-section {
+    padding: 16px;
+}
+
+.comments-title {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.comment {
+    display: flex;
+    gap: 8px;
+}
+
+.comment-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.comment-author {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.comment-text {
+    font-size: 14px;
+}
+
+/* Comment Form */
+.comment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.comment-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #e4e4e4;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.comment-submit {
+    align-self: flex-end;
+    background-color: #5858fa;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 16px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.comment-submit:hover {
+    background-color: #4646e8;
+}
+
+/* Search Container */
+.search-container {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: #787878;
+}
+
+.search-input {
+    width: 100%;
+    padding: 8px 8px 8px 32px;
+    border: 1px solid #e4e4e4;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+/* Make the content area display flex */
+.content-area {
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    padding: 0 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .right-sidebar {
+        display: none;
+    }
+    
+    .image-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .side-images {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+        height: auto;
+    }
+}
+</style>
+{% endblock %}
