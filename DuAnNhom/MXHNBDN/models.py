@@ -63,13 +63,27 @@ class BinhLuan(models.Model):
 
 # Nhắn tin
 class CuocTroChuyen(models.Model):
-    ten_nhom = models.CharField(max_length=255, null=True, blank=True)
+    LOAI_TRO_CHUYEN_CHOICES = [
+        ('personal', 'Cá nhân'),
+        ('group', 'Nhóm'),
+    ]
+    loai_tro_chuyen = models.CharField(max_length=10, choices=LOAI_TRO_CHUYEN_CHOICES)
+    ten_nhom = models.CharField(max_length=255, null=True, blank=True)  # Dành cho nhóm
     thanh_vien = models.ManyToManyField(NguoiDung)
 
+    def save(self, *args, **kwargs):
+        # Kiểm tra số thành viên theo loại trò chuyện
+        if self.loai_tro_chuyen == 'personal' and self.thanh_vien.count() != 2:
+            raise ValueError("Trò chuyện cá nhân phải có đúng 2 người tham gia.")
+        if self.loai_tro_chuyen == 'group' and self.thanh_vien.count() < 2:
+            raise ValueError("Trò chuyện nhóm phải có ít nhất 2 người tham gia.")
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        if self.ten_nhom:
-            return f'Nhóm: {self.ten_nhom}'
-        return f'Cuộc trò chuyện #{self.pk}'
+        if self.loai_tro_chuyen == 'personal':
+            return f'Trò chuyện cá nhân giữa {", ".join([str(nguoi.username) for nguoi in self.thanh_vien.all()])}'
+        return f'Nhóm: {self.ten_nhom or "Cuộc trò chuyện nhóm"}'
+
 
 class TinNhan(models.Model):
     cuoc_tro_chuyen = models.ForeignKey(CuocTroChuyen, on_delete=models.CASCADE)
