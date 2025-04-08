@@ -172,9 +172,33 @@
     </div>
 
     <div class="tab-content" id="info-content">
-      <div class="info-container">
-        <p class="info-text">Thông tin cá nhân sẽ hiển thị ở đây</p>
-      </div>
+
+        <div class="personal-info-form">
+                            <div class="form-group">
+                              <label class="form-label">Họ tên</label>
+                              <input type="text" class="form-input" value="Trà My">
+                            </div>
+
+                            <div class="form-group">
+                              <label class="form-label">Ngày sinh</label>
+                              <input type="text" class="form-input" value="08/02/2004">
+                            </div>
+
+                            <div class="form-group">
+                              <label class="form-label">Chức vụ</label>
+                              <input type="text" class="form-input" value="Trưởng phòng nhân sự">
+                            </div>
+
+                            <div class="form-group">
+                              <label class="form-label">Địa chỉ</label>
+                              <input type="text" class="form-input" value="abc.NHS.ĐN">
+                            </div>
+
+                            <div class="form-group">
+                              <label class="form-label">Ngày bắt đầu làm việc</label>
+                              <input type="text" class="form-input" value="05/02/2024">
+                            </div>
+                          </div>
     </div>
   </div>
 </div>
@@ -453,7 +477,29 @@ display: flex
   padding: 4px;
   text-align: center;
 }
-
+.personal-info-form {
+    display: grid
+;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+.form-group {
+    margin-bottom: 16px;
+}
+.form-label {
+    display: block;
+    font-size: 14px;
+    color: #686868;
+    margin-bottom: 6px;
+}
+.form-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #e4e4e4;
+    border-radius: 4px;
+    font-size: 14px;
+}
 .table-cell-left {
   border: 1px solid #d9d9d9;
   padding: 4px;
