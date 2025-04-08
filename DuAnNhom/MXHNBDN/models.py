@@ -148,3 +148,11 @@ class ThongBao(models.Model):
 
     def __str__(self):
         return f'Thông báo đến {self.nguoi_nhan.username}: {self.noi_dung[:40]}...'
+class CauHoi(models.Model):
+    nguoi_dung = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)  # Người tạo câu hỏi
+    noi_dung = models.TextField()  # Nội dung câu hỏi
+    ngay_tao = models.DateTimeField(auto_now_add=True)  # Thời gian tạo câu hỏi
+    da_tra_loi = models.BooleanField(default=False)  # Trạng thái câu hỏi đã có câu trả lời hay chưa
+
+    def __str__(self):
+        return f'Câu hỏi của {self.nguoi_dung.username} - {self.noi_dung[:30]}...'
