@@ -33,12 +33,7 @@ class VaiTro(models.Model):
     def __str__(self):
         return self.ten_vai_tro
 # xoa phan quyen nay do khong can da co san tren django
-class PhanQuyen(models.Model):
-    nguoi_dung = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)
-    vai_tro = models.ForeignKey(VaiTro, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return f'{self.nguoi_dung} - {self.vai_tro}'
 
 # Bài viết
 class BaiViet(models.Model):
@@ -139,21 +134,20 @@ class ThanhVienNhom(models.Model):
     def __str__(self):
         return f'{self.nguoi_dung.username} trong {self.nhom.ten_nhom}'
 
-# Thông báo *
-class ThongBao(models.Model):
-    nguoi_nhan = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)
-    noi_dung = models.TextField()
-    lien_ket = models.URLField(null=True, blank=True)
-    da_xem = models.BooleanField(default=False)
-    ngay_tao = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f'Thông báo đến {self.nguoi_nhan.username}: {self.noi_dung[:40]}...'
+
 class CauHoi(models.Model):
     nguoi_dung = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)  # Người tạo câu hỏi
     noi_dung = models.TextField()  # Nội dung câu hỏi
     ngay_tao = models.DateTimeField(auto_now_add=True)  # Thời gian tạo câu hỏi
-    da_tra_loi = models.BooleanField(default=False)  # Trạng thái câu hỏi đã có câu trả lời hay chưa
 
     def __str__(self):
         return f'Câu hỏi của {self.nguoi_dung.username} - {self.noi_dung[:30]}...'
+class CauTraLoi(models.Model):
+    cau_hoi = models.ForeignKey(CauHoi, on_delete=models.CASCADE, related_name='cau_tra_loi')
+    nguoi_tra_loi = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)
+    noi_dung = models.TextField()
+    ngay_tao = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Trả lời bởi {self.nguoi_tra_loi.username} - {self.noi_dung[:30]}...'

@@ -1,11 +1,11 @@
 from django.contrib import admin
 from .models import (
-    NguoiDung, VaiTro, PhanQuyen,
+    NguoiDung, VaiTro,
     BaiViet, BinhLuan,
     CuocTroChuyen, TinNhan,
     BinhChon, LuaChonBinhChon, BinhChonNguoiDung,
     Nhom, ThanhVienNhom,
-    ThongBao
+
 )
 from django.contrib.auth.admin import UserAdmin
 
@@ -24,7 +24,6 @@ class NguoiDungAdmin(UserAdmin):
     )
 
 admin.site.register(VaiTro)
-admin.site.register(PhanQuyen)
 
 @admin.register(BaiViet)
 class BaiVietAdmin(admin.ModelAdmin):
@@ -67,10 +66,7 @@ class NhomAdmin(admin.ModelAdmin):
 class ThanhVienNhomAdmin(admin.ModelAdmin):
     list_display = ('nhom', 'nguoi_dung', 'ngay_gia_nhap')
 
-@admin.register(ThongBao)
-class ThongBaoAdmin(admin.ModelAdmin):
-    list_display = ('nguoi_nhan', 'da_xem', 'ngay_tao')
-    search_fields = ('noi_dung',)
+
 
 # Register your models here.
 
