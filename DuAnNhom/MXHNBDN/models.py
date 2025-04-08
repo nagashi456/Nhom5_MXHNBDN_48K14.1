@@ -3,6 +3,14 @@ from django.contrib.auth.models import AbstractUser, Group, Permission
 
 # Người dùng -avatar moi thieu ho ten
 class NguoiDung(AbstractUser):
+    VAI_TRO_CHOICES = [
+        ('admin', 'Quản trị viên'),
+        ('nhanvien', 'Nhân viên'),
+        ('truongphong', 'Trưởng phòng'),
+        ('khach', 'Khách'),
+        # thêm vai trò khác nếu cần
+    ]
+    vai_tro = models.CharField(max_length=50, choices=VAI_TRO_CHOICES, default='khach')
     so_dien_thoai = models.CharField(max_length=15, unique=True)
     email = models.EmailField(unique=True)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
@@ -27,12 +35,7 @@ class NguoiDung(AbstractUser):
         return self.username
 
 # Vai trò và quyền hạn - them vao trong nguoi dung khi hien thi html an di nhung van la 1 thuoc tinh
-class VaiTro(models.Model):
-    ten_vai_tro = models.CharField(max_length=100)
 
-    def __str__(self):
-        return self.ten_vai_tro
-# xoa phan quyen nay do khong can da co san tren django
 
 
 # Bài viết

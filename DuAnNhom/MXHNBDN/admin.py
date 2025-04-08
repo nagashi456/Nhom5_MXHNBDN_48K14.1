@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    NguoiDung, VaiTro,
+    NguoiDung,
     BaiViet, BinhLuan,
     CuocTroChuyen, TinNhan,
     BinhChon, LuaChonBinhChon, BinhChonNguoiDung,
@@ -12,18 +12,17 @@ from django.contrib.auth.admin import UserAdmin
 @admin.register(NguoiDung)
 class NguoiDungAdmin(UserAdmin):
     model = NguoiDung
-    list_display = ('username', 'email', 'so_dien_thoai', 'is_staff', 'is_active')
-    list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
+    list_display = ('username', 'email', 'so_dien_thoai', 'vai_tro', 'is_staff', 'is_active')
+    list_filter = ('vai_tro', 'is_staff', 'is_superuser', 'is_active', 'groups')
     search_fields = ('username', 'email', 'so_dien_thoai')
     ordering = ('username',)
 
     fieldsets = UserAdmin.fieldsets + (
         ("Thông tin bổ sung", {
-            "fields": ("so_dien_thoai", "avatar"),
+            "fields": ("so_dien_thoai", "avatar", "vai_tro"),
         }),
     )
 
-admin.site.register(VaiTro)
 
 @admin.register(BaiViet)
 class BaiVietAdmin(admin.ModelAdmin):

@@ -1,693 +1,538 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block content %}
-<div class="profile-page">
-    <div class="profile-header">
-        <a href="#" class="back-button">
-            <i data-lucide="arrow-left"></i>
-            <span>Trà My</span>
-        </a>
-        <span class="post-count">33 posts</span>
+<div class="profile-container">
+  <!-- Profile Header -->
+  <div class="profile-header">
+    <button class="back-button">
+      <i data-lucide="arrow-left"></i>
+    </button>
+    <div>
+      <h1 class="profile-name">Trà My</h1>
+      <p class="profile-meta">1 bài viết</p>
     </div>
-    <div class="cover-photo">
-        <button class="add-cover-btn">
-            <i data-lucide="camera"></i>
+  </div>
+
+  <div class="cover-photo-actions">
+
+      <button class="add-cover-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="camera" class="lucide lucide-camera"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>
             <span>Add Cover Photo</span>
         </button>
+  </div>
+
+  <!-- Profile Info -->
+  <div class="profile-info">
+    <div class="profile-avatar-container">
+      <img src="{% static 'img/avatar_tm.jpg' %}" alt="Profile" class="profile-avatar">
+    </div>
+    <div>
+      <h2 class="profile-title">Trà My</h2>
+    </div>
+    <div class="profile-actions">
+      <button class="secondary-button" onclick="location.href='{% url 'edit_profile' %}'">
+        <i data-lucide="pen" class="small-icon"></i>
+        Chỉnh sửa trang cá nhân
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-container">
+    <div class="tabs-header">
+      <button class="tab-button active" data-tab="posts">Bài viết</button>
+      <button class="tab-button" data-tab="info">Thông tin cá nhân</button>
     </div>
 
-    <div class="profile-info">
-        <div class="profile-avatar">
-            <img src="{% static 'img/avatar_tm.jpg' %}" alt="Profile">
-        </div>
-        <div class="profile-details">
-            <div class="profile-name">
-                <h2>Trà My</h2>
-                <span class="username">@my</span>
+    <div class="tab-content active" id="posts-content">
+      <!-- Post -->
+      <div class="post-card">
+        <div class="post-content">
+          <div class="post-author">
+            <div class="author-avatar-container">
+              <img src="{% static 'img/avatar_tm.jpg' %}" alt="Profile" class="author-avatar">
             </div>
-        </div>
-        <div class="profile-actions">
-          <button class="edit-profile-button">
-                        <i class="fas fa-edit"></i>
-                        Chỉnh sửa trang cá nhân
-                    </button>
+            <div>
+              <div class="author-name">Nguyễn Thị Trà My</div>
+              <div class="author-username">@teamy</div>
+            </div>
+            <div class="post-date">March 24</div>
+          </div>
 
+          <div class="post-body">
+            <h3 class="post-title">THÔNG BÁO LƯƠNG THÁNG 03/2025</h3>
+            <p class="post-text">
+              Hôm nay ngày 05/03/2025, kế toán đã thanh toán lương cho toàn bộ nhân viên. Hiện nay có sự thay
+              đổi về bậc/hệ số lương. Mọi người nếu có thắc mắc hãy điền đơn Kiến nghị được đính kèm sau:
+            </p>
+          </div>
+
+          <div class="post-actions">
+            <button class="action-button">
+              MẪU ĐƠN KIẾN NGHỊ
+            </button>
+          </div>
+
+          <div class="table-container">
+            <table class="salary-table">
+              <thead>
+                <tr class="table-header">
+                  <th colspan="8" class="table-title">
+                    HỆ THỐNG THANG LƯƠNG, BẢNG LƯƠNG
+                  </th>
+                </tr>
+                <tr>
+                  <td colspan="8" class="table-section">
+                    <strong>I. Mức lương tối thiểu:</strong>
+                    <br>
+                    Mức lương tối thiểu của người lao động đang áp dụng
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="7" class="table-section">
+                    <strong>II. Hệ thống thang lương, bảng lương:</strong>
+                  </td>
+                  <td class="table-value">3.100.000 đồng/tháng</td>
+                </tr>
+                <tr>
+                  <td colspan="8" class="table-section-title">
+                    1. BẢNG LƯƠNG CHỨC VỤ QUẢN LÝ DOANH NGHIỆP
+                  </td>
+                </tr>
+                <tr class="table-header">
+                  <td colspan="3" class="table-column-header">
+                    Chức danh công việc
+                  </td>
+                  <td class="table-column-header">Mã số</td>
+                  <td colspan="4" class="table-column-header">
+                    Bậc/hệ số, mức lương
+                    <br>
+                    <div class="level-grid">
+                      <div>I</div>
+                      <div>II</div>
+                      <div>III</div>
+                      <div>IV</div>
+                      <div>V</div>
+                      <div>VI</div>
+                      <div>VII</div>
+                    </div>
+                  </td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="3" class="table-cell-left">
+                    01. Giám Đốc
+                    <br>- Hệ số
+                  </td>
+                  <td class="table-cell">C.01</td>
+                  <td class="table-cell">1.80</td>
+                  <td class="table-cell">1.95</td>
+                  <td class="table-cell">2.35</td>
+                  <td class="table-cell">2.85</td>
+                </tr>
+                <tr>
+                  <td colspan="3" class="table-cell-left">
+                    - Mức lương
+                  </td>
+                  <td class="table-cell"></td>
+                  <td class="table-cell">5.580</td>
+                  <td class="table-cell">6.045</td>
+                  <td class="table-cell">7.285</td>
+                  <td class="table-cell">8.835</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="reaction-buttons">
+            <button class="reaction-button">
+              <i data-lucide="thumbs-up"></i>
+              <span>122</span>
+            </button>
+            <button class="reaction-button">
+              <i data-lucide="thumbs-down"></i>
+              <span>0</span>
+            </button>
+            <button class="reaction-button">
+              <i data-lucide="message-square"></i>
+              <span>3</span>
+            </button>
+          </div>
         </div>
+
+        <div class="post-footer">
+          <div class="company-logo">
+            <img src="{% static 'img/logo_hd.png' %}" alt="Company Logo">
+          </div>
+          <p class="company-email">Hoangdaivantai@.com</p>
+        </div>
+      </div>
     </div>
 
-    <div class="tabs">
-                    <div class="tab-list">
-                        <button class="tab-button active" data-tab="posts">Bài viết</button>
-                        <button class="tab-button" data-tab="info">Thông tin cá nhân</button>
-                    </div>
-
-                    <!-- Posts Tab Content -->
-                    <div class="tab-content active" id="posts">
-                        <!-- Post -->
-                        <div class="post">
-                            <div class="post-header">
-                                <div class="post-avatar">
-                                    <img src="{% static 'img/avatar_tm.jpg' %}" alt="Profile">
-                                </div>
-                                <div>
-                                    <h3 class="post-author">Nguyễn Thị Trà My</h3>
-                                    <p class="post-username">@tramy</p>
-                                </div>
-                                <div class="post-date">Tháng 24</div>
-                            </div>
-
-                            <div class="post-content">
-                                <h4 class="post-title">THÔNG BÁO LƯƠNG THÁNG 03/2025</h4>
-                                <p class="post-text">
-                                    Hôm nay ngày 05/03/2025, kế toán đã thanh toán lương cho toàn bộ nhân viên. Hiện nay có sự thay
-                                    đổi về bậc/hệ số lương. Mọi người nếu có thắc mắc hãy điền đơn Kiến nghị dưới đính kèm sau:
-                                </p>
-                            </div>
-
-                            <div class="post-action">
-                                <button class="form-button">MẪU ĐƠN KIẾN NGHỊ</button>
-                            </div>
-
-                            <div class="salary-info">
-                                <h4 class="salary-title">HỆ THỐNG THANG LƯƠNG, BẢNG LƯƠNG</h4>
-                                <div class="salary-description">
-                                    <p>I. Mức lương tối thiểu:</p>
-                                    <p>- Mức lương tối thiểu vùng áp dụng từ ngày 01/07/2023:</p>
-                                    <p>+ Hệ thống thang lương, bảng lương: <span class="highlight">4.180.000 đồng/tháng</span></p>
-                                </div>
-
-                                <div class="salary-description">
-                                    <p>I. BẢNG LƯƠNG CHỨC VỤ QUẢN LÝ DOANH NGHIỆP</p>
-                                    <p>Đơn vị tính: 1000 đồng</p>
-                                </div>
-
-                                <div class="table-container">
-                                    <table class="salary-table">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-left">Chức danh công việc</th>
-                                                <th>Mã</th>
-                                                <th colspan="7">Bậc/hệ số mức lương</th>
-                                            </tr>
-                                            <tr>
-                                                <th></th>
-                                                <th></th>
-                                                <th>1</th>
-                                                <th>2</th>
-                                                <th>3</th>
-                                                <th>4</th>
-                                                <th>5</th>
-                                                <th>6</th>
-                                                <th>7</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>1. Giám Đốc</td>
-                                                <td class="text-center">GĐ</td>
-                                                <td class="text-center">1.80</td>
-                                                <td class="text-center">1.85</td>
-                                                <td class="text-center">2.90</td>
-                                                <td class="text-center">2.95</td>
-                                                <td class="text-center">3.30</td>
-                                                <td class="text-center">3.60</td>
-                                                <td class="text-center">4.30</td>
-                                            </tr>
-                                            <tr>
-                                                <td>2. Phó Giám Đốc</td>
-                                                <td class="text-center">PGĐ</td>
-                                                <td class="text-center">1.50</td>
-                                                <td class="text-center">1.75</td>
-                                                <td class="text-center">1.90</td>
-                                                <td class="text-center">2.45</td>
-                                                <td class="text-center">2.75</td>
-                                                <td class="text-center">3.25</td>
-                                                <td class="text-center">3.65</td>
-                                            </tr>
-                                            <tr>
-                                                <td>3. Trưởng phòng (Kế toán trưởng)</td>
-                                                <td class="text-center">TP</td>
-                                                <td class="text-center">1.40</td>
-                                                <td class="text-center">1.45</td>
-                                                <td class="text-center">1.75</td>
-                                                <td class="text-center">2.00</td>
-                                                <td class="text-center">2.30</td>
-                                                <td class="text-center">2.60</td>
-                                                <td class="text-center">2.95</td>
-                                            </tr>
-                                            <tr>
-                                                <td>4. Phó phòng</td>
-                                                <td class="text-center">PP</td>
-                                                <td class="text-center">1.30</td>
-                                                <td class="text-center">1.35</td>
-                                                <td class="text-center">1.40</td>
-                                                <td class="text-center">1.45</td>
-                                                <td class="text-center">1.50</td>
-                                                <td class="text-center">1.55</td>
-                                                <td class="text-center">1.60</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            <div class="post-interactions">
-                                <div class="interaction">
-                                    <i class="fas fa-thumbs-up"></i>
-                                    <span>122</span>
-                                </div>
-                                <div class="interaction">
-                                    <i class="fas fa-thumbs-down"></i>
-                                    <span></span>
-                                </div>
-                                <div class="interaction">
-                                    <i class="fas fa-comment"></i>
-                                    <span>3</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Company Logo -->
-
-                    </div>
-
-                    <!-- Info Tab Content -->
-                    <div class="tab-content" id="info">
-                        <p class="info-text">Thông tin cá nhân sẽ hiển thị ở đây</p>
-                    </div>
-                </div>
-
-
-
-
-
-</div>
-
-<!-- Add search box to the right side -->
-<div class="search-container">
-    <div class="search-box">
-        <input type="text" class="search-input" placeholder="Tìm kiếm">
+    <div class="tab-content" id="info-content">
+      <div class="info-container">
+        <p class="info-text">Thông tin cá nhân sẽ hiển thị ở đây</p>
+      </div>
     </div>
+  </div>
 </div>
-
-
 <style>
-    /* Profile Page Styles */
-    .profile-page {
-        max-width: 800px;
-        margin: 0 auto;
-        background-color: #ffffff;
-        border-radius: 8px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        font-family: "Times New Roman", serif; /* Thêm font Times New Roman */
-    }
+    /* Profile page styles */
+.profile-container {
 
-    .profile-header {
-        padding: 16px;
-        border-bottom: 1px solid #e4e4e4;
-        display: flex;
-        align-items: center;
-    }
+  max-width: 768px;
+    width: 100%;
+    padding: 16px;
+    margin: 0 auto;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
 
-    .back-button {
-        display: flex;
-        align-items: center;
-        color: #5858fa;
-        text-decoration: none;
-        font-weight: 500;
-    }
-.tabs {
-            width: 100%;
-        }
+/* Profile header */
+.profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.add-cover-btn{
+display: flex
+;
+    align-items: center;
+    background: none;
+    border: none;
+    color: #5858fa;
+    cursor: pointer;
+    font-size: 14px;
+}
+.back-button {
+  margin-right: 8px;
+  background: none;
+  border: none;
+  color: #686868;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-        .tab-list {
-            display: flex;
-            border-bottom: 1px solid #e4e4e4;
-        }
+.profile-name {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #150aa1;
+}
 
-        .tab-button {
-            padding: 12px 24px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            color: #686868;
-            position: relative;
-        }
+.profile-meta {
+  font-size: 0.875rem;
+  color: #686868;
+}
 
-        .tab-button.active {
-            color: #5858fa;
-            font-weight: 500;
-        }
+.cover-photo-actions {
+  height: 128px;
+    background-color: #f1f1ff;
+    display: flex
+;
+    align-items: center;
+    justify-content: center;
+}
 
-        .tab-button.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: #5858fa;
-        }
+.secondary-button {
+  background-color: #f1f1ff;
+  color: #150aa1;
+  border: 1px solid #e4e4e4;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
 
-        .tab-content {
-            display: none;
-        }
+.small-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+}
 
-        .tab-content.active {
-            display: block;
-        }
+/* Profile info */
+.profile-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
 
-        /* Post */
-        .post {
-            border-bottom: 1px solid #e4e4e4;
-            padding: 16px;
-        }
+.profile-avatar-container {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 16px;
+}
 
-        .post-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
+.profile-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-        .post-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            overflow: hidden;
-        }
+.profile-title {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #150aa1;
+}
 
-        .post-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+.profile-actions {
+  margin-left: auto;
+}
 
-        .post-author {
-            font-size: 14px;
-            font-weight: 500;
-        }
+/* Tabs */
+.tabs-container {
+  margin-bottom: 24px;
+}
 
-        .post-username {
-            font-size: 12px;
-            color: #9a9a9a;
-        }
+.tabs-header {
+  display: flex;
+  border-bottom: 1px solid #e4e4e4;
+}
 
-        .post-date {
-            margin-left: auto;
-            font-size: 12px;
-            color: #9a9a9a;
-        }
+.tab-button {
+  padding: 8px 24px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-weight: 500;
+  cursor: pointer;
+  color: #686868;
+}
 
-        .post-content {
-            margin-bottom: 16px;
-        }
+.tab-button.active {
+  border-bottom-color: #150aa1;
+  color: #150aa1;
+}
 
-        .post-title {
-            font-size: 14px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
+.tab-content {
+  display: none;
+  padding-top: 16px;
+}
 
-        .post-text {
-            font-size: 14px;
-        }
+.tab-content.active {
+  display: block;
+}
 
-        .post-action {
-            margin-bottom: 16px;
-        }
+/* Post */
+.post-card {
+  border: 1px solid #e4e4e4;
+  border-radius: 6px;
+  margin-bottom: 24px;
+}
 
-        .form-button {
-            background-color: #e4e4e4;
-            border: 1px solid #d9d9d9;
-            color: #686868;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-        }
+.post-content {
+  padding: 16px;
+}
 
-        /* Salary Info */
-        .salary-info {
-            margin-bottom: 16px;
-        }
+.post-author {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
 
-        .salary-title {
-            font-size: 14px;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 8px;
-        }
+.author-avatar-container {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 12px;
+}
 
-        .salary-description {
-            font-size: 12px;
-            margin-bottom: 8px;
-        }
+.author-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-        .highlight {
-            color: #ff0000;
-        }
+.author-name {
+  font-weight: 500;
+}
 
-        .table-container {
-            overflow-x: auto;
-        }
+.author-username {
+  font-size: 0.875rem;
+  color: #686868;
+}
 
-        .salary-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-        }
+.post-date {
+  margin-left: auto;
+  font-size: 0.875rem;
+  color: #a8a8a8;
+}
 
-        .salary-table th,
-        .salary-table td {
-            border: 1px solid #d9d9d9;
-            padding: 4px;
-        }
+.post-body {
+  margin-bottom: 16px;
+}
 
-        .salary-table thead tr {
-            background-color: #f2f2f2;
-        }
+.post-title {
+  font-weight: 700;
+  font-size: 1.125rem;
+  margin-bottom: 8px;
+}
 
-        .text-left {
-            text-align: left;
-        }
+.post-text {
+  color: #494949;
+}
 
-        .text-center {
-            text-align: center;
-        }
+.post-actions {
+  margin-bottom: 16px;
+}
 
-        /* Post Interactions */
-        .post-interactions {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            margin-top: 16px;
-        }
+.action-button {
+  background-color: #d9d9d9;
+  color: #494949;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+}
 
-        .interaction {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            color: #686868;
-            font-size: 12px;
-        }
-    .back-button i {
-        margin-right: 8px;
-    }
+/* Table */
+.table-container {
+  margin-bottom: 16px;
+  overflow-x: auto;
+}
 
-    .post-count {
-        color: #686868;
-        font-size: 14px;
-        margin-left: 8px;
-    }
+.salary-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #d9d9d9;
+  font-size: 0.875rem;
+}
 
-    .cover-photo {
-        height: 128px;
-        background-color: #f1f1ff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+.table-header {
+  background-color: #f2f2f2;
+  text-align: center;
+}
 
-    .add-cover-btn {
-        display: flex;
-        align-items: center;
-        background: none;
-        border: none;
-        color: #5858fa;
-        cursor: pointer;
-        font-size: 14px;
-    }
+.table-title {
+  border: 1px solid #d9d9d9;
+  padding: 8px;
+  text-align: center;
+  font-weight: bold;
+}
 
-    .add-cover-btn i {
-        margin-right: 8px;
-    }
+.table-section {
+  border: 1px solid #d9d9d9;
+  padding: 8px;
+}
 
-    .profile-info {
-        padding: 16px 24px;
-        display: flex;
-        align-items: center;
-    }
+.table-section-title {
+  border: 1px solid #d9d9d9;
+  padding: 8px;
+  font-weight: bold;
+}
 
-    .profile-avatar {
-        position: relative;
-        margin-top: -48px;
-    }
+.table-value {
+  border: 1px solid #d9d9d9;
+  padding: 8px;
+  text-align: right;
+}
 
-    .profile-avatar img {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        border: 4px solid #ffffff;
-    }
+.table-column-header {
+  border: 1px solid #d9d9d9;
+  padding: 8px;
+  text-align: center;
+}
 
-    .profile-details {
-        flex: 1;
-        margin-left: 16px;
-    }
+.level-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-top: 4px;
+}
 
-    .profile-name {
-        display: flex;
-        align-items: center;
-    }
+.table-cell {
+  border: 1px solid #d9d9d9;
+  padding: 4px;
+  text-align: center;
+}
 
-    .profile-name h2 {
-        font-size: 18px;
-        font-weight: 600;
-    }
+.table-cell-left {
+  border: 1px solid #d9d9d9;
+  padding: 4px;
+  text-align: left;
+}
 
-    .username {
-        color: #686868;
-        margin-left: 8px;
-        font-size: 14px;
-    }
+/* Reaction buttons */
+.reaction-buttons {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
 
-    .profile-actions {
-        display: flex;
-        gap: 8px;
-    }
+.reaction-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: #686868;
+  cursor: pointer;
+}
 
-    .save-btn {
-        background-color: #150aa1;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        padding: 8px 16px;
-        font-size: 14px;
-        cursor: pointer;
-    }
+/* Post footer */
+.post-footer {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #e4e4e4;
+}
 
-    .share-btn {
-        display: flex;
-        align-items: center;
-        background-color: white;
-        color: #686868;
-        border: 1px solid #e4e4e4;
-        border-radius: 4px;
-        padding: 8px 16px;
-        font-size: 14px;
-        cursor: pointer;
-    }
+.company-logo {
+  width: 96px;
+  height: 96px;
+  margin-bottom: 16px;
+}
 
-    .share-btn i {
-        margin-right: 8px;
-    }
+.company-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
 
-    .bio-section {
-        padding: 16px 24px;
-        border-top: 1px solid #e4e4e4;
-    }
+.company-email {
+  color: #686868;
+  font-size: 0.875rem;
+}
 
-    /* Thay đổi cỡ chữ và màu chữ cho h3 trong bio-section */
-    .bio-section h3 {
-        font-size: 18px;   /* Cỡ chữ lớn hơn */
-        font-weight: 600;  /* Đậm hơn */
-        color: #2C3E50;    /* Màu tối đậm */
-        margin-bottom: 12px;
-        text-transform: uppercase; /* Chữ in hoa */
-        letter-spacing: 1px; /* Khoảng cách giữa các chữ */
-    }
+/* Info tab */
+.info-container {
+  padding: 16px;
+}
 
-    .bio-section textarea {
-        width: 100%;
-        height: 100px;
-        padding: 12px;
-        border: 1px solid #e4e4e4;
-        border-radius: 4px;
-        resize: none;
-        font-family: "Times New Roman", serif; /* Thêm font Times New Roman */
-        font-size: 14px;
-    }
-
-    .bio-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 8px;
-    }
-
-    .char-count {
-        font-size: 12px;
-        color: #a8a8a8;
-    }
-
-    .form-sections {
-        padding: 16px 24px;
-        border-top: 1px solid #e4e4e4;
-    }
-
-    .form-section {
-        margin-bottom: 16px;
-    }
-
-    /* Thay đổi cỡ chữ và màu chữ cho h3 trong form-section */
-    .form-section h3,.bio-section h3 {
-        font-size: 12px;   /* Cỡ chữ lớn hơn */
-        font-weight: 600;  /* Đậm hơn */
-        color: #2C3E50;    /* Màu tối đậm */
-        margin-bottom: 12px;
-        text-transform: uppercase; /* Chữ in hoa */
-        letter-spacing: 1px; /* Khoảng cách giữa các chữ */
-    }
-
-    .form-row {
-        display: flex;
-        gap: 8px;
-    }
-
-    .form-row input {
-        flex: 1;
-        padding: 8px 12px;
-        border: 1px solid #e4e4e4;
-        border-radius: 4px;
-        font-size: 14px;
-    }
-    .edit-profile-button {
-            margin-left: auto;
-            background-color: white;
-            border: 1px solid #5858fa;
-            color: #5858fa;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-        }
-    .change-btn {
-        background-color: #150aa1;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        padding: 8px 16px;
-        font-size: 14px;
-        cursor: pointer;
-    }
-
-    .password-fields {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .password-fields input {
-        padding: 8px 12px;
-        border: 1px solid #e4e4e4;
-        border-radius: 4px;
-        font-size: 14px;
-    }
-
-    .logout-section {
-        padding: 24px;
-        border-top: 1px solid #e4e4e4;
-        display: flex;
-        justify-content: center;
-    }
-
-    .logout-btn {
-        background-color: white;
-        color: #686868;
-        border: 1px solid #d9d9d9;
-        border-radius: 4px;
-        padding: 8px 32px;
-        font-size: 14px;
-        cursor: pointer;
-    }
-
-    /* Override search container position */
-    .search-container {
-        position: absolute;
-        top: 64px;
-        right: 16px;
-    }
-
-    /* Override content area */
-    .content-area {
-        display: block;
-        padding: 16px;
-    }
+.info-text {
+  color: #686868;
+}
 </style>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize Lucide icons
-        lucide.createIcons();
-    });
-    const textarea = document.getElementById("bioTextarea");
-    const charCount = document.getElementById("charCount");
-    const MAX_CHARS = 888;
-    const warningMessage = document.getElementById("warningMessage");
+  // Tab functionality
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const tabContents = document.querySelectorAll('.tab-content');
 
-    textarea.addEventListener("input", function () {
-    let content = textarea.value;
-
-    // Kiểm tra số ký tự
-    if (content.length > MAX_CHARS) {
-      content = content.substring(0, MAX_CHARS);
-      textarea.value = content;
-      warningMessage.style.display = 'block';
-    } else {
-      warningMessage.style.display = 'none';
-    }
-
-    // Cập nhật hiển thị số ký tự
-    charCount.textContent = `${textarea.value.length}/${MAX_CHARS}`;
-    });
-  document.addEventListener('DOMContentLoaded', function() {
-            const tabButtons = document.querySelectorAll('.tab-button');
-            const tabContents = document.querySelectorAll('.tab-content');
-
-            tabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    // Remove active class from all buttons and contents
-                    tabButtons.forEach(btn => btn.classList.remove('active'));
-                    tabContents.forEach(content => content.classList.remove('active'));
-
-                    // Add active class to clicked button and corresponding content
-                    button.classList.add('active');
-                    const tabId = button.getAttribute('data-tab');
-                    document.getElementById(tabId).classList.add('active');
-                });
-            });
-        });
-  document.querySelectorAll('.tab-button').forEach(button => {
+  tabButtons.forEach(button => {
     button.addEventListener('click', () => {
-        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      // Remove active class from all buttons and contents
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      tabContents.forEach(content => content.classList.remove('active'));
 
-        button.classList.add('active');
-        document.getElementById(button.dataset.tab).classList.add('active');
+      // Add active class to clicked button
+      button.classList.add('active');
+
+      // Show corresponding content
+      const tabId = button.getAttribute('data-tab');
+      document.getElementById(`${tabId}-content`).classList.add('active');
     });
-});
-  document.querySelectorAll('.interaction').forEach(item => {
-    item.addEventListener('click', () => {
-        // ví dụ: tăng số like
-        const count = item.querySelector('span');
-        count.textContent = parseInt(count.textContent) + 1;
-    });
+  });
 });
 </script>
 {% endblock %}
