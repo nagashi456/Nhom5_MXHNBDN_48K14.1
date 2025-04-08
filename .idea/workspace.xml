@@ -5,9 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fdfa841e-42fd-409c-b2ce-585c6219d6b4" name="Changes" comment="update">
-      <change beforePath="$PROJECT_DIR$/.idea/ck.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ck.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Nhom5_MXHNBDN_48K14.1.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Nhom5_MXHNBDN_48K14.1.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DuAnNhom/MXHNBDN/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/DuAnNhom/MXHNBDN/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DuAnNhom/MXHNBDN/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/DuAnNhom/MXHNBDN/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DuAnNhom/MXHNBDN/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/DuAnNhom/MXHNBDN/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DuAnNhom/MXHNBDN/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/DuAnNhom/MXHNBDN/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +27,7 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="MIXED" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
