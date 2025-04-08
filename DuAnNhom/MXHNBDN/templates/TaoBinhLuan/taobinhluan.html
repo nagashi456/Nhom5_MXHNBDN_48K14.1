@@ -1,0 +1,590 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="post-container">
+    <div class="page-header">
+        <h1 class="page-title">Trang chủ</h1>
+
+        <div class="search-box-container">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" placeholder="Tìm kiếm" class="search-input">
+        </div>
+    </div>
+
+    <div class="post-feed">
+        <div class="post-card">
+            <div class="post-header">
+                <div class="post-author">
+                    <img src="{% static 'img/avatar_ta.jpg' %}" alt="Profile" class="author-avatar">
+                    <div class="author-info">
+                        <div class="author-name">Tram Anh_QLB</div>
+                        <div class="author-handle">@tramanh</div>
+                    </div>
+                </div>
+                <div class="post-options">
+                    <i data-lucide="more-horizontal" class="options-icon"></i>
+                </div>
+            </div>
+
+            <div class="post-content">
+                <p>📢 THÔNG BÁO: BÃI ĐỖ XE MỚI TẠI ĐÀ NẴNG 🚛🚚</p>
+                <p>Kính gửi bằng hữu tài xế và những người quan tâm,</p>
+                <p>Nhằm hỗ trợ tốt hơn cho việc đỗ xe và điều phối vận tải, công ty xin thông báo về bãi đỗ xe mới vừa được đưa vào sử dụng tại Đà Nẵng. Đây là địa điểm thuận tiện giúp tất cả việc đỗ, bảo trì và xuất bến.</p>
+                <p>📍 Địa chỉ bãi đỗ xe mới: [Cập nhật địa chỉ cụ thể]</p>
+                <p>✅ Thời gian hoạt động: 24/7</p>
+                <p>✅ Có bảo vệ tuần tra</p>
+                <p>✅ Khu vực rộng rãi, an toàn</p>
+                <p>✅ Có bãi vệ tục trực</p>
+                <p>✅ Có chỗ nghỉ ngơi cho tài xế</p>
+                <p>Anh em có thể sử dụng các nhật ký trình và tuân thủ quy định khi sử dụng bãi đỗ. Mọi thắc mắc xin liên hệ phòng điều phối để được hỗ trợ.</p>
+                <p>Cảm ơn anh em đã hợp tác! 🚚🚛</p>
+            </div>
+
+            <div class="post-images">
+                <div class="image-grid">
+                    <img src="{% static 'img/trucks1.jpg' %}" alt="Parking Area" class="post-image">
+                    <img src="{% static 'img/trucks2.jpg' %}" alt="Parking Area" class="post-image">
+                    <img src="{% static 'img/trucks3.jpg' %}" alt="Parking Area" class="post-image">
+                </div>
+            </div>
+
+            <div class="post-timestamp">March 24</div>
+
+            <div class="post-actions">
+                <div class="action-button">
+                    <i data-lucide="thumbs-up" class="action-icon"></i>
+                    <span class="action-count">122</span>
+                </div>
+                <div class="action-button">
+                    <i data-lucide="message-square" class="action-icon"></i>
+                    <span class="action-count">5</span>
+                </div>
+                <div class="action-button">
+                    <i data-lucide="share" class="action-icon"></i>
+                    <span class="action-count">3</span>
+                </div>
+            </div>
+
+            <div class="comments-section">
+                <h3 class="comments-title">Tất cả bình luận</h3>
+
+                <div class="comment">
+                    <img src="{% static 'img/user_3.jpg' %}" alt="Profile" class="comment-avatar">
+                    <div class="comment-content">
+                        <div class="comment-author">QuangCenter</div>
+                        <div class="comment-text">Đã nhận thông báo ở TramAnh</div>
+                        <div class="comment-options-container">
+                            <button class="comment-options-btn">...</button>
+                            <div class="comment-options-menu">
+                                <div class="option-item edit-option">
+                                    <i data-lucide="edit-2" class="option-icon"></i>
+                                    <span>Sửa bình luận</span>
+                                </div>
+                                <div class="option-item delete-option">
+                                    <i data-lucide="trash-2" class="option-icon"></i>
+                                    <span>Xóa bình luận</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <img src="{% static 'img/user_1.jpg' %}" alt="Profile" class="comment-avatar">
+                    <div class="comment-content">
+                        <div class="comment-author">LêVietA</div>
+                        <div class="comment-text">vậy là bữa này không đỗ bãi A nữa à chị</div>
+                        <div class="comment-options-container">
+                            <button class="comment-options-btn">...</button>
+                            <div class="comment-options-menu">
+                                <div class="option-item edit-option">
+                                    <i data-lucide="edit-2" class="option-icon"></i>
+                                    <span>Sửa bình luận</span>
+                                </div>
+                                <div class="option-item delete-option">
+                                    <i data-lucide="trash-2" class="option-icon"></i>
+                                    <span>Xóa bình luận</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <img src="{% static 'img/user_2.jpg' %}" alt="Profile" class="comment-avatar">
+                    <div class="comment-content">
+                        <div class="comment-author">Quang Đạt_PNS</div>
+                        <div class="comment-text">Thông báo bổ ích</div>
+                        <div class="comment-options-container">
+                            <button class="comment-options-btn">...</button>
+                            <div class="comment-options-menu">
+                                <div class="option-item edit-option">
+                                    <i data-lucide="edit-2" class="option-icon"></i>
+                                    <span>Sửa bình luận</span>
+                                </div>
+                                <div class="option-item delete-option">
+                                    <i data-lucide="trash-2" class="option-icon"></i>
+                                    <span>Xóa bình luận</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <img src="{% static 'img/avatar_tm.jpg' %}" alt="Profile" class="comment-avatar">
+                    <div class="comment-content">
+                        <div class="comment-author">NguyenTraMy</div>
+                        <div class="comment-text">Đã vãng sắp</div>
+                        <div class="comment-options-container">
+                            <button class="comment-options-btn">...</button>
+                            <div class="comment-options-menu">
+                                <div class="option-item edit-option">
+                                    <i data-lucide="edit-2" class="option-icon"></i>
+                                    <span>Sửa bình luận</span>
+                                </div>
+                                <div class="option-item delete-option">
+                                    <i data-lucide="trash-2" class="option-icon"></i>
+                                    <span>Xóa bình luận</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comment-form">
+                    <input type="text" placeholder="Nhập bình luận..." class="comment-input">
+                    <button class="comment-submit-btn">Đăng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .post-container {
+        max-width: 600px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0 16px;
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 0;
+        border-bottom: 1px solid #e4e4e4;
+    }
+
+    .page-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .search-box-container {
+        position: relative;
+        width: 240px;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 8px 12px 8px 36px;
+        border: 1px solid #e4e4e4;
+        border-radius: 20px;
+        font-size: 14px;
+        background-color: #f5f5f5;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #a8a8a8;
+        width: 16px;
+        height: 16px;
+    }
+
+    .post-feed {
+        padding: 16px 0;
+    }
+
+    .post-card {
+        background-color: #ffffff;
+        border: 1px solid #e4e4e4;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        overflow: hidden;
+    }
+
+    .post-header {
+        display: flex;
+        padding: 12px 16px;
+        align-items: center;
+    }
+
+    .post-author {
+        display: flex;
+        align-items: center;
+        flex: 1;
+    }
+
+    .author-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 12px;
+    }
+
+    .author-name {
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .author-handle {
+        color: #686868;
+        font-size: 12px;
+    }
+
+    .post-options {
+        color: #686868;
+    }
+
+    .options-icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .post-content {
+        padding: 0 16px 16px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .post-content p {
+        margin-bottom: 8px;
+    }
+
+    .post-images {
+        margin-bottom: 8px;
+    }
+
+    .image-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2px;
+    }
+
+    .post-image {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+
+    .post-timestamp {
+        padding: 0 16px 8px;
+        text-align: right;
+        color: #686868;
+        font-size: 12px;
+    }
+
+    .post-actions {
+        display: flex;
+        border-top: 1px solid #e4e4e4;
+        border-bottom: 1px solid #e4e4e4;
+    }
+
+    .action-button {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px;
+        color: #686868;
+    }
+
+    .action-icon {
+        width: 18px;
+        height: 18px;
+        margin-right: 4px;
+    }
+
+    .comments-section {
+        padding: 16px;
+    }
+
+    .comments-title {
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 16px;
+    }
+
+    .comment {
+        display: flex;
+        margin-bottom: 16px;
+        position: relative;
+    }
+
+    .comment-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        margin-right: 12px;
+    }
+
+    .comment-content {
+        flex: 1;
+        background-color: #f5f5f5;
+        padding: 8px 12px;
+        border-radius: 8px;
+        position: relative;
+    }
+
+    .comment-author {
+        font-weight: 500;
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .comment-text {
+        font-size: 14px;
+    }
+
+    .comment-options-container {
+        position: absolute;
+        right: 8px;
+        top: 8px;
+    }
+
+    .comment-options-btn {
+        background: none;
+        border: none;
+        color: #686868;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 0 4px;
+    }
+
+    .comment-options-menu {
+        position: absolute;
+        right: 0;
+        top: 100%;
+        background-color: white;
+        border: 1px solid #e4e4e4;
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        width: 160px;
+        z-index: 10;
+        display: none;
+    }
+
+    .comment-options-container.active .comment-options-menu {
+        display: block;
+    }
+
+    .option-item {
+        display: flex;
+        align-items: center;
+        padding: 8px 12px;
+        cursor: pointer;
+    }
+
+    .option-item:hover {
+        background-color: #f5f5f5;
+    }
+
+    .edit-option {
+        color: #5858fa;
+    }
+
+    .delete-option {
+        color: #ff3b30;
+    }
+
+    .option-icon {
+        width: 16px;
+        height: 16px;
+        margin-right: 8px;
+    }
+
+    .comment-form {
+        display: flex;
+        margin-top: 16px;
+    }
+
+    .comment-input {
+        flex: 1;
+        padding: 8px 12px;
+        border: 1px solid #e4e4e4;
+        border-radius: 4px 0 0 4px;
+        font-size: 14px;
+    }
+
+    .comment-submit-btn {
+        background-color: #5858fa;
+        color: white;
+        border: none;
+        border-radius: 0 4px 4px 0;
+        padding: 0 16px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Comment options functionality
+        const optionsBtns = document.querySelectorAll('.comment-options-btn');
+
+        // Function to close all open menus
+        function closeAllMenus() {
+            document.querySelectorAll('.comment-options-container.active').forEach(container => {
+                container.classList.remove('active');
+            });
+        }
+
+        // Add click event to each options button
+        optionsBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent click from bubbling to document
+
+                // Close any open menus first
+                closeAllMenus();
+
+                // Toggle active class on the parent container
+                const container = this.closest('.comment-options-container');
+                container.classList.toggle('active');
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function() {
+            closeAllMenus();
+        });
+
+        // Prevent menu from closing when clicking inside the menu
+        document.querySelectorAll('.comment-options-menu').forEach(menu => {
+            menu.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent click from bubbling to document
+            });
+        });
+
+        // Edit comment functionality
+        document.querySelectorAll('.edit-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const comment = this.closest('.comment');
+                const commentText = comment.querySelector('.comment-text').textContent;
+
+                // Create an input field to edit the comment
+                const commentContent = comment.querySelector('.comment-content');
+                const commentTextElement = comment.querySelector('.comment-text');
+
+                // Create edit form
+                const editForm = document.createElement('div');
+                editForm.className = 'comment-edit-form';
+                editForm.innerHTML = `
+                    <input type="text" class="edit-comment-input" value="${commentText}">
+                    <div class="edit-actions">
+                        <button class="save-edit-btn">Lưu</button>
+                        <button class="cancel-edit-btn">Hủy</button>
+                    </div>
+                `;
+
+                // Replace comment text with edit form
+                commentTextElement.style.display = 'none';
+                commentContent.appendChild(editForm);
+
+                // Focus on the input
+                const input = editForm.querySelector('.edit-comment-input');
+                input.focus();
+                input.setSelectionRange(input.value.length, input.value.length);
+
+                // Save edit
+                editForm.querySelector('.save-edit-btn').addEventListener('click', function() {
+                    const newText = input.value.trim();
+                    if (newText) {
+                        commentTextElement.textContent = newText;
+                    }
+
+                    // Remove edit form and show comment text
+                    editForm.remove();
+                    commentTextElement.style.display = 'block';
+
+                    // Close the options menu
+                    closeAllMenus();
+                });
+
+                // Cancel edit
+                editForm.querySelector('.cancel-edit-btn').addEventListener('click', function() {
+                    // Remove edit form and show comment text
+                    editForm.remove();
+                    commentTextElement.style.display = 'block';
+
+                    // Close the options menu
+                    closeAllMenus();
+                });
+            });
+        });
+
+        // Delete comment functionality
+        document.querySelectorAll('.delete-option').forEach(option => {
+            option.addEventListener('click', function() {
+                if (confirm('Bạn có chắc chắn muốn xóa bình luận này?')) {
+                    const comment = this.closest('.comment');
+                    comment.remove();
+                }
+
+                // Close the options menu
+                closeAllMenus();
+            });
+        });
+    });
+</script>
+
+<style>
+    /* Additional styles for edit form */
+    .comment-edit-form {
+        margin-top: 8px;
+    }
+
+    .edit-comment-input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #5858fa;
+        border-radius: 4px;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .edit-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+
+    .save-edit-btn, .cancel-edit-btn {
+        padding: 4px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    .save-edit-btn {
+        background-color: #5858fa;
+        color: white;
+        border: none;
+    }
+
+    .cancel-edit-btn {
+        background-color: #f5f5f5;
+        color: #686868;
+        border: 1px solid #e4e4e4;
+    }
+</style>
+{% endblock %}
