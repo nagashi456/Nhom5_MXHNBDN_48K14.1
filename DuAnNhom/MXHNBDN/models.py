@@ -111,7 +111,7 @@ class BinhChon(models.Model):
 class LuaChonBinhChon(models.Model):
     binh_chon = models.ForeignKey(BinhChon, on_delete=models.CASCADE)
     noi_dung = models.CharField(max_length=255)
-
+    nguoi_chon=models.ManyToManyField(NguoiDung,through="BinhChonNguoiDung")
     def __str__(self):
         return f'{self.binh_chon.ten_tieu_de} - {self.noi_dung}'
 #Bình chọn người dung *
