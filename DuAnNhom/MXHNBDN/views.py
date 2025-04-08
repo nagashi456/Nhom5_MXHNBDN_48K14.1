@@ -9,5 +9,7 @@ def Nhantin(request):
     return render(request,"NhanTin/NhanTin.html")
 def TaoTaiKhoan(request):
     return render(request,"TaoTaiKhoan/TaoTaiKhoan.html")
+def ProfileDetail(request):
+    return render(request,"Edit_profile/profile_details.html")
 
 

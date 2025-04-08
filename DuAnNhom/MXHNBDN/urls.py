@@ -5,5 +5,6 @@ urlpatterns = [
     path('binh_chon/', views.BinhChon, name='binhchon'),
     path('edit_profile/', views.edit_profile, name='edit_profile'),
     path('nhantin/', views.Nhantin, name='nhantin'),
-    path('tao_tai_khoan/',views.TaoTaiKhoan,name='tao_tai_khoan')
+    path('tao_tai_khoan/',views.TaoTaiKhoan,name='tao_tai_khoan'),
+    path('profile_detail/',views.ProfileDetail,name='profile_detail')
 ]
