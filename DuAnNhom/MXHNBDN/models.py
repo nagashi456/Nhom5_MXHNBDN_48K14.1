@@ -127,7 +127,7 @@ class Nhom(models.Model):
     ten_nhom = models.CharField(max_length=255)
     hinh_anh_nhom = models.ImageField(upload_to='nhom/', null=True, blank=True)
     ngay_tao = models.DateTimeField(auto_now_add=True)
-
+    thanhvien= models.ManyToManyField(NguoiDung,through="ThanhVienNhom")
     def __str__(self):
         return self.ten_nhom
 
@@ -139,21 +139,11 @@ class ThanhVienNhom(models.Model):
     def __str__(self):
         return f'{self.nguoi_dung.username} trong {self.nhom.ten_nhom}'
 
-# Thông báo *
-class ThongBao(models.Model):
-    nguoi_nhan = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)
-    noi_dung = models.TextField()
-    lien_ket = models.URLField(null=True, blank=True)
-    da_xem = models.BooleanField(default=False)
-    ngay_tao = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f'Thông báo đến {self.nguoi_nhan.username}: {self.noi_dung[:40]}...'
 class CauHoi(models.Model):
     nguoi_dung = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)  # Người tạo câu hỏi
     noi_dung = models.TextField()  # Nội dung câu hỏi
     ngay_tao = models.DateTimeField(auto_now_add=True)  # Thời gian tạo câu hỏi
-    da_tra_loi = models.BooleanField(default=False)  # Trạng thái câu hỏi đã có câu trả lời hay chưa
 
     def __str__(self):
         return f'Câu hỏi của {self.nguoi_dung.username} - {self.noi_dung[:30]}...'
