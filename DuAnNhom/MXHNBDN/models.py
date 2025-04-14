@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission
 
-# Người dùng -avatar moi thieu ho ten
+# Người dùng -avatar moi thieu ho ten thieu khoa ngoai tai khoan
 class NguoiDung(AbstractUser):
     VAI_TRO_CHOICES = [
         ('admin', 'Quản trị viên'),
@@ -33,9 +33,6 @@ class NguoiDung(AbstractUser):
 
     def __str__(self):
         return self.username
-
-# Vai trò và quyền hạn - them vao trong nguoi dung khi hien thi html an di nhung van la 1 thuoc tinh
-
 
 
 # Bài viết
