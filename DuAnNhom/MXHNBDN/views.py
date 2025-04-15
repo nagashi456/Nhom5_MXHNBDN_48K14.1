@@ -1,6 +1,42 @@
 from django.shortcuts import render
 def DangNhap(request):
     return render(request,"DangNhap.html")
+
+
+def tao_bai_viet(request):
+    # Get the admin user from your custom NguoiDung model
+    try:
+        # Try to get the first admin user from NguoiDung model
+        admin_user = NguoiDung.objects.filter(is_superuser=True).first()
+        if not admin_user:
+            # If no admin exists, try to get any user
+            admin_user = NguoiDung.objects.first()
+            if not admin_user:
+                # If no users exist, show an error message
+                messages.error(request,
+                               'Không tìm thấy người dùng nào trong hệ thống. Vui lòng tạo một tài khoản admin trước.')
+                return redirect('trang_chu')
+    except Exception as e:
+        messages.error(request, f'Lỗi khi tìm người dùng: {str(e)}')
+        return redirect('trang_chu')
+
+    if request.method == 'POST':
+        form = BaiVietForm(request.POST, request.FILES)
+        if form.is_valid():
+            bai_viet = form.save(commit=False)
+            # Use the admin user from NguoiDung model
+            bai_viet.nguoi_dung = admin_user
+            bai_viet.save()
+            messages.success(request, 'Bài viết đã được đăng thành công!')
+            return redirect('trang_chu')
+    else:
+        form = BaiVietForm()
+
+    # Pass the admin username to the template for display
+    return render(request, 'TaoBaiViet.html', {
+        'form': form,
+        'admin_username': admin_user.username
+    })
 def Binhluan(request):
     return render(request,"TaoBinhLuan/Taobinhluan.html")
 # def BinhChon(request):
@@ -10,7 +46,7 @@ def edit_profile(request):
 def Nhantin(request):
     return render(request,"NhanTin/NhanTin.html")
 from django.shortcuts import render, redirect
-from .forms import NguoiDungForm
+from .forms import NguoiDungForm, BaiVietForm
 from django.contrib import messages
 
 def TaoTaiKhoan(request):
@@ -31,7 +67,7 @@ def ProfileDetail(request):
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import BinhChon, LuaChonBinhChon
+from .models import BinhChon, LuaChonBinhChon, NguoiDung
 from .forms import BinhChonForm, LuaChonFormSet
 
 from django.shortcuts import render, redirect, get_object_or_404

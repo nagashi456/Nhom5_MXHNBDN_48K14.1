@@ -1,389 +1,199 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tạo bài viết</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        /* Reset and base styles */
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
+{% extends 'base.html' %}
+{% load static %}
 
-        body {
-          font-family: 'Inter', Arial, sans-serif;
-          color: #000000;
-          background-color: #ffffff;
-        }
 
-        /* App container */
-        .app-container {
-          display: flex;
-          flex-direction: column;
-          min-height: 100vh;
-        }
 
-        /* Header */
-        .header {
-          background-color: #5858fa;
-          height: 48px;
-          display: flex;
-          align-items: center;
-          padding: 0 16px;
-        }
+{% block content %}
 
-        .logo-icon {
-          color: white;
-        }
+<style>
+    /* Post creation form styles */
+    .post-form-container {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+    }
 
-        /* Main container */
-        .main-container {
-          display: flex;
-          flex: 1;
-        }
+    .post-form-card {
+        background-color: #f1f1f1;
+        border-radius: 8px;
+        padding: 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
 
-        /* Sidebar */
-        .sidebar {
-          width: 200px;
-          border-right: 1px solid #e4e4e4;
-          display: flex;
-          flex-direction: column;
-        }
+    .post-textarea-container {
+        margin-bottom: 12px;
+    }
 
-        .profile {
-          display: flex;
-          justify-content: center;
-          padding: 16px 0;
-        }
+    .post-textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #e4e4e4;
+        border-radius: 8px;
+        background-color: white;
+        font-family: 'Inter', Arial, sans-serif;
+        font-size: 14px;
+        resize: none;
+    }
 
-        .profile-image {
-          width: 80px;
-          height: 80px;
-          border-radius: 50%;
-          overflow: hidden;
-        }
+    .post-textarea:focus {
+        outline: none;
+        border-color: #5858fa;
+    }
 
-        .profile-image img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
+    .post-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 12px;
+        border-top: 1px solid #e4e4e4;
+    }
 
-        .nav-menu {
-          flex: 1;
-        }
+    .post-media-buttons {
+        display: flex;
+        align-items: center;
+    }
 
-        .nav-menu ul {
-          list-style: none;
-        }
+    .media-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #686868;
+    }
 
-        .nav-item {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 10px 16px;
-          text-decoration: none;
-          color: #000000;
-          font-size: 14px;
-        }
+    .media-button:hover {
+        background-color: #e4e4e4;
+    }
 
-        .nav-item:hover {
-          background-color: #f1f1f1;
-        }
+    .media-button i {
+        width: 20px;
+        height: 20px;
+    }
 
-        .nav-item.active {
-          color: #5858fa;
-          font-weight: 500;
-        }
+    .hidden-input {
+        display: none;
+    }
 
-        .nav-icon {
-          color: #a8a8a8;
-          width: 18px;
-          height: 18px;
-        }
+    .filename-display {
+        margin-left: 8px;
+        font-size: 12px;
+        color: #686868;
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 
-        /* Main content */
-        .main-content {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-        }
+    .post-submit-buttons {
+        display: flex;
+        gap: 8px;
+    }
 
-        .search-container {
-          padding: 16px;
-          display: flex;
-          justify-content: flex-end;
-        }
+    .cancel-button {
+        padding: 6px 16px;
+        background: none;
+        border: none;
+        border-radius: 4px;
+        color: #686868;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: none;
+    }
 
-        .search-box {
-          width: 180px;
-        }
+    .cancel-button:hover {
+        background-color: #e4e4e4;
+    }
 
-        .search-input {
-          width: 100%;
-          padding: 8px 12px;
-          border: 1px solid #e4e4e4;
-          border-radius: 4px;
-          font-size: 14px;
-        }
+    .submit-button {
+        padding: 6px 16px;
+        background-color: #150aa1;
+        border: none;
+        border-radius: 4px;
+        color: white;
+        font-size: 14px;
+        cursor: pointer;
+    }
 
-        .content-area {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          padding: 0 20px 20px;
-        }
-
-        /* Post editor */
-        .post-editor {
-          width: 100%;
-          max-width: 800px;
-          background-color: white;
-          border-radius: 8px;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-          padding: 20px;
-          margin-bottom: 20px;
-        }
-
-        .editor-textarea {
-          width: 100%;
-          min-height: 200px;
-          border: 1px solid #e0e0e0;
-          border-radius: 4px;
-          padding: 15px;
-          font-size: 14px;
-          resize: vertical;
-          margin-bottom: 15px;
-          font-family: 'Inter', Arial, sans-serif;
-        }
-
-        .editor-actions {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-
-        .attachment-actions {
-          display: flex;
-          gap: 15px;
-        }
-
-        .attachment-button {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          color: #666;
-        }
-
-        .attachment-button:hover {
-          color: #5858fa;
-        }
-
-        .button-actions {
-          display: flex;
-          gap: 10px;
-        }
-
-        .btn {
-          padding: 8px 16px;
-          border-radius: 4px;
-          font-size: 14px;
-          font-weight: 500;
-          cursor: pointer;
-          border: none;
-        }
-
-        .btn-secondary {
-          background-color: #e0e0e0;
-          color: #333;
-        }
-
-        .btn-primary {
-          background-color: #5858fa;
-          color: white;
-        }
-
-        /* Footer */
-        .footer {
-          padding: 16px;
-          display: flex;
-          justify-content: center;
-          margin-top: auto;
-        }
-
-        .footer-content {
-          text-align: center;
-        }
-
-        .footer-logo {
-          display: flex;
-          justify-content: center;
-          margin-bottom: 8px;
-        }
-
-        .footer-text {
-          font-size: 12px;
-          color: #a8a8a8;
-        }
-
-        @media (max-width: 768px) {
-          .sidebar {
-            width: 70px;
-          }
-
-          .nav-item span {
-            display: none;
-          }
-
-          .nav-item i {
-            margin-right: 0;
-            font-size: 20px;
-          }
-
-          .main-content {
-            width: calc(100% - 70px);
-          }
-
-          .profile {
-            padding: 10px 0;
-          }
-
-          .profile-image {
-            width: 40px;
-            height: 40px;
-          }
-        }
-    </style>
-</head>
-<body>
-    <div class="app-container">
-        <!-- Header -->
-        <header class="header">
-            <div class="logo">
-                <img src="{% static 'img/logo_hd.png' %}" alt="logo" width="40" height="40" class="logo-icon">
+    .submit-button:hover {
+        background-color: #0f0880;
+    }
+</style>
+<div class="post-form-container">
+    <div class="post-form-card">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="post-textarea-container">
+                {{ form.noi_dung }}
             </div>
-        </header>
 
-        <div class="main-container">
-            <!-- Sidebar -->
-            <aside class="sidebar">
-                <div class="profile">
-                    <div class="profile-image">
-                        <img src="images/avatar.jpg" alt="Profile">
-                    </div>
+            <div class="post-actions">
+                <div class="post-media-buttons">
+                    <!-- Image upload button -->
+                    <button type="button" class="media-button" id="hinh_anh_btn" title="Thêm hình ảnh">
+                        <i data-lucide="image"></i>
+                    </button>
+                    {{ form.hinh_anh }}
+                    <span id="hinh_anh_filename" class="filename-display"></span>
+
+                    <!-- File attachment button -->
+                    <button type="button" class="media-button" id="tep_dinh_kem_btn" title="Thêm tệp đính kèm">
+                        <i data-lucide="paperclip"></i>
+                    </button>
+                    {{ form.tep_dinh_kem }}
+                    <span id="tep_dinh_kem_filename" class="filename-display"></span>
                 </div>
 
-                <nav class="nav-menu">
-                    <ul>
-                        <li>
-                            <a href="#" class="nav-item">
-                                <i data-lucide="home" class="nav-icon"></i>
-                                <span>Trang chủ</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="nav-item">
-                                <i data-lucide="search" class="nav-icon"></i>
-                                <span>Tìm kiếm</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="nav-item">
-                                <i data-lucide="message-square" class="nav-icon"></i>
-                                <span>Tin nhắn</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="nav-item active">
-                                <i data-lucide="file-text" class="nav-icon" style="color: #5858fa;"></i>
-                                <span>Tạo bài viết</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="nav-item">
-                                <i data-lucide="help-circle" class="nav-icon"></i>
-                                <span>Hỏi đáp</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="nav-item">
-                                <i data-lucide="user" class="nav-icon"></i>
-                                <span>Hồ sơ</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="nav-item">
-                                <i data-lucide="bar-chart-2" class="nav-icon"></i>
-                                <span>Tạo bình chọn</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="nav-item">
-                                <i data-lucide="user-plus" class="nav-icon"></i>
-                                <span>Tạo tài khoản</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="nav-item">
-                                <i data-lucide="log-out" class="nav-icon"></i>
-                                <span>Đăng xuất</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </aside>
-
-            <!-- Main Content -->
-            <main class="main-content">
-                <div class="search-container">
-                    <div class="search-box">
-                        <input type="text" placeholder="Tìm kiếm" class="search-input">
-                    </div>
+                <div class="post-submit-buttons">
+                    <a href="#" class="cancel-button">Hủy</a>
+                    <button type="submit" class="submit-button">Đăng</button>
                 </div>
-
-                <div class="content-area">
-                    <div class="post-editor">
-                        <textarea class="editor-textarea" placeholder="Bạn đang nghĩ gì?"></textarea>
-
-                        <div class="editor-actions">
-                            <div class="attachment-actions">
-                                <div class="attachment-button">
-                                    <i data-lucide="image" style="width: 20px; height: 20px;"></i>
-                                </div>
-                                <div class="attachment-button">
-                                    <i data-lucide="paperclip" style="width: 20px; height: 20px;"></i>
-                                </div>
-                            </div>
-                            <div class="button-actions">
-                                <button class="btn btn-secondary">Hủy</button>
-                                <button class="btn btn-primary">Đăng</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Footer -->
-                <footer class="footer">
-                    <div class="footer-content">
-                        <div class="footer-logo">
-                            <img src="{% static 'img/logo_hd.png' %}" alt="logo" width="60" height="60">
-                        </div>
-                        <p class="footer-text">Hoangdaivantai@.com</p>
-                    </div>
-                </footer>
-            </main>
-        </div>
+            </div>
+        </form>
     </div>
+</div>
 
-    <script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
         // Initialize Lucide icons
         lucide.createIcons();
-    </script>
-</body>
-</html>
+
+        // Image upload button
+        const hinhAnhBtn = document.getElementById('hinh_anh_btn');
+        const hinhAnhInput = document.getElementById('hinh_anh_input');
+        const hinhAnhFilename = document.getElementById('hinh_anh_filename');
+
+        hinhAnhBtn.addEventListener('click', function() {
+            hinhAnhInput.click();
+        });
+
+        hinhAnhInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                hinhAnhFilename.textContent = this.files[0].name;
+            } else {
+                hinhAnhFilename.textContent = '';
+            }
+        });
+
+        // File attachment button
+        const tepDinhKemBtn = document.getElementById('tep_dinh_kem_btn');
+        const tepDinhKemInput = document.getElementById('tep_dinh_kem_input');
+        const tepDinhKemFilename = document.getElementById('tep_dinh_kem_filename');
+
+        tepDinhKemBtn.addEventListener('click', function() {
+            tepDinhKemInput.click();
+        });
+
+        tepDinhKemInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                tepDinhKemFilename.textContent = this.files[0].name;
+            } else {
+                tepDinhKemFilename.textContent = '';
+            }
+        });
+    });
+</script>
+{% endblock %}

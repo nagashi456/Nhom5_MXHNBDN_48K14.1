@@ -70,3 +70,27 @@ LuaChonFormSet = inlineformset_factory(
     min_num=1,  # Số lượng form tối thiểu
     validate_min=True
 )
+from django import forms
+from .models import BaiViet
+
+class BaiVietForm(forms.ModelForm):
+    class Meta:
+        model = BaiViet
+        fields = ['noi_dung', 'hinh_anh', 'tep_dinh_kem']
+        widgets = {
+            'noi_dung': forms.Textarea(attrs={
+                'placeholder': 'Bạn đang nghĩ gì?',
+                'class': 'post-textarea',
+                'rows': 10
+            }),
+            'hinh_anh': forms.FileInput(attrs={
+                'class': 'hidden-input',
+                'id': 'hinh_anh_input',
+                'accept': 'image/*'
+            }),
+            'tep_dinh_kem': forms.FileInput(attrs={
+                'class': 'hidden-input',
+                'id': 'tep_dinh_kem_input',
+                'accept': '.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip,.rar'
+            }),
+        }
