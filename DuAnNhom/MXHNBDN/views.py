@@ -109,5 +109,12 @@ def BinhChon(request):
         'form': form,
         'formset': formset
     })
+
+
+def TaoBaiViet(request):
+    return render(request,"TaoBaiViet/TaoBaiViet.html")
+def SuaBaiViet(request):
+    return render(request,"SuaBaiViet/SuaBaiViet.html")
+
 def Trangchu(request):
     return render(request,"Trangchu.html")
