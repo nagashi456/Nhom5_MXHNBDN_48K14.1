@@ -10,4 +10,6 @@ urlpatterns = [
     path('login/',views.DangNhap,name='dang_nhap'),
     path('tao_bai_viet/', views.TaoBaiViet, name='tao_bai_viet'),
     path('sua_bai_viet/', views.SuaBaiViet, name='sua_bai_viet'),
+    path('login/',views.DangNhap,name='dang_nhap'),
+    path('trang_chu/',views.Trangchu,name='trang_chu')
 ]
