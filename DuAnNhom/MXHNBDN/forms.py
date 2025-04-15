@@ -4,7 +4,44 @@ from .models import NguoiDung
 from django import forms
 from django.forms import inlineformset_factory
 from .models import BinhChon, LuaChonBinhChon
+from django.contrib.auth import authenticate, get_user_model
 
+User = get_user_model()  # Lấy model người dùng từ settings.AUTH_USER_MODEL
+
+
+class LoginForm(forms.Form):
+    username_or_email = forms.CharField(
+        label='Tên đăng nhập hoặc Email',
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nhập tên đăng nhập hoặc email'})
+    )
+    password = forms.CharField(
+        label='Mật khẩu',
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Nhập mật khẩu'})
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        username_or_email = cleaned_data.get('username_or_email')
+        password = cleaned_data.get('password')
+
+        if username_or_email and password:
+            # Thử xác thực với tên đăng nhập
+            user = authenticate(username=username_or_email, password=password)
+
+            # Nếu không thành công, thử với email
+            if not user:
+                try:
+                    user_obj = User.objects.get(email=username_or_email)
+                    user = authenticate(username=user_obj.username, password=password)
+                except User.DoesNotExist:
+                    user = None
+
+            if not user:
+                raise forms.ValidationError('Tên đăng nhập hoặc mật khẩu không đúng')
+
+            cleaned_data['user'] = user
+
+        return cleaned_data
 class NguoiDungForm(UserCreationForm):
     class Meta:
         model = NguoiDung
@@ -65,8 +102,8 @@ LuaChonFormSet = inlineformset_factory(
     BinhChon,
     LuaChonBinhChon,
     form=LuaChonBinhChonForm,
-    extra=3,  # Số lượng form trống ban đầu
+    extra=3,
     can_delete=True,
-    min_num=1,  # Số lượng form tối thiểu
+    min_num=1,
     validate_min=True
 )
