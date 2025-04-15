@@ -103,11 +103,11 @@
             font-size: 14px;
         }
 
-        .content-area {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-        }
+.content-area {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
 
         .footer {
             padding: 16px;
@@ -160,21 +160,65 @@
                 </div>
             </div>
 
-            <nav class="nav-menu">
-                <ul>
-                    <li><a href="{% url 'home' %}" class="nav-item"><i data-lucide="home" class="nav-icon"></i><span>Trang chủ</span></a></li>
-                    <li><a href="#" class="nav-item"><i data-lucide="search" class="nav-icon"></i><span>Tìm kiếm</span></a></li>
-                    <li><a href="{% url 'nhantin' %}" class="nav-item"><i data-lucide="message-square" class="nav-icon"></i><span>Tin nhắn</span></a></li>
-                    <li><a href="#" class="nav-item"><i data-lucide="file-text" class="nav-icon"></i><span>Tạo bài viết</span></a></li>
-                    <li><a href="#" class="nav-item"><i data-lucide="help-circle" class="nav-icon"></i><span>Hỏi đáp</span></a></li>
-                    <li><a href="{% url 'profile_detail' %}" class="nav-item"><i data-lucide="user" class="nav-icon"></i><span>Hồ sơ</span></a></li>
-                    <li><a href="{% url 'binhchon' %}" class="nav-item"><i data-lucide="bar-chart-2" class="nav-icon"></i><span>Tạo bình chọn</span></a></li>
-                    <li><a href="{% url 'tao_tai_khoan' %}" class="nav-item"><i data-lucide="user-plus" class="nav-icon"></i><span>Tạo tài khoản</span></a></li>
-                    <li><a href="{% url 'logout' %}" class="nav-item"><i data-lucide="log-out" class="nav-icon"></i><span>Đăng xuất</span></a></li>
-                </ul>
-            </nav>
-        </aside>
-        {% endif %}
+                <nav class="nav-menu">
+                    <ul>
+                        <li>
+                            <a href="#" class="nav-item">
+                                <i data-lucide="home" class="nav-icon"></i>
+                                <span>Trang chủ</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-item">
+                                <i data-lucide="search" class="nav-icon"></i>
+                                <span>Tìm kiếm</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://127.0.0.1:8000/nhan_tin/" class="nav-item">
+                                <i data-lucide="message-square" class="nav-icon"></i>
+                                <span>Tin nhắn</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-item">
+                                <i data-lucide="file-text" class="nav-icon"></i>
+                                <span>Tạo bài viết</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-item">
+                                <i data-lucide="help-circle" class="nav-icon"></i>
+                                <span>Hỏi đáp</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://127.0.0.1:8000/profile_detail/" class="nav-item">
+                                <i data-lucide="user" class="nav-icon"></i>
+                                <span>Hồ sơ</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://127.0.0.1:8000/binh_chon/" class="nav-item">
+                                <i data-lucide="bar-chart-2" class="nav-icon"></i>
+                                <span>Tạo bình chọn</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://127.0.0.1:8000/tao_tai_khoan/" class="nav-item">
+                                <i data-lucide="user-plus" class="nav-icon"></i>
+                                <span>Tạo tài khoản</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-item">
+                                <i data-lucide="log-out" class="nav-icon"></i>
+                                <span>Đăng xuất</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
 
         <!-- Main Content -->
         <main class="main-content">
