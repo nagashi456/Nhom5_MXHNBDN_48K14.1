@@ -1,0 +1,382 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+<style>
+    /* Main container */
+    .main-container {
+        display: flex;
+        flex: 1;
+    }
+    .post-info {
+    flex: 1;
+    }
+
+    .post-author {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    }
+
+    .author-name {
+    font-weight: 500;
+    font-size: 1rem;
+    }
+
+    .author-username {
+    font-size: 0.875rem;
+    color: #787878;
+    }
+
+    .post-date {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #787878;
+    font-size: 0.875rem;
+    }
+
+    .menu-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #787878;
+    margin-left: 0.25rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    }
+    /* Main content */
+    .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .search-container {
+        padding: 16px;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .search-box {
+        width: 180px;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #e4e4e4;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .content-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0 20px 20px;
+    }
+
+    /* Post editor */
+    .post-editor {
+        width: 100%;
+        max-width: 800px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .post-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .post-content {
+        font-size: 14px;
+        line-height: 1.5;
+        color: #555;
+        margin-bottom: 20px;
+    }
+
+    .attachment-section {
+        background-color: #f9f9f9;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .attachment-title {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #333;
+        display: inline-block;
+        padding: 5px 10px;
+        background-color: #e0e0e0;
+        border-radius: 4px;
+    }
+
+    .salary-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        font-size: 13px;
+    }
+
+    .salary-table-title {
+        font-size: 14px;
+        font-weight: 600;
+        margin: 15px 0 10px;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    .salary-table th, .salary-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+    }
+
+    .salary-table th {
+        background-color: #f2f2f2;
+        font-weight: 500;
+    }
+
+    .salary-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .salary-info {
+        margin-bottom: 10px;
+        font-size: 13px;
+    }
+
+    .salary-info strong {
+        font-weight: 600;
+    }
+
+    .editor-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    .attachment-actions {
+        display: flex;
+        gap: 15px;
+    }
+
+    .attachment-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #666;
+    }
+
+    .attachment-button:hover {
+        color: #5858fa;
+    }
+
+    .button-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+    }
+
+    .btn-secondary {
+        background-color: #e0e0e0;
+        color: #333;
+    }
+
+    .btn-primary {
+        background-color: #5858fa;
+        color: white;
+    }
+
+
+    @media (max-width: 768px) {
+        .sidebar {
+        width: 70px;
+        }
+
+        .nav-item span {
+        display: none;
+        }
+
+        .nav-item i {
+        margin-right: 0;
+        font-size: 20px;
+        }
+
+        .main-content {
+        width: calc(100% - 70px);
+        }
+
+        .profile {
+        padding: 10px 0;
+        }
+
+        .profile-image {
+        width: 40px;
+        height: 40px;
+        }
+    }
+</style>
+<!-- Main Content -->
+<main class="main-content">
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" placeholder="Tìm kiếm" class="search-input">
+        </div>
+    </div>
+
+    <div class="content-area">
+        <div class="post-editor">
+            <div class="post-info">
+                <div class="post-author">
+                <div>
+                    <h3 class="author-name">Nguyễn Thị Trà My</h3>
+                    <p class="author-username">@tramy</p>
+                </div>
+                <div class="post-date">
+                    <span>24/03/2025</span>
+                    <i class='bx bx-dots-vertical-rounded'></i>
+                </div>
+                </div>
+            <h2 class="post-title">THÔNG BÁO LƯƠNG THÁNG 03/2025</h2>
+
+            <p class="post-content" contenteditable="true">
+                Kính gửi các CBNV công ty Vận tải Hoàng Đại. Hôm nay công ty xin thông báo về chế độ lương cho toàn bộ nhân viên. Hiện nay có sự thay đổi về bảng lương. Mọi người nếu có thắc mắc hãy điền đơn kiến nghị được đính kèm sau.
+            </p>
+
+            <div class="attachment-section">
+                <span class="attachment-title">Mẫu đơn kiến nghị</span>
+
+                <h3 class="salary-table-title">HỆ THỐNG THANG LƯƠNG, BẢNG LƯƠNG</h3>
+
+                <div class="salary-info">
+                    <strong>I. Mức lương tối thiểu:</strong><br>
+                    Mức lương tối thiểu vùng doanh nghiệp đang áp dụng: <strong>3.100.000 đồng/tháng</strong><br>
+                    <strong>II. HỆ THỐNG THANG LƯƠNG, BẢNG LƯƠNG</strong>
+                </div>
+
+                <div class="salary-info">
+                    <strong>1. BẢNG LƯƠNG CHỨC VỤ QUẢN LÝ DOANH NGHIỆP</strong><br>
+                    Đơn vị tính: 1000 đồng
+                </div>
+
+                <table class="salary-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">Chức danh công việc</th>
+                            <th rowspan="2">Mã</th>
+                            <th colspan="7">Bậc/Hệ số mức lương</th>
+                        </tr>
+                        <tr>
+                            <th>1</th>
+                            <th>2</th>
+                            <th>3</th>
+                            <th>4</th>
+                            <th>5</th>
+                            <th>6</th>
+                            <th>7</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Giám Đốc</td>
+                            <td>GĐ</td>
+                            <td>4.340</td>
+                            <td>4.650</td>
+                            <td>5.115</td>
+                            <td>5.630</td>
+                            <td>6.190</td>
+                            <td>6.810</td>
+                            <td>7.490</td>
+                        </tr>
+                        <tr>
+                            <td>Phó Giám Đốc</td>
+                            <td>PGĐ</td>
+                            <td>3.780</td>
+                            <td>4.160</td>
+                            <td>4.580</td>
+                            <td>5.030</td>
+                            <td>5.540</td>
+                            <td>6.090</td>
+                            <td>6.700</td>
+                        </tr>
+                        <tr>
+                            <td>Kế toán trưởng</td>
+                            <td>KTT</td>
+                            <td>3.780</td>
+                            <td>4.160</td>
+                            <td>4.580</td>
+                            <td>5.030</td>
+                            <td>5.540</td>
+                            <td>6.090</td>
+                            <td>6.700</td>
+                        </tr>
+                        <tr>
+                            <td>Trưởng phòng/bộ phận tương đương</td>
+                            <td>TP</td>
+                            <td>3.100</td>
+                            <td>3.410</td>
+                            <td>3.750</td>
+                            <td>4.130</td>
+                            <td>4.540</td>
+                            <td>5.000</td>
+                            <td>5.500</td>
+                        </tr>
+                        <tr>
+                            <td>Phó trưởng phòng/bộ phận tương đương</td>
+                            <td>PTP</td>
+                            <td>2.700</td>
+                            <td>2.970</td>
+                            <td>3.270</td>
+                            <td>3.590</td>
+                            <td>3.950</td>
+                            <td>4.350</td>
+                            <td>4.780</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="editor-actions">
+                <div class="attachment-actions">
+                    <div class="attachment-button">
+                        <i data-lucide="image" style="width: 20px; height: 20px;"></i>
+                    </div>
+                    <div class="attachment-button">
+                        <i data-lucide="paperclip" style="width: 20px; height: 20px;"></i>
+                    </div>
+                </div>
+                <div class="button-actions">
+                    <button class="btn btn-secondary">Hủy</button>
+                    <button class="btn btn-primary">Đăng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</main>
+{% endblock %}

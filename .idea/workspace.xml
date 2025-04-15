@@ -5,13 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fdfa841e-42fd-409c-b2ce-585c6219d6b4" name="Changes" comment="update">
-      <change beforePath="$PROJECT_DIR$/.idea/Nhom5_MXHNBDN_48K14.1.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Nhom5_MXHNBDN_48K14.1.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DuAnNhom/MXHNBDN/templates/SuaBaiViet/SuaBaiViet.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DuAnNhom/MXHNBDN/templates/TaoBaiViet/TaoBaiViet.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DuAnNhom/MXHNBDN/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/DuAnNhom/MXHNBDN/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DuAnNhom/MXHNBDN/templates/NhanTin/NhanTin.html" beforeDir="false" afterPath="$PROJECT_DIR$/DuAnNhom/MXHNBDN/templates/NhanTin/NhanTin.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DuAnNhom/MXHNBDN/templates/SuaBaiViet.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/DuAnNhom/MXHNBDN/templates/TaoBaiViet.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/DuAnNhom/MXHNBDN/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/DuAnNhom/MXHNBDN/templates/base.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DuAnNhom/MXHNBDN/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/DuAnNhom/MXHNBDN/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DuAnNhom/MXHNBDN/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/DuAnNhom/MXHNBDN/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DuAnNhom/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/DuAnNhom/db.sqlite3" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,6 +65,12 @@
     &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\DuAnCuoiKyLTW\DuAnNhom\MXHNBDN\templates\SuaBaiViet" />
+      <recent name="D:\DuAnCuoiKyLTW\DuAnNhom\MXHNBDN\templates\TaoBaiViet" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -134,7 +143,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="master" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
