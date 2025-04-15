@@ -109,3 +109,5 @@ def BinhChon(request):
         'form': form,
         'formset': formset
     })
+def Trangchu(request):
+    return render(request,"Trangchu.html")
