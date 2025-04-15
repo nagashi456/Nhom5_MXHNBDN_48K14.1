@@ -7,9 +7,5 @@ urlpatterns = [
     path('nhan_tin/', views.Nhantin, name='nhantin'),
     path('tao_tai_khoan/',views.TaoTaiKhoan,name='tao_tai_khoan'),
     path('profile_detail/',views.ProfileDetail,name='profile_detail'),
-    path('login/',views.DangNhap,name='dang_nhap'),
-    path('tao_bai_viet/', views.TaoBaiViet, name='tao_bai_viet'),
-    path('sua_bai_viet/', views.SuaBaiViet, name='sua_bai_viet'),
-    path('login/',views.DangNhap,name='dang_nhap'),
-    path('trang_chu/',views.Trangchu,name='trang_chu')
+    path('login/',views.DangNhap,name='dang_nhap')
 ]

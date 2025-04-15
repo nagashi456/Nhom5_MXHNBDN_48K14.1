@@ -1,180 +1,164 @@
-
 <!DOCTYPE html>
 {% load static %}
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vietnamese Web Application</title>
+    <title>{% block title %}Mạng xã hội{% endblock %}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* Reset and base styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-body {
-  font-family: 'Inter', Arial, sans-serif;
-  color: #000000;
-  background-color: #ffffff;
-}
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            color: #000000;
+            background-color: #ffffff;
+        }
 
-/* App container */
-.app-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
+        .app-container { display: flex; flex-direction: column; min-height: 100vh; }
 
-/* Header */
-.header {
-  background-color: #5858fa;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  padding: 0 16px;
-}
+        .header {
+            background-color: #5858fa;
+            height: 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            color: white;
+        }
 
-.logo-icon {
-  color: white;
-}
+        .logo-icon { color: white; }
 
-/* Main container */
-.main-container {
-  display: flex;
-  flex: 1;
-}
+        .main-container { display: flex; flex: 1; }
 
-/* Sidebar */
-.sidebar {
-  width: 200px;
-  border-right: 1px solid #e4e4e4;
-  display: flex;
-  flex-direction: column;
-}
+        .sidebar {
+            width: 200px;
+            border-right: 1px solid #e4e4e4;
+            display: flex;
+            flex-direction: column;
+        }
 
-.profile {
-  display: flex;
-  justify-content: center;
-  padding: 16px 0;
-}
+        .profile {
+            display: flex;
+            justify-content: center;
+            padding: 16px 0;
+        }
 
-.profile-image {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  overflow: hidden;
-}
+        .profile-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
 
-.profile-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-.nav-menu {
-  flex: 1;
-}
+        .nav-menu { flex: 1; }
 
-.nav-menu ul {
-  list-style: none;
-}
+        .nav-menu ul { list-style: none; }
 
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 16px;
-  text-decoration: none;
-  color: #000000;
-  font-size: 14px;
-}
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            text-decoration: none;
+            color: #000000;
+            font-size: 14px;
+        }
 
-.nav-item:hover {
-  background-color: #f1f1f1;
-}
+        .nav-item:hover { background-color: #f1f1f1; }
 
-.nav-icon {
-  color: #a8a8a8;
-  width: 18px;
-  height: 18px;
-}
+        .nav-icon {
+            color: #a8a8a8;
+            width: 18px;
+            height: 18px;
+        }
 
-/* Main content */
-.main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
 
-.search-container {
-  padding: 16px;
-  display: flex;
-  justify-content: flex-end;
-}
+        .search-container {
+            padding: 16px;
+            display: flex;
+            justify-content: flex-end;
+        }
 
-.search-box {
-  width: 180px;
-}
+        .search-box { width: 180px; }
 
-.search-input {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #e4e4e4;
-  border-radius: 4px;
-  font-size: 14px;
-}
+        .search-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e4e4e4;
+            border-radius: 4px;
+            font-size: 14px;
+        }
 
 .content-area {
   flex: 1;
   display: flex;
-}
-
-/* Footer */
-.footer {
-  padding: 16px;
-  display: flex;
   justify-content: center;
 }
 
-.footer-content {
-  text-align: center;
-}
+        .footer {
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+        }
 
-.footer-logo {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 8px;
-}
+        .footer-content { text-align: center; }
 
-.footer-text {
-  font-size: 12px;
-  color: #a8a8a8;
-}
+        .footer-logo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .footer-text {
+            font-size: 12px;
+            color: #a8a8a8;
+        }
+
+        .username-display {
+            font-weight: 500;
+            margin-right: 16px;
+        }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Header -->
-        <header class="header">
-            <div class="logo">
-                <img src="{% static 'img/logo_hd.png' %}" alt="logo" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logo-icon">
-            </div>
-        </header>
+<div class="app-container">
 
-        <div class="main-container">
-            <!-- Sidebar -->
-            <aside class="sidebar">
-                <div class="profile">
-                    <div class="profile-image">
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <img src="{% static 'img/logo_hd.png' %}" alt="logo" width="40" height="40" class="logo-icon">
+        </div>
+        {% if user.is_authenticated %}
+        <div class="d-flex align-items-center">
+            <span class="username-display">{{ user.username }}</span>
+            <a href="{% url 'logout' %}" class="btn btn-sm btn-light">Đăng xuất</a>
+        </div>
+        {% endif %}
+    </header>
 
-                        <img src="{% static 'img/avatar_tm.jpg' %}" alt="Profile">
-                    </div>
+    <div class="main-container">
+        {% if user.is_authenticated %}
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="profile">
+                <div class="profile-image">
+                    <img src="{% static 'img/avatar_tm.jpg' %}" alt="Profile">
                 </div>
+            </div>
 
                 <nav class="nav-menu">
                     <ul>
@@ -197,7 +181,7 @@ body {
                             </a>
                         </li>
                         <li>
-                            <a href="http://127.0.0.1:8000/tao_bai_viet/" class="nav-item">
+                            <a href="#" class="nav-item">
                                 <i data-lucide="file-text" class="nav-icon"></i>
                                 <span>Tạo bài viết</span>
                             </a>
@@ -236,54 +220,29 @@ body {
                 </nav>
             </aside>
 
-            <!-- Main Content -->
-<!-- Main Content -->
-<main class="main-content">
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-area">
+                {% block content %}
+                    <h1>Welcome to Bookr!</h1>
+                {% endblock %}
+            </div>
 
-    {% if messages %}
-        <div style="padding: 16px; width: 100%;">
-            {% for message in messages %}
-                <div style="padding: 10px 16px; border-radius: 6px; margin-bottom: 10px;
-                            background-color: {% if message.tags == 'success' %}#d4edda
-                                             {% elif message.tags == 'error' %}#f8d7da
-                                             {% else %}#fff3cd{% endif %};
-                            color: {% if message.tags == 'success' %}#155724
-                                  {% elif message.tags == 'error' %}#721c24
-                                  {% else %}#856404{% endif %};
-                            border: 1px solid {% if message.tags == 'success' %}#c3e6cb
-                                               {% elif message.tags == 'error' %}#f5c6cb
-                                               {% else %}#ffeeba{% endif %};"
-                >
-                    {{ message }}
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-
-    <div class="content-area">
-        {% block content %}
-            <h1>Welcome to Bookr!</h1>
-        {% endblock %}
-    </div>
-
-
-
-                <!-- Footer -->
-                <footer class="footer">
-                    <div class="footer-content">
-                        <div class="footer-logo">
-                            <img src="{% static 'img/logo_hd.png' %}" alt="logo" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#5858fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        </div>
-                        <p class="footer-text">Hoangdaiviet@.com</p>
+            <!-- Footer -->
+            <footer class="footer">
+                <div class="footer-content">
+                    <div class="footer-logo">
+                        <img src="{% static 'img/logo_hd.png' %}" alt="logo" width="60" height="60">
                     </div>
-                </footer>
-            </main>
-        </div>
+                    <p class="footer-text">Hoangdaiviet@.com</p>
+                </div>
+            </footer>
+        </main>
     </div>
+</div>
 
-    <script>
-        // Initialize Lucide icons
-        lucide.createIcons();
-    </script>
+<script>
+    lucide.createIcons();
+</script>
 </body>
 </html>

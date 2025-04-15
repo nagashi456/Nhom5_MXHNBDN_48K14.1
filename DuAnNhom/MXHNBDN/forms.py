@@ -102,8 +102,8 @@ LuaChonFormSet = inlineformset_factory(
     BinhChon,
     LuaChonBinhChon,
     form=LuaChonBinhChonForm,
-    extra=3,  # Số lượng form trống ban đầu
+    extra=3,
     can_delete=True,
-    min_num=1,  # Số lượng form tối thiểu
+    min_num=1,
     validate_min=True
 )
