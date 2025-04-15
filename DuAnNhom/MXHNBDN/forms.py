@@ -6,7 +6,7 @@ from django.forms import inlineformset_factory
 from .models import BinhChon, LuaChonBinhChon
 from django.contrib.auth import authenticate, get_user_model
 
-User = get_user_model()  # Lấy model người dùng từ settings.AUTH_USER_MODEL
+User = get_user_model()
 
 
 class LoginForm(forms.Form):
