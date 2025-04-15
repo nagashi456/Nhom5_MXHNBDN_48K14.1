@@ -1,10 +1,173 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% load static %}
 
-</body>
-</html>
+{% block content %}
+<div style="max-width: 800px; width: 100%; padding: 0 16px;">
+    <!-- Page Title -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h1 style="font-size: 20px; font-weight: 600; color: #050041;">Trang chủ</h1>
+        <button style="background: none; border: none; cursor: pointer;">
+            <i data-lucide="menu" style="color: #787878;"></i>
+        </button>
+    </div>
+
+    <!-- Poll Card -->
+    <div style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px;">
+        <div style="padding: 16px; display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background-color: #5858fa; display: flex; align-items: center; justify-content: center;">
+                <img src="{% static 'img/avatar_nguyn.jpg' %}" alt="User" style="width: 40px; height: 40px; border-radius: 50%;">
+            </div>
+            <div>
+                <div style="display: flex; align-items: center; gap: 4px;">
+                    <span style="font-weight: 500;">Đoàn Phúc Nguyên</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#5858fa" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div style="padding: 0 16px 16px;">
+            <div style="background-color: #f1f1f1; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                    <div style="width: 24px; height: 24px; background-color: #5858fa; color: white; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-size: 12px;">
+                        M
+                    </div>
+                    <span style="font-size: 14px;">Mọi người muốn cuộc họp vào thứ mấy?</span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="display: flex; justify-content: space-between; background-color: #e4e4e4; padding: 8px; border-radius: 4px;">
+                        <span style="font-size: 14px;">Thứ 2</span>
+                        <span style="font-size: 14px; color: #5858fa; font-weight: 500;">33</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; background-color: #e4e4e4; padding: 8px; border-radius: 4px;">
+                        <span style="font-size: 14px;">Thứ 3</span>
+                        <span style="font-size: 14px; color: #5858fa; font-weight: 500;">12</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; background-color: #e4e4e4; padding: 8px; border-radius: 4px;">
+                        <span style="font-size: 14px;">Chủ Nhật</span>
+                        <span style="font-size: 14px; color: #5858fa; font-weight: 500;">41</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; margin-top: 12px; font-size: 12px; color: #787878;">
+                    <span>77 Bình chọn</span>
+                    <span>7 phút trước</span>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <button style="background: none; border: none; cursor: pointer;">
+                    <i data-lucide="thumbs-up" style="color: #787878; width: 18px; height: 18px;"></i>
+                </button>
+                <button style="background: none; border: none; cursor: pointer;">
+                    <i data-lucide="message-square" style="color: #787878; width: 18px; height: 18px;"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Post 1 -->
+    <div style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px;">
+        <div style="padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden;">
+                    <img src="{% static 'img/avatar_ta.jpg' %}" alt="User" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div>
+                    <div style="font-weight: 500;">Nguyễn Thị Trâm Anh</div>
+                </div>
+            </div>
+            <div style="font-size: 12px; color: #787878;">3/3/2025</div>
+        </div>
+
+        <div style="padding: 0 16px 16px;">
+            <div style="margin-bottom: 12px;">
+                <p style="font-weight: 700; margin-bottom: 8px;">⚠️ THÔNG BÁO: BÃI XE MỚI TẠI ĐÀ NẴNG 🚛</p>
+                <p style="font-size: 14px; margin-bottom: 4px;">Kính gửi toàn thể tài xế và nhân viên công ty,</p>
+                <p style="font-size: 14px; margin-bottom: 4px;">
+                    Nhằm hỗ trợ tốt hơn cho việc đỗ xe và điều phối vận tải, công ty xin thông báo về bãi đỗ xe mới vừa
+                    được đưa vào sử dụng tại Đà Nẵng. Bãi đỗ xe mới có các tiện ích giúp tối ưu việc đỗ, bảo trì và xuất
+                    bến.
+                </p>
+                <p style="font-size: 14px; margin-bottom: 4px;">📍 Địa chỉ bãi đỗ xe mới: [Địa chỉ đầy đủ tại đây]</p>
+                <p style="font-size: 14px; margin-bottom: 4px;">✅ Thời gian hoạt động: 24/7</p>
+                <p style="font-size: 14px; margin-bottom: 4px;">✅ Hệ thống an ninh 24/7</p>
+                <p style="font-size: 14px; margin-bottom: 4px;">✅ Khu vực công tác an toàn</p>
+                <p style="font-size: 14px; margin-bottom: 4px;">✅ Có bảo vệ trực trực</p>
+                <p style="font-size: 14px; margin-bottom: 4px;">✅ Khu vực nghỉ ngơi và cơ bản</p>
+                <p style="font-size: 14px; margin-bottom: 4px;">
+                    Anh em tài xế lưu ý tuân thủ nội quy và tuân thủ quy định khi sử dụng bãi đỗ. Mọi thắc mắc xin liên
+                    hệ phòng điều phối để được hỗ trợ.
+                </p>
+                <p style="font-size: 14px;">Cảm ơn anh em đã hợp tác! 👍</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px;">
+                <img src="{% static 'img/trucks1.jpg' %}" alt="Truck yard 1" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">
+                <div style="display: grid; grid-template-rows: 1fr 1fr; gap: 8px;">
+                    <img src="{% static 'img/trucks2.jpg' %}" alt="Truck yard 2" style="width: 100%; height: 96px; object-fit: cover; border-radius: 8px;">
+                    <img src="{% static 'img/trucks3.jpg' %}" alt="Truck yard 3" style="width: 100%; height: 96px; object-fit: cover; border-radius: 8px;">
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 16px; border-top: 1px solid #e4e4e4; padding-top: 12px;">
+                <button style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                    <i data-lucide="thumbs-up" style="width: 18px; height: 18px;"></i>
+                    <span style="font-size: 14px;">122</span>
+                </button>
+                <button style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                    <i data-lucide="thumbs-down" style="width: 18px; height: 18px;"></i>
+                    <span style="font-size: 14px;">0</span>
+                </button>
+                <button style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                    <i data-lucide="share-2" style="width: 18px; height: 18px;"></i>
+                    <span style="font-size: 14px;">5</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Post 2 -->
+    <div style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px;">
+        <div style="padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden;">
+                    <img src="{% static 'img/avatar_tm.jpg' %}" alt="User" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div>
+                    <div style="font-weight: 500;">Nguyễn Thị Trà My</div>
+                    <div style="font-size: 12px; color: #787878;">@tramy</div>
+                </div>
+            </div>
+            <div style="font-size: 12px; color: #787878;">5/3/2025</div>
+        </div>
+
+        <div style="padding: 0 16px 16px;">
+            <div style="margin-bottom: 12px;">
+                <p style="font-weight: 700; margin-bottom: 8px;">THÔNG BÁO LƯƠNG THÁNG 03/2025</p>
+                <p style="font-size: 14px; margin-bottom: 12px;">
+                    Hôm nay ngày 05/03/2025, kế toán đã thanh toán lương cho toàn bộ nhân viên. Hiện nay có sự thay đổi
+                    về bảng số lương. Mọi người nếu có thắc mắc hãy điền đơn kiến nghị được đính kèm sau:
+                </p>
+
+                <div style="background-color: #f1f1f1; padding: 12px; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="file-text" style="width: 16px; height: 16px;"></i>
+                    <span style="font-size: 14px; font-weight: 500;">MẪU ĐƠN KIẾN NGHỊ</span>
+                </div>
+
+                <div style="border: 1px solid #e4e4e4; border-radius: 8px; overflow: hidden; margin-bottom: 12px;">
+                    <img src="{% static 'img/salary.png' %}" alt="Salary table" style="width: 100%; height: auto;">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add search box to the right side -->
+<div style="position: absolute; top: 50px; right: 16px; width: 240px;">
+    <input type="text" placeholder="Tìm kiếm" style="width: 100%; padding: 8px 12px; border: 1px solid #e4e4e4; border-radius: 4px; font-size: 14px;">
+</div>
+{% endblock %}
