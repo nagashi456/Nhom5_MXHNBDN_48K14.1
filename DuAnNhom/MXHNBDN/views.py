@@ -1,4 +1,6 @@
 from django.shortcuts import render
+def DangNhap(request):
+    return render(request,"DangNhap.html")
 def Binhluan(request):
     return render(request,"TaoBinhLuan/Taobinhluan.html")
 # def BinhChon(request):
