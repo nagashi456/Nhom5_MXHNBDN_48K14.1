@@ -142,16 +142,16 @@
         <div class="logo">
             <img src="{% static 'img/logo_hd.png' %}" alt="logo" width="40" height="40" class="logo-icon">
         </div>
-        {% if user.is_authenticated %}
-        <div class="d-flex align-items-center">
-            <span class="username-display">{{ user.username }}</span>
-            <a href="{% url 'logout' %}" class="btn btn-sm btn-light">Đăng xuất</a>
-        </div>
-        {% endif %}
+<!--        {% if user.is_authenticated %}-->
+<!--        <div class="d-flex align-items-center">-->
+<!--            <span class="username-display">{{ user.username }}</span>-->
+<!--            <a href="{% url 'logout' %}" class="btn btn-sm btn-light">Đăng xuất</a>-->
+<!--        </div>-->
+<!--        {% endif %}-->
     </header>
 
     <div class="main-container">
-        {% if user.is_authenticated %}
+
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="profile">
@@ -163,7 +163,7 @@
                 <nav class="nav-menu">
                     <ul>
                         <li>
-                            <a href="#" class="nav-item">
+                            <a href="http://127.0.0.1:8000/trang_chu/" class="nav-item">
                                 <i data-lucide="home" class="nav-icon"></i>
                                 <span>Trang chủ</span>
                             </a>
@@ -181,7 +181,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="nav-item">
+                            <a href="http://127.0.0.1:8000/tao_bai_viet/" class="nav-item">
                                 <i data-lucide="file-text" class="nav-icon"></i>
                                 <span>Tạo bài viết</span>
                             </a>
@@ -211,7 +211,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="nav-item">
+                            <a href="http://127.0.0.1:8000/login/" class="nav-item">
                                 <i data-lucide="log-out" class="nav-icon"></i>
                                 <span>Đăng xuất</span>
                             </a>

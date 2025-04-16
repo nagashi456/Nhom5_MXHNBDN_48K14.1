@@ -8,5 +8,6 @@ urlpatterns = [
     path('tao_tai_khoan/',views.TaoTaiKhoan,name='tao_tai_khoan'),
     path('profile_detail/',views.ProfileDetail,name='profile_detail'),
     path('login/',views.DangNhap,name='dang_nhap'),
-    path('trang_chu/',views.Trangchu,name='trang_chu')
+    path('trang_chu/',views.Trangchu,name='trang_chu'),
+    path('quen_pass/',views.Quenpass,name='Quenpass')
 ]
