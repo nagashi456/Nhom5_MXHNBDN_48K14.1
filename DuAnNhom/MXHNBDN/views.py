@@ -147,3 +147,5 @@ def SuaBaiViet(request):
 
 def Trangchu(request):
     return render(request,"Trangchu.html")
+def Quenpass(request):
+    return render(request,"Quenpass.html")
