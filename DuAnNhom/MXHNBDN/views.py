@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, logout
 def DangNhap(request):
     return render(request,"DangNhap.html")
 
@@ -48,7 +50,34 @@ def Nhantin(request):
 from django.shortcuts import render, redirect
 from .forms import NguoiDungForm, BaiVietForm
 from django.contrib import messages
+from .forms import LoginForm
 
+
+def login_view(request):
+    # Nếu người dùng đã đăng nhập, chuyển hướng đến trang chủ
+    if request.user.is_authenticated:
+        return redirect('home')
+
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = form.cleaned_data.get('user')
+            login(request, user)
+            # Chuyển hướng đến trang chủ sau khi đăng nhập thành công
+            return redirect('home')
+    else:
+        form = LoginForm()
+
+    return render(request, 'DangNhap.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('dang_nhap')
+
+@login_required
+def home_view(request):
+    return render(request, 'home.html')
 def TaoTaiKhoan(request):
     if request.method == 'POST':
         form = NguoiDungForm(request.POST, request.FILES)

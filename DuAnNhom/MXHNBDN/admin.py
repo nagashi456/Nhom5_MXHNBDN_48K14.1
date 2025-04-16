@@ -4,7 +4,7 @@ from .models import (
     BaiViet, BinhLuan,
     CuocTroChuyen, TinNhan,
     BinhChon, LuaChonBinhChon, BinhChonNguoiDung,
-    Nhom, ThanhVienNhom,
+    Nhom, ThanhVienNhom, CauHoi,
 
 )
 from django.contrib.auth.admin import UserAdmin
