@@ -58,7 +58,7 @@ from .forms import LoginForm
 def login_view(request):
     # Nếu người dùng đã đăng nhập, chuyển hướng đến trang chủ
     if request.user.is_authenticated:
-        return redirect('home')
+        return redirect('trang_chu')
 
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -66,7 +66,7 @@ def login_view(request):
             user = form.cleaned_data.get('user')
             login(request, user)
             # Chuyển hướng đến trang chủ sau khi đăng nhập thành công
-            return redirect('home')
+            return redirect('trang_chu')
     else:
         form = LoginForm()
 
@@ -146,7 +146,7 @@ def TaoBaiViet(request):
     return render(request,"TaoBaiViet/TaoBaiViet.html")
 def SuaBaiViet(request):
     return render(request,"SuaBaiViet/SuaBaiViet.html")
-
+@login_required
 def Trangchu(request):
     return render(request,"Trangchu.html")
 def Quenpass(request):
