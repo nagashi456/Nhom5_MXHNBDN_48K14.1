@@ -34,7 +34,7 @@ class NguoiDung(AbstractUser):
     def __str__(self):
         return self.username
 
-
+# test
 # Bài viết
 class BaiViet(models.Model):
     nguoi_dung = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)
