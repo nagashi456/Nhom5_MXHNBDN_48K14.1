@@ -1,10 +1,19 @@
-
 from django.contrib.auth.forms import UserCreationForm
 from .models import NguoiDung
 from django import forms
-from django.forms import inlineformset_factory
+from django.forms import inlineformset_factory, BaseInlineFormSet
 from .models import BinhChon, LuaChonBinhChon
 from django.contrib.auth import authenticate, get_user_model
+class BaseLuaChonFormSet(BaseInlineFormSet):
+    def clean(self):
+        super().clean()
+        count = 0
+        for form in self.forms:
+            if form.cleaned_data.get('NoiDung') and not form.cleaned_data.get('DELETE', False):
+                count += 1
+
+        if count < 2:
+            raise forms.ValidationError("Bạn phải nhập ít nhất 2 lựa chọn.")
 
 User = get_user_model()
 
@@ -42,92 +51,86 @@ class LoginForm(forms.Form):
             cleaned_data['user'] = user
 
         return cleaned_data
-class NguoiDungForm(UserCreationForm):
-    class Meta:
-        model = NguoiDung
-        fields = ['username', 'email', 'so_dien_thoai', 'avatar', 'password1', 'password2', 'vai_tro']
-        widgets = {
-            'vai_tro': forms.Select(attrs={'class': 'form-input'}),
-        }
+# class NguoiDungForm(UserCreationForm):
+#     class Meta:
+#         model = NguoiDung
+#         fields = ['username', 'email', 'so_dien_thoai', 'avatar', 'password1', 'password2', 'vai_tro']
+#         widgets = {
+#             'vai_tro': forms.Select(attrs={'class': 'form-input'}),
+#         }
+#
+#     def __init__(self, *args, **kwargs):
+#         super(NguoiDungForm, self).__init__(*args, **kwargs)
+#         for field_name, field in self.fields.items():
+#             field.widget.attrs['class'] = 'form-input'
+#             field.widget.attrs['placeholder'] = 'Điền ở đây'
 
-    def __init__(self, *args, **kwargs):
-        super(NguoiDungForm, self).__init__(*args, **kwargs)
-        for field_name, field in self.fields.items():
-            field.widget.attrs['class'] = 'form-input'
-            field.widget.attrs['placeholder'] = 'Điền ở đây'
-
+from django import forms
+from django.forms import inlineformset_factory
+from .models import BinhChon, LuaChonBinhChon
 
 class BinhChonForm(forms.ModelForm):
     class Meta:
         model = BinhChon
-        fields = ['ten_tieu_de', 'mo_ta', 'thoi_gian_ket_thuc']
+        fields = ['TenTieuDe', 'ThoiGianKetThucBC', 'MoTa']
         widgets = {
-            'ten_tieu_de': forms.TextInput(attrs={
+            'TenTieuDe': forms.TextInput(attrs={
                 'class': 'form-input',
-                'placeholder': 'Nhập tiêu đề bình chọn'
+                'placeholder': 'Nhập tiêu đề bình chọn',
+                'required': True
             }),
-            'mo_ta': forms.Textarea(attrs={
+            'ThoiGianKetThucBC': forms.DateTimeInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'Nhập thời gian kết thúc bình chọn',
+                'type': 'text',  # sẽ chuyển sang datetime-local khi focus
+                'required': True
+            }),
+            'MoTa': forms.Textarea(attrs={
                 'class': 'form-textarea',
                 'placeholder': 'Nhập mô tả',
                 'rows': 5
             }),
-            'thoi_gian_ket_thuc': forms.DateTimeInput(attrs={
-                'class': 'form-input',
-                'placeholder': 'Nhập thời gian kết thúc bình chọn',
-                'type': 'datetime-local'
-            }),
-        }
-        labels = {
-            'ten_tieu_de': '',
-            'mo_ta': '',
-            'thoi_gian_ket_thuc': '',
         }
 
-class LuaChonBinhChonForm(forms.ModelForm):
-    class Meta:
-        model = LuaChonBinhChon
-        fields = ['noi_dung']
-        widgets = {
-            'noi_dung': forms.TextInput(attrs={
-                'class': 'form-input',
-                'placeholder': 'Nhập lựa chọn'
-            })
-        }
-        labels = {
-            'noi_dung': '',
-        }
-
-# Tạo formset cho các lựa chọn bình chọn
+# Tạo inline formset để quản lý các lựa chọn của một BinhChon
 LuaChonFormSet = inlineformset_factory(
     BinhChon,
     LuaChonBinhChon,
-    form=LuaChonBinhChonForm,
-    extra=3,
+    fields=['NoiDung'],
+    extra=0,
     can_delete=True,
-    min_num=1,
-    validate_min=True
+    formset=BaseLuaChonFormSet,
+    widgets={
+        'NoiDung': forms.TextInput(attrs={
+            'class': 'form-input',
+            'placeholder': 'Nhập lựa chọn',
+            'required': True
+        }),
+    }
 )
-from django import forms
-from .models import BaiViet
 
-class BaiVietForm(forms.ModelForm):
-    class Meta:
-        model = BaiViet
-        fields = ['noi_dung', 'hinh_anh', 'tep_dinh_kem']
-        widgets = {
-            'noi_dung': forms.Textarea(attrs={
-                'placeholder': 'Bạn đang nghĩ gì?',
-                'class': 'post-textarea',
-                'rows': 10
-            }),
-            'hinh_anh': forms.FileInput(attrs={
-                'class': 'hidden-input',
-                'id': 'hinh_anh_input',
-                'accept': 'image/*'
-            }),
-            'tep_dinh_kem': forms.FileInput(attrs={
-                'class': 'hidden-input',
-                'id': 'tep_dinh_kem_input',
-                'accept': '.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip,.rar'
-            }),
-        }
+
+# from django import forms
+# from .models import BaiViet
+#
+# class BaiVietForm(forms.ModelForm):
+#     class Meta:
+#         model = BaiViet
+#         fields = ['noi_dung', 'hinh_anh', 'tep_dinh_kem']
+#         widgets = {
+#             'noi_dung': forms.Textarea(attrs={
+#                 'placeholder': 'Bạn đang nghĩ gì?',
+#                 'class': 'post-textarea',
+#                 'rows': 10
+#             }),
+#             'hinh_anh': forms.FileInput(attrs={
+#                 'class': 'hidden-input',
+#                 'id': 'hinh_anh_input',
+#                 'accept': 'image/*'
+#             }),
+#             'tep_dinh_kem': forms.FileInput(attrs={
+#                 'class': 'hidden-input',
+#                 'id': 'tep_dinh_kem_input',
+#                 'accept': '.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip,.rar'
+#             }),
+#         }

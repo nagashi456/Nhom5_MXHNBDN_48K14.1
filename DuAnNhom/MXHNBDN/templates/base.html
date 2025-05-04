@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 {% load static %}
 <html lang="vi">
@@ -143,12 +142,6 @@
         <div class="logo">
             <img src="{% static 'img/logo_hd.png' %}" alt="logo" width="40" height="40" class="logo-icon">
         </div>
-        {% if user.is_authenticated %}
-        <div class="d-flex align-items-center">
-            <span class="username-display">{{ user.username }}</span>
-            <a href="{% url 'logout' %}" class="btn btn-sm btn-light">Đăng xuất</a>
-        </div>
-        {% endif %}
     </header>
 
     <div class="main-container">
@@ -166,7 +159,7 @@
                     <li><a href="{% url 'trang_chu' %}" class="nav-item"><i data-lucide="home" class="nav-icon"></i><span>Trang chủ</span></a></li>
                     <li><a href="#" class="nav-item"><i data-lucide="search" class="nav-icon"></i><span>Tìm kiếm</span></a></li>
                     <li><a href="{% url 'nhantin' %}" class="nav-item"><i data-lucide="message-square" class="nav-icon"></i><span>Tin nhắn</span></a></li>
-                    <li><a href="#" class="nav-item"><i data-lucide="file-text" class="nav-icon"></i><span>Tạo bài viết</span></a></li>
+                    <li><a href="http://127.0.0.1:8000/tao_bai_viet/" class="nav-item"><i data-lucide="file-text" class="nav-icon"></i><span>Tạo bài viết</span></a></li>
                     <li><a href="#" class="nav-item"><i data-lucide="help-circle" class="nav-icon"></i><span>Hỏi đáp</span></a></li>
                     <li><a href="{% url 'profile_detail' %}" class="nav-item"><i data-lucide="user" class="nav-icon"></i><span>Hồ sơ</span></a></li>
                     <li><a href="{% url 'binhchon' %}" class="nav-item"><i data-lucide="bar-chart-2" class="nav-icon"></i><span>Tạo bình chọn</span></a></li>
