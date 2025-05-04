@@ -1,109 +1,156 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 
+User = get_user_model()
+
+
 class PhongBan(models.Model):
-    MaPhong = models.AutoField(primary_key=True)
     TenPhong = models.CharField(max_length=255)
-    HinhAnhPhong = models.TextField(blank=True, null=True)
+    HinhAnhPhong = models.ImageField(upload_to='phong_images/', blank=True, null=True)
+
+    def __str__(self):
+        return self.TenPhong
+
 
 class NguoiDung(models.Model):
-    MaNguoiDung = models.AutoField(primary_key=True)
     HoTen = models.CharField(max_length=255)
     SoDienThoai = models.CharField(max_length=20)
-    VaiTro = models.CharField(max_length=100)
     Email = models.EmailField()
+    Avatar = models.ImageField(upload_to='avatar/',blank=True,null=True);
     MaPhong = models.ForeignKey(PhongBan, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+
+    def __str__(self):
+        return self.HoTen
+
 
 class BaiViet(models.Model):
-    MaBaiViet = models.AutoField(primary_key=True)
     NgayTao = models.DateTimeField()
-    TepDinhKem = models.TextField(blank=True, null=True)
-    HinhAnh = models.TextField(blank=True, null=True)
     NoiDung = models.TextField()
-    ThoiGianTao = models.DateTimeField()
+    ThoiGianTao = models.DateTimeField(auto_now_add=True)
     MaNguoiDung = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'Bài viết của {self.MaNguoiDung.HoTen} - {self.ThoiGianTao.strftime("%Y-%m-%d %H:%M")}'
+
+
 class TepDinhKem(models.Model):
-    MaTepDinhKem = models.AutoField(primary_key=True)
-    FileName = models.CharField(max_length=255)
-    FilePath = models.TextField()
+    Tep = models.FileField(upload_to='tepdinhkem/')
     FileSize = models.IntegerField()
     MaBaiViet = models.ForeignKey(BaiViet, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.Tep.name
+
+
 class HinhAnh(models.Model):
-    MaHinhAnh = models.AutoField(primary_key=True)
-    ImgPath = models.TextField()
+    Anh = models.ImageField(upload_to='hinhanh/')
     ImgSize = models.IntegerField()
     MaBaiViet = models.ForeignKey(BaiViet, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.Anh.name
+
+
 class BinhLuan(models.Model):
-    MaBinhLuan = models.AutoField(primary_key=True)
     NoiDung = models.TextField()
     MaBaiViet = models.ForeignKey(BaiViet, on_delete=models.CASCADE)
     MaNguoiDung = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)
+    NgayTao = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.MaNguoiDung.HoTen} bình luận: {self.NoiDung[:30]}'
+
 
 class LuotCamXuc(models.Model):
-    MaLuotCamXuc = models.AutoField(primary_key=True)
-    LoaiCamXuc = models.CharField(max_length=50)
-    ThoiGian = models.DateTimeField()
     MaBaiViet = models.ForeignKey(BaiViet, on_delete=models.CASCADE)
     MaNguoiDung = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)
+    is_like = models.BooleanField()  # True: like, False: dislike
+    ThoiGian = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('MaNguoiDung', 'MaBaiViet')
+
 
 class CuocTroChuyen(models.Model):
-    MaCuocTroChuyen = models.AutoField(primary_key=True)
-    Loai = models.CharField(max_length=50)  # cá nhân, nhóm
+    Loai = models.CharField(max_length=50)
     TenNhom = models.CharField(max_length=255, blank=True, null=True)
     ThanhVien = models.TextField(blank=True, null=True)
     HinhAnh = models.TextField(blank=True, null=True)
 
+    def __str__(self):
+        return self.TenNhom if self.TenNhom else f'Cuộc trò chuyện {self.id}'
+
+
 class ThanhVienCuocTroChuyen(models.Model):
-    MaThanhVienCuocTroChuyen = models.AutoField(primary_key=True)
     MaCuocTroChuyen = models.ForeignKey(CuocTroChuyen, on_delete=models.CASCADE)
     MaNguoiDung = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)
     NgayGiaNhap = models.DateTimeField()
 
+    def __str__(self):
+        return f'{self.MaNguoiDung.HoTen} tham gia {self.MaCuocTroChuyen}'
+
+
 class TinNhanChiTiet(models.Model):
-    MaTinNhan = models.AutoField(primary_key=True)
     NgayTao = models.DateTimeField()
     NoiDung = models.TextField()
-    TepDinhKem = models.TextField(blank=True, null=True)
-    BieuTuongCamXuc = models.CharField(max_length=50, blank=True, null=True)
-    HinhAnh = models.TextField(blank=True, null=True)
+    TepDinhKem = models.FileField(upload_to='uploads/attachments/', blank=True, null=True)
+    HinhAnh = models.ImageField(upload_to='uploads/images/', blank=True, null=True)
     MaCuocTroChuyen = models.ForeignKey(CuocTroChuyen, on_delete=models.CASCADE)
     NguoiDung = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'{self.NguoiDung.HoTen}: {self.NoiDung[:30]}'
+
+
 class BangHoi(models.Model):
-    MaHoi = models.AutoField(primary_key=True)
     NoiDung = models.TextField()
     NgayTao = models.DateTimeField()
     MaNguoiDung = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'Hỏi bởi {self.MaNguoiDung.HoTen}: {self.NoiDung[:30]}'
+
+
 class BangTL(models.Model):
-    MaTL = models.AutoField(primary_key=True)
     NoiDung = models.TextField()
     NgayTao = models.DateTimeField()
     MaHoi = models.ForeignKey(BangHoi, on_delete=models.CASCADE)
     MaNguoiDung = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'{self.MaNguoiDung.HoTen} trả lời: {self.NoiDung[:30]}'
+
+
+
+
 class BinhChon(models.Model):
-    MaBinhChon = models.AutoField(primary_key=True)
     MoTa = models.TextField()
     TenTieuDe = models.CharField(max_length=255)
     ThoiGianKetThucBC = models.DateTimeField()
     MaNguoiDung = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)
 
-class LuaChonBinhChon(models.Model):
-    MaLuaChon = models.AutoField(primary_key=True)
-    MaBinhChon = models.ForeignKey(BinhChon, on_delete=models.CASCADE)
-    NoiDung = models.TextField()
+    # Thiết lập quan hệ N-N với PhongBan thông qua bảng trung gian
+    PhongBans = models.ManyToManyField(
+        PhongBan,
+        through='BinhChonNhom',
+        related_name='BinhChons'
+    )
 
-class NguoiDung_BinhChon(models.Model):
-    MaBCNguoiDung = models.AutoField(primary_key=True)
-    MaLuaChon = models.ForeignKey(LuaChonBinhChon, on_delete=models.CASCADE)
-    MaNguoiDung = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.TenTieuDe
 
 class BinhChonNhom(models.Model):
-    MaNhom = models.IntegerField()
+    # FK về PhongBan
+    MaPhong = models.ForeignKey(PhongBan, on_delete=models.CASCADE)
+    # FK về BinhChon
     MaBinhChon = models.ForeignKey(BinhChon, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('MaNhom', 'MaBinhChon')
+        # Đảm bảo mỗi cặp (MaPhong, MaBinhChon) chỉ tồn tại một lần
+        unique_together = ('MaPhong', 'MaBinhChon')
+
+    def __str__(self):
+        return f"{self.MaPhong} ↔ {self.MaBinhChon}"
