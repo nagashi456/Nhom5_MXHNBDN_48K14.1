@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 def DangNhap(request):
@@ -50,7 +50,7 @@ def Nhantin(request):
 def Quenpass(request):
     return render(request,"Quenpass.html")
 from django.shortcuts import render, redirect
-from .forms import NguoiDungForm, BaiVietForm
+# from .forms import NguoiDungForm, BaiVietForm
 from django.contrib import messages
 from .forms import LoginForm
 
@@ -94,52 +94,52 @@ def TaoTaiKhoan(request):
 def ProfileDetail(request):
     return render(request,"Edit_profile/profile_details.html")
 
-
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import BinhChon, LuaChonBinhChon, NguoiDung
-from .forms import BinhChonForm, LuaChonFormSet
-
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from django.contrib.auth import get_user_model
+from .models import NguoiDung, BinhChon
 from .forms import BinhChonForm, LuaChonFormSet
 
 
-def BinhChon(request):
+@login_required
+def tao_binh_chon(request):
+    try:
+        nguoi_dung = NguoiDung.objects.get(Email=request.user.email)
+    except NguoiDung.DoesNotExist:
+        messages.error(request, "Tài khoản của bạn chưa được liên kết với bảng NguoiDung.")
+        return redirect('profile_detail')
+
     if request.method == 'POST':
         form = BinhChonForm(request.POST)
         formset = LuaChonFormSet(request.POST)
 
         if form.is_valid() and formset.is_valid():
+            # Lưu bình chọn
             binh_chon = form.save(commit=False)
-
-            # Gán người tạo là user có username là "admin"
-            User = get_user_model()
-            admin_user = get_object_or_404(User, username='admin')
-            binh_chon.nguoi_tao = admin_user
-
+            binh_chon.MaNguoiDung = nguoi_dung
             binh_chon.save()
 
-            lua_chon_instances = formset.save(commit=False)
-            for lua_chon in lua_chon_instances:
-                lua_chon.binh_chon = binh_chon
-                lua_chon.save()
+            # Gán formset instance và lưu các lựa chọn
+            formset.instance = binh_chon
+            formset.save()
 
-            for obj in formset.deleted_objects:
-                obj.delete()
-
-            messages.success(request, 'Bình chọn đã được tạo thành công!')
-            return redirect('chi_tiet_binh_chon', binh_chon_id=binh_chon.id)
+            return redirect('chi-tiet-binh-chon', pk=binh_chon.MaBinhChon)
     else:
         form = BinhChonForm()
         formset = LuaChonFormSet()
 
     return render(request, 'TaoBinhChon/TaoBinhChon.html', {
         'form': form,
-        'formset': formset
+        'formset': formset,
+        'vai_tro': nguoi_dung.VaiTro,
     })
+def chi_tiet_binh_chon(request, pk):
+    binh_chon = get_object_or_404(BinhChon, pk=pk)
+    return render(request, 'binh_chon/chi_tiet.html', {'binh_chon': binh_chon})
+from django.forms import BaseInlineFormSet
+
+
+
 
 
 def TaoBaiViet(request):

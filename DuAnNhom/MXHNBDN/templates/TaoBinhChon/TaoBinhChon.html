@@ -22,6 +22,11 @@
         text-align: center;
         width: 100%;
     }
+    .text-danger {
+    color: red;
+    font-size: 13px;
+    margin-top: 4px;
+}
 
     /* Container form bình chọn */
     .poll-form-container {
@@ -168,141 +173,141 @@
             <span class="poll-form-title">Tạo bình chọn</span>
         </div>
 
-        <form method="post" class="poll-form">
-            {% csrf_token %}
+<form method="post" class="poll-form">
+    {% csrf_token %}
 
-            <div class="form-group">
-                <input type="text" name="ten_tieu_de" id="id_ten_tieu_de" class="form-input" placeholder="Nhập tiêu đề bình chọn" required>
+    <!-- Trường Tiêu đề -->
+    <div class="form-group">
+        {{ form.TenTieuDe }}
+    </div>
+
+    <!-- Trường Thời gian kết thúc -->
+<div class="form-group">
+    <div class="date-input-container">
+        {{ form.ThoiGianKetThucBC }}
+        {% if form.ThoiGianKetThucBC.errors %}
+            <div class="text-danger">
+                Hãy nhập đúng kiểu dữ liệu ngày
             </div>
-
-            <div class="form-group">
-                <div class="date-input-container">
-                    <input type="text" name="thoi_gian_ket_thuc" id="id_thoi_gian_ket_thuc" class="form-input" placeholder="Nhập thời gian kết thúc bình chọn" required>
-                    <svg class="date-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect width="18" height="18" x="3" y="3" rx="2"/>
-                        <path d="M8 3v3"/>
-                        <path d="M16 3v3"/>
-                        <path d="M3 9h18"/>
-                    </svg>
-                </div>
-            </div>
-
-            <!-- Options container -->
-            <div id="options-container">
-                <div class="form-group option-form">
-                    <div class="option-input-container">
-                        <input type="text" name="options[]" class="form-input" placeholder="Nhập lựa chọn 1" required>
-                        <button type="button" class="remove-option-btn">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M18 6 6 18"/>
-                                <path d="m6 6 12 12"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="form-group option-form">
-                    <div class="option-input-container">
-                        <input type="text" name="options[]" class="form-input" placeholder="Nhập lựa chọn 2" required>
-                        <button type="button" class="remove-option-btn">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M18 6 6 18"/>
-                                <path d="m6 6 12 12"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="form-group option-form">
-                    <div class="option-input-container">
-                        <input type="text" name="options[]" class="form-input" placeholder="Nhập lựa chọn 3" required>
-                        <button type="button" class="remove-option-btn">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M18 6 6 18"/>
-                                <path d="m6 6 12 12"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <a href="javascript:void(0)" id="add-option-btn" class="add-option-link">+ Thêm lựa chọn</a>
-
-            <div class="form-group">
-                <textarea name="mo_ta" id="id_mo_ta" class="form-textarea" placeholder="Nhập mô tả" rows="5"></textarea>
-            </div>
-
-            <div class="form-actions">
-                <button type="submit" class="submit-btn">Đăng</button>
-            </div>
-        </form>
+        {% endif %}
     </div>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Xử lý thêm lựa chọn mới
-        document.getElementById('add-option-btn').addEventListener('click', function() {
-            const optionsContainer = document.getElementById('options-container');
-            const optionForms = optionsContainer.querySelectorAll('.option-form');
-            const newIndex = optionForms.length + 1;
+    <div id="options-container">
+        {{ formset.management_form }}
+        {% if formset.non_form_errors %}
+    <div class="text-danger">
+        {{ formset.non_form_errors }}
+    </div>
+{% endif %}
 
-            // Tạo form mới
-            const newForm = document.createElement('div');
-            newForm.className = 'form-group option-form';
-            newForm.innerHTML = `
+        {% for f in formset %}
+            <div class="form-group option-form">
                 <div class="option-input-container">
-                    <input type="text" name="options[]" class="form-input" placeholder="Nhập lựa chọn ${newIndex}" required>
-                    <button type="button" class="remove-option-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M18 6 6 18"/>
-                            <path d="m6 6 12 12"/>
-                        </svg>
-                    </button>
+                    {{ f.NoiDung }}
+                    {% if formset.can_delete %}
+                        {{ f.DELETE }}  <!-- Quan trọng để Django xử lý xoá -->
+                        <button type="button" class="remove-option-btn">X</button>
+
+                    {% endif %}
                 </div>
-            `;
+            </div>
+        {% endfor %}
+    </div>
 
-            // Thêm form mới vào container
-            optionsContainer.appendChild(newForm);
+    <a href="javascript:void(0)" id="add-option-btn" class="add-option-link">+ Thêm lựa chọn</a>
 
-            // Thêm event listener cho nút xóa
-            const removeBtn = newForm.querySelector('.remove-option-btn');
-            removeBtn.addEventListener('click', function() {
-                optionsContainer.removeChild(newForm);
-                updateOptionPlaceholders();
-            });
+    <!-- Trường Mô tả -->
+    <div class="form-group">
+        {{ form.MoTa }}
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="submit-btn">Đăng</button>
+    </div>
+</form>
+
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const optionsContainer = document.getElementById('options-container');
+    const totalFormsInput = document.querySelector('input[name="luachonbinhchon_set-TOTAL_FORMS"]');
+
+    function updateOptionPlaceholders() {
+        const inputs = optionsContainer.querySelectorAll('.option-form .form-input');
+        inputs.forEach((input, index) => {
+            input.placeholder = `Nhập lựa chọn ${index + 1}`;
+        });
+    }
+
+    // Xử lý thêm lựa chọn mới
+    document.getElementById('add-option-btn').addEventListener('click', function() {
+        const currentIndex = parseInt(totalFormsInput.value);
+        const newForm = document.createElement('div');
+        newForm.className = 'form-group option-form';
+        newForm.innerHTML = `
+            <div class="option-input-container">
+                <input type="text" name="luachonbinhchon_set-${currentIndex}-NoiDung" class="form-input" placeholder="Nhập lựa chọn ${currentIndex + 1}" required>
+                <input type="hidden" name="luachonbinhchon_set-${currentIndex}-id" id="id_luachonbinhchon_set-${currentIndex}-id">
+                <input type="checkbox" name="luachonbinhchon_set-${currentIndex}-DELETE" id="id_luachonbinhchon_set-${currentIndex}-DELETE" style="display:none;">
+                <button type="button" class="remove-option-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 6 18"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+        `;
+        optionsContainer.appendChild(newForm);
+        totalFormsInput.value = currentIndex + 1;
+
+        const removeBtn = newForm.querySelector('.remove-option-btn');
+        removeBtn.addEventListener('click', function() {
+            const optionForm = this.closest('.option-form');
+            const deleteCheckbox = optionForm.querySelector('input[type="checkbox"]');
+            if (deleteCheckbox) {
+                deleteCheckbox.checked = true;
+                optionForm.style.display = 'none';  // Ẩn chứ không xóa để Django xử lý
+            } else {
+                optionForm.remove();  // Nếu là form mới thêm thì xóa hẳn
+            }
+            updateOptionPlaceholders();
         });
 
-        // Thêm event listener cho các nút xóa ban đầu
-        const removeButtons = document.querySelectorAll('.remove-option-btn');
-        removeButtons.forEach(function(button) {
-            button.addEventListener('click', function() {
-                const optionForm = this.closest('.option-form');
-                const optionsContainer = document.getElementById('options-container');
-                optionsContainer.removeChild(optionForm);
-                updateOptionPlaceholders();
-            });
-        });
+        updateOptionPlaceholders();
+    });
 
-        // Xử lý input ngày tháng
-        const dateInput = document.getElementById('id_thoi_gian_ket_thuc');
-        dateInput.addEventListener('focus', function() {
+    // Xử lý nút xoá cho form có sẵn
+    const removeButtons = document.querySelectorAll('.remove-option-btn');
+    removeButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            const optionForm = this.closest('.option-form');
+            const deleteCheckbox = optionForm.querySelector('input[type="checkbox"]');
+            if (deleteCheckbox) {
+                deleteCheckbox.checked = true;
+                optionForm.style.display = 'none';
+            } else {
+                optionForm.remove();
+            }
+            updateOptionPlaceholders();
+        });
+    });
+
+    // Chuyển đổi input ngày tháng
+    const dateInput = document.getElementById('id_thoi_gian_ket_thuc');
+    if (dateInput) {
+        dateInput.addEventListener('focus', function () {
             this.type = 'datetime-local';
         });
 
-        dateInput.addEventListener('blur', function() {
+        dateInput.addEventListener('blur', function () {
             if (!this.value) {
                 this.type = 'text';
             }
         });
-    });
-
-    // Cập nhật placeholder cho các lựa chọn
-    function updateOptionPlaceholders() {
-        const optionInputs = document.querySelectorAll('#options-container .form-input');
-        optionInputs.forEach(function(input, index) {
-            input.placeholder = `Nhập lựa chọn ${index + 1}`;
-        });
     }
+});
 </script>
+
 {% endblock %}
