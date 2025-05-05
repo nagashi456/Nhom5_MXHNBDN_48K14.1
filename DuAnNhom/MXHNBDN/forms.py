@@ -9,7 +9,7 @@ class BaseLuaChonFormSet(BaseInlineFormSet):
         super().clean()
         count = 0
         for form in self.forms:
-            if form.cleaned_data.get('NoiDung') and not form.cleaned_data.get('DELETE', False):
+            if form.cleaned_data.get('noi_dung') and not form.cleaned_data.get('DELETE', False):
                 count += 1
 
         if count < 2:
@@ -96,12 +96,12 @@ class BinhChonForm(forms.ModelForm):
 LuaChonFormSet = inlineformset_factory(
     BinhChon,
     LuaChonBinhChon,
-    fields=['NoiDung'],
+    fields=['noi_dung'],
     extra=0,
     can_delete=True,
     formset=BaseLuaChonFormSet,
     widgets={
-        'NoiDung': forms.TextInput(attrs={
+        'noi_dung': forms.TextInput(attrs={
             'class': 'form-input',
             'placeholder': 'Nhập lựa chọn',
             'required': True
