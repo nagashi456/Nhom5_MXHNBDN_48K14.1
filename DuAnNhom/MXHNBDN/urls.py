@@ -11,10 +11,15 @@ path('binh_chon/<int:pk>/', views.chi_tiet_binh_chon, name='chi-tiet-binh-chon')
 
     # path('login/',views.DangNhap,name='dang_nhap'),
     path('', views.Trangchu, name='trang_chu'),
-    path('tao_bai_viet/', views.TaoBaiViet, name='tao_bv'),
-    path('sua_bai_viet/', views.SuaBaiViet, name='sua_bv'),
+    path('bai-viet/', views.danh_sach_bai_viet, name='danh_sach_bai_viet'),
+    path('bai-viet/tao/', views.tao_bai_viet, name='tao_bai_viet'),
+    path('bai-viet/sua/<int:pk>/', views.sua_bai_viet, name='sua_bai_viet'),
+    path('bai-viet/xoa/<int:pk>/', views.xoa_bai_viet, name='xoa_bai_viet'),
+    # path('tao_bai_viet/', views.TaoBaiViet, name='tao_bv'),
+    # path('sua_bai_viet/', views.SuaBaiViet, name='sua_bv'),
     path('login/',views.login_view,name='dang_nhap'),
     path('logout/', views.logout_view, name='logout'),
     # path('trang_chu/',views.Trangchu,name='trang_chu'),
     path('quen_pass/',views.Quenpass,name='Quenpass')
 ]
+
