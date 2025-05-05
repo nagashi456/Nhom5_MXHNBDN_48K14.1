@@ -142,6 +142,21 @@ class BinhChon(models.Model):
     def __str__(self):
         return self.TenTieuDe
 
+#Lựa chọn bình chọn *
+class LuaChonBinhChon(models.Model):
+    binh_chon = models.ForeignKey(BinhChon, on_delete=models.CASCADE)
+    noi_dung = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f'{self.binh_chon.ten_tieu_de} - {self.noi_dung}'
+#Bình chọn người dung *
+class BinhChonNguoiDung(models.Model):
+    nguoi_dung = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)
+    lua_chon = models.ForeignKey(LuaChonBinhChon, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.nguoi_dung.username} chọn {self.lua_chon.noi_dung}'
+
 class BinhChonNhom(models.Model):
     # FK về PhongBan
     MaPhong = models.ForeignKey(PhongBan, on_delete=models.CASCADE)
