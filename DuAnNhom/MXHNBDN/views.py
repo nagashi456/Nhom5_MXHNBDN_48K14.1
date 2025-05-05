@@ -4,41 +4,93 @@ from django.contrib.auth import login, logout
 def DangNhap(request):
     return render(request,"DangNhap.html")
 
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import BaiViet, HinhAnh, TepDinhKem
+from .forms import BaiVietForm
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 
+@login_required
+def danh_sach_bai_viet(request):
+    baiviet_list = BaiViet.objects.filter(MaNguoiDung=request.user).order_by('-ThoiGianTao')
+    return render(request, 'baiviet/danh_sach_bai_viet.html', {'baiviet_list': baiviet_list})
+
+@login_required
 def tao_bai_viet(request):
-    # Get the admin user from your custom NguoiDung model
-    try:
-        # Try to get the first admin user from NguoiDung model
-        admin_user = NguoiDung.objects.filter(is_superuser=True).first()
-        if not admin_user:
-            # If no admin exists, try to get any user
-            admin_user = NguoiDung.objects.first()
-            if not admin_user:
-                # If no users exist, show an error message
-                messages.error(request,
-                               'Không tìm thấy người dùng nào trong hệ thống. Vui lòng tạo một tài khoản admin trước.')
-                return redirect('trang_chu')
-    except Exception as e:
-        messages.error(request, f'Lỗi khi tìm người dùng: {str(e)}')
-        return redirect('trang_chu')
-
     if request.method == 'POST':
-        form = BaiVietForm(request.POST, request.FILES)
+        form = BaiVietForm(request.POST)
         if form.is_valid():
-            bai_viet = form.save(commit=False)
-            # Use the admin user from NguoiDung model
-            bai_viet.nguoi_dung = admin_user
-            bai_viet.save()
-            messages.success(request, 'Bài viết đã được đăng thành công!')
-            return redirect('trang_chu')
+            baiviet = form.save(commit=False)
+            baiviet.MaNguoiDung = request.user
+            baiviet.ThoiGianTao = timezone.now()
+            baiviet.save()
+
+            for f in request.FILES.getlist('Anh'):
+                HinhAnh.objects.create(Anh=f, ImgSize=f.size, MaBaiViet=baiviet)
+
+            for f in request.FILES.getlist('Tep'):
+                TepDinhKem.objects.create(Tep=f, FileSize=f.size, MaBaiViet=baiviet)
+
+            return redirect('danh_sach_bai_viet')
     else:
         form = BaiVietForm()
+    return render(request, 'baiviet/tao_bai_viet.html', {'form': form})
 
-    # Pass the admin username to the template for display
-    return render(request, 'TaoBaiViet.html', {
-        'form': form,
-        'admin_username': admin_user.username
-    })
+@login_required
+def sua_bai_viet(request, pk):
+    baiviet = get_object_or_404(BaiViet, pk=pk, MaNguoiDung=request.user)
+    if request.method == 'POST':
+        form = BaiVietForm(request.POST, instance=baiviet)
+        if form.is_valid():
+            form.save()
+            return redirect('danh_sach_bai_viet')
+    else:
+        form = BaiVietForm(instance=baiviet)
+    return render(request, 'baiviet/sua_bai_viet.html', {'form': form})
+
+@login_required
+def xoa_bai_viet(request, pk):
+    baiviet = get_object_or_404(BaiViet, pk=pk, MaNguoiDung=request.user)
+    if request.method == 'POST':
+        baiviet.delete()
+        return redirect('danh_sach_bai_viet')
+    return render(request, 'baiviet/xoa_bai_viet.html', {'baiviet': baiviet})
+
+
+# def tao_bai_viet(request):
+#     # Get the admin user from your custom NguoiDung model
+#     try:
+#         # Try to get the first admin user from NguoiDung model
+#         admin_user = NguoiDung.objects.filter(is_superuser=True).first()
+#         if not admin_user:
+#             # If no admin exists, try to get any user
+#             admin_user = NguoiDung.objects.first()
+#             if not admin_user:
+#                 # If no users exist, show an error message
+#                 messages.error(request,
+#                                'Không tìm thấy người dùng nào trong hệ thống. Vui lòng tạo một tài khoản admin trước.')
+#                 return redirect('trang_chu')
+#     except Exception as e:
+#         messages.error(request, f'Lỗi khi tìm người dùng: {str(e)}')
+#         return redirect('trang_chu')
+#
+#     if request.method == 'POST':
+#         form = BaiVietForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             bai_viet = form.save(commit=False)
+#             # Use the admin user from NguoiDung model
+#             bai_viet.nguoi_dung = admin_user
+#             bai_viet.save()
+#             messages.success(request, 'Bài viết đã được đăng thành công!')
+#             return redirect('trang_chu')
+#     else:
+#         form = BaiVietForm()
+#
+#     # Pass the admin username to the template for display
+#     return render(request, 'TaoBaiViet.html', {
+#         'form': form,
+#         'admin_username': admin_user.username
+#     })
 def Binhluan(request):
     return render(request,"TaoBinhLuan/Taobinhluan.html")
 # def BinhChon(request):
