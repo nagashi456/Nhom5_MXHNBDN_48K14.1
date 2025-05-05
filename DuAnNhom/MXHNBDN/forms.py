@@ -109,27 +109,6 @@ LuaChonFormSet = inlineformset_factory(
     }
 )
 
-from django import forms
-from .models import BaiViet, HinhAnh, TepDinhKem
-
-class BaiVietForm(forms.ModelForm):
-    class Meta:
-        model = BaiViet
-        fields = ['NgayTao', 'NoiDung']
-
-class HinhAnhForm(forms.ModelForm):
-    class Meta:
-        model = HinhAnh
-        fields = ['Anh']
-        widgets = {'Anh': forms.ClearableFileInput(attrs={'multiple': True})}
-
-class TepDinhKemForm(forms.ModelForm):
-    class Meta:
-        model = TepDinhKem
-        fields = ['Tep']
-        widgets = {'Tep': forms.ClearableFileInput(attrs={'multiple': True})}
-
-
 # from django import forms
 # from .models import BaiViet
 #
