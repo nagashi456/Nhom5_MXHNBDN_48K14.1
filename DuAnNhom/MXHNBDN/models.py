@@ -19,6 +19,7 @@ class NguoiDung(models.Model):
     SoDienThoai = models.CharField(max_length=20)
     Email = models.EmailField()
     Avatar = models.ImageField(upload_to='avatar/',blank=True,null=True);
+    AnhBia = models.ImageField(upload_to='anhbia/', blank=True, null=True);
     MaPhong = models.ForeignKey(PhongBan, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
