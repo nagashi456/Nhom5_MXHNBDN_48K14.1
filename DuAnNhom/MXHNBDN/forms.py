@@ -17,6 +17,39 @@ class BaseLuaChonFormSet(BaseInlineFormSet):
 
 User = get_user_model()
 
+# forms.py
+
+from django import forms
+from django.contrib.auth.models import User
+from .models import NguoiDung
+
+class UserRegistrationForm(forms.ModelForm):
+    password1 = forms.CharField(label='Mật khẩu', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Xác nhận mật khẩu', widget=forms.PasswordInput)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email']
+
+    def clean_password2(self):
+        pw1 = self.cleaned_data.get('password1')
+        pw2 = self.cleaned_data.get('password2')
+        if pw1 and pw2 and pw1 != pw2:
+            raise forms.ValidationError("Mật khẩu không khớp")
+        return pw2
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data['password1'])
+        if commit:
+            user.save()
+        return user
+
+class NguoiDungForm(forms.ModelForm):
+    class Meta:
+        model = NguoiDung
+        fields = ['HoTen', 'SoDienThoai', 'Email', 'MaPhong', 'Avatar', 'AnhBia']
+        # Hoặc các field mà bạn thực sự cần lưu trong NguoiDung
 
 class LoginForm(forms.Form):
     username_or_email = forms.CharField(

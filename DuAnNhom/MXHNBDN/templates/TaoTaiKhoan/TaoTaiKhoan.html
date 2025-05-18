@@ -1,183 +1,151 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block content %}
-<div class="account-creation-container">
-    <div class="page-header">
-        <a href="#" class="back-link">
-            <i data-lucide="arrow-left" class="back-icon"></i>
-            Tạo tài khoản
-        </a>
-        
-        <div class="search-box-container">
-            <input type="text" placeholder="Tìm kiếm" class="search-input">
-            <i data-lucide="search" class="search-icon"></i>
-        </div>
-    </div>
-    
-    <div class="account-form-container">
-        <div class="profile-upload-section">
-            <div class="profile-upload-area">
-                <i data-lucide="camera" class="camera-icon"></i>
-                <div class="upload-text">Thêm ảnh bìa</div>
-            </div>
-            
-            <div class="avatar-upload-container">
-                <div class="avatar-upload-circle">
-                    <i data-lucide="camera" class="camera-icon"></i>
-                    <div class="upload-text">Thêm ảnh ở đây</div>
-                </div>
-            </div>
-        </div>
-        
-        <form method="post" class="account-form" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.non_field_errors }}
+{% block title %}Tạo tài khoản{% endblock %}
+{% block body_class %}no-sidebar{% endblock %}
 
-            {% for field in form %}
-                <div class="form-group">
-                    <label class="form-label" for="{{ field.id_for_label }}">
-                        <i data-lucide="user" class="form-icon"></i>
-                        {{ field.label }}
-                    </label>
-                    {{ field }}
-                    {% if field.errors %}
-                        <div class="form-error">{{ field.errors }}</div>
-                    {% endif %}
-                </div>
-            {% endfor %}
-
-            <div class="form-actions">
-                <button type="submit" class="submit-btn">Tạo tài khoản</button>
-            </div>
-        </form>
-    </div>
-</div>
-
+{% block head_extra %}
 <style>
-    .account-creation-container {
+    .register-container {
         max-width: 800px;
-        width: 100%;
-        padding: 0 20px;
-    }
-
-    .page-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-        padding: 16px 0;
-    }
-
-    .back-link {
-        display: flex;
-        align-items: center;
-        text-decoration: none;
-        color: #5858fa;
-        font-weight: 500;
-    }
-
-    .back-icon {
-        width: 18px;
-        height: 18px;
-        margin-right: 8px;
-    }
-
-    .search-box-container {
-        position: relative;
-        width: 240px;
-    }
-
-    .search-input {
-        width: 100%;
-        padding: 8px 12px 8px 36px;
-        border: 1px solid #e4e4e4;
-        border-radius: 4px;
-        font-size: 14px;
-    }
-
-    .search-icon {
-        position: absolute;
-        left: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #a8a8a8;
-        width: 16px;
-        height: 16px;
-    }
-
-    .account-form-container {
-        background-color: #f1f1ff;
-        border-radius: 4px;
+        margin: 0 auto;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         overflow: hidden;
     }
 
-    .profile-upload-section {
-        position: relative;
-        height: 120px;
-        margin-bottom: 40px;
+    .register-header {
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        border-bottom: 1px solid var(--border-color);
     }
 
-    .profile-upload-area {
-        width: 100%;
-        height: 100%;
-        background-color: #f9f9f9;
+    .back-button {
+        display: flex;
+        align-items: center;
+        color: var(--dark-text);
+        text-decoration: none;
+        margin-right: 15px;
+    }
+
+    .register-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--dark-text);
+        margin: 0;
+    }
+
+    .register-form {
+        padding: 30px;
+    }
+
+    .cover-photo-area {
+        background-color: var(--secondary);
+        border-radius: 8px;
+        height: 200px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        margin-bottom: 30px;
         cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
     }
 
-    .camera-icon {
-        color: #5858fa;
-        width: 24px;
-        height: 24px;
-        margin-bottom: 4px;
+    .cover-photo-area:hover {
+        background-color: #e8e8ff;
+    }
+
+    .cover-photo-area.has-image {
+        background-size: cover;
+        background-position: center;
+    }
+
+    .cover-photo-area.has-image .upload-icon,
+    .cover-photo-area.has-image .upload-text {
+        display: none;
+    }
+
+    .cover-photo-area:hover .upload-overlay {
+        opacity: 1;
+    }
+
+    .upload-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.3);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .upload-icon {
+        color: var(--primary);
+        margin-bottom: 10px;
     }
 
     .upload-text {
-        color: #5858fa;
+        color: var(--primary);
         font-size: 14px;
+        font-weight: 500;
     }
 
-    .avatar-upload-container {
-        position: absolute;
-        bottom: -30px;
-        left: 20px;
+    .overlay-text {
+        color: white;
+        font-size: 14px;
+        font-weight: 500;
     }
 
-    .avatar-upload-circle {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background-color: #f9f9f9;
+    .avatar-section {
         display: flex;
-        flex-direction: column;
+        margin-bottom: 30px;
+    }
+
+    .avatar-upload {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: var(--secondary);
+        display: flex;
         align-items: center;
         justify-content: center;
+        margin-right: 20px;
         cursor: pointer;
-        border: 2px solid white;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
     }
 
-    .avatar-upload-circle .camera-icon {
-        width: 20px;
-        height: 20px;
-        margin-bottom: 2px;
+    .avatar-upload:hover {
+        background-color: #e8e8ff;
     }
 
-    .avatar-upload-circle .upload-text {
-        font-size: 10px;
-        text-align: center;
-        padding: 0 4px;
+    .avatar-upload.has-image .upload-icon {
+        display: none;
     }
 
-    .account-form {
-        padding: 20px;
+    .avatar-upload.has-image:hover .upload-overlay {
+        opacity: 1;
+    }
+
+    .avatar-upload img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
     .form-group {
-        margin-bottom: 16px;
+        margin-bottom: 20px;
     }
 
     .form-label {
@@ -185,113 +153,515 @@
         align-items: center;
         margin-bottom: 8px;
         font-weight: 500;
-        color: #050041;
     }
 
     .form-icon {
-        width: 16px;
-        height: 16px;
-        margin-right: 8px;
-        color: #5858fa;
+        width: 24px;
+        height: 24px;
+        background-color: var(--primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
     }
 
-    .form-input {
-        width: 100%;
-        padding: 10px 12px;
-        border: 1px solid #e4e4e4;
-        border-radius: 4px;
-        font-size: 14px;
-        background-color: white;
+    .form-icon i {
+        color: white;
+        font-size: 12px;
     }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(88, 88, 250, 0.2);
+    }
+
+    .form-select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 14px;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23686868' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 15px center;
+        transition: all 0.3s ease;
+    }
+
+    .form-select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(88, 88, 250, 0.2);
+    }
+
+    .password-strength {
+        height: 4px;
+        background-color: #e9ecef;
+        border-radius: 2px;
+        margin-top: 8px;
+        overflow: hidden;
+    }
+
+    .password-strength-bar {
+        height: 100%;
+        width: 0;
+        transition: width 0.3s ease;
+    }
+
+    .password-strength-bar.weak { background-color: #dc3545; }
+    .password-strength-bar.medium { background-color: #ffc107; }
+    .password-strength-bar.good { background-color: #0dcaf0; }
+    .password-strength-bar.strong { background-color: #198754; }
 
     .form-actions {
         display: flex;
-        justify-content: center;
-        margin-top: 24px;
+        justify-content: flex-end;
+        margin-top: 30px;
     }
 
-    .submit-btn {
-        background-color: #5858fa;
+    .btn-primary {
+        background-color: var(--primary);
         color: white;
         border: none;
-        border-radius: 4px;
-        padding: 10px 24px;
-        font-size: 14px;
-        cursor: pointer;
+        padding: 12px 24px;
+        border-radius: 8px;
         font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
     }
 
-    .submit-btn:hover {
-        background-color: #150aa1;
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+    }
+
+    .invalid-feedback {
+        color: #dc3545;
+        font-size: 12px;
+        margin-top: 5px;
+        display: none; /* Ẩn mặc định */
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        border-color: #f5c2c7;
+        color: #842029;
+        padding: 10px 15px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+
+    /* Khi input/select có lớp is-invalid, viền đỏ */
+    .form-control.is-invalid,
+    .form-select.is-invalid {
+        border-color: #dc3545;
+    }
+
+    /* Hide file inputs */
+    .file-input {
+        display: none;
     }
 </style>
+{% endblock %}
 
+{% block content %}
+<div class="register-container">
+    <div class="register-header">
+        <a href="{% url 'trang_chu' %}" class="back-button">
+            <i data-lucide="arrow-left" style="width: 20px; height: 20px; margin-right: 8px;"></i>
+        </a>
+        <h1 class="register-title">Tạo tài khoản</h1>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="register-form" novalidate>
+        {% csrf_token %}
+
+        {# Hiển thị alert khi có lỗi ở user_form hoặc profile_form #}
+        {% if user_form.errors or profile_form.errors %}
+          <div class="alert alert-danger">
+            Vui lòng sửa lỗi bên dưới
+          </div>
+        {% endif %}
+
+        <!-- Cover Photo Upload -->
+        <div class="cover-photo-area" id="cover-photo-area">
+            <div class="upload-icon">
+                <i data-lucide="camera" style="width: 32px; height: 32px;"></i>
+            </div>
+            <p class="upload-text">Thêm ảnh bìa</p>
+            <div class="upload-overlay">
+                <p class="overlay-text">Thay đổi ảnh bìa</p>
+            </div>
+            <input
+                type="file"
+                id="{{ profile_form.AnhBia.id_for_label }}"
+                name="{{ profile_form.AnhBia.html_name }}"
+                class="file-input {% if profile_form.AnhBia.errors %}is-invalid{% endif %}"
+                accept="image/*"
+            >
+            {% if profile_form.AnhBia.errors %}
+              <div class="invalid-feedback">
+                {{ profile_form.AnhBia.errors.0 }}
+              </div>
+            {% endif %}
+        </div>
+
+        <!-- Avatar Upload và Họ và tên -->
+        <div class="avatar-section">
+            <div class="avatar-upload" id="avatar-upload">
+                <div class="upload-icon">
+                    <i data-lucide="camera" style="width: 24px; height: 24px;"></i>
+                </div>
+                <div class="upload-overlay">
+                    <p class="overlay-text">Thay đổi ảnh</p>
+                </div>
+                <input
+                    type="file"
+                    id="{{ profile_form.Avatar.id_for_label }}"
+                    name="{{ profile_form.Avatar.html_name }}"
+                    class="file-input {% if profile_form.Avatar.errors %}is-invalid{% endif %}"
+                    accept="image/*"
+                >
+                {% if profile_form.Avatar.errors %}
+                  <div class="invalid-feedback">
+                    {{ profile_form.Avatar.errors.0 }}
+                  </div>
+                {% endif %}
+            </div>
+
+            <div class="flex-grow-1" style="flex: 1;">
+                <div class="form-group">
+                    <label for="{{ profile_form.HoTen.id_for_label }}" class="form-label">
+                        <div class="form-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        Họ và tên
+                    </label>
+                    <input
+                        type="text"
+                        id="{{ profile_form.HoTen.id_for_label }}"
+                        name="{{ profile_form.HoTen.html_name }}"
+                        class="form-control {% if profile_form.HoTen.errors %}is-invalid{% endif %}"
+                        placeholder="Điền ở đây"
+                        value="{{ profile_form.HoTen.value|default_if_none:'' }}"
+                        required
+                    >
+                    {% if profile_form.HoTen.errors %}
+                      <div class="invalid-feedback">
+                        {{ profile_form.HoTen.errors.0 }}
+                      </div>
+                    {% else %}
+                      <div class="invalid-feedback">Vui lòng nhập họ và tên.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Username -->
+        <div class="form-group">
+            <label for="{{ user_form.username.id_for_label }}" class="form-label">
+                <div class="form-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                Tên đăng nhập
+            </label>
+            <input
+                type="text"
+                id="{{ user_form.username.id_for_label }}"
+                name="{{ user_form.username.html_name }}"
+                class="form-control {% if user_form.username.errors %}is-invalid{% endif %}"
+                placeholder="Điền ở đây"
+                value="{{ user_form.username.value|default_if_none:'' }}"
+                required
+            >
+            {% if user_form.username.errors %}
+              <div class="invalid-feedback">
+                {{ user_form.username.errors.0 }}
+              </div>
+            {% else %}
+              <div class="invalid-feedback">Vui lòng nhập tên đăng nhập.</div>
+            {% endif %}
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+            <label for="{{ user_form.password1.id_for_label }}" class="form-label">
+                <div class="form-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                Mật khẩu
+            </label>
+            <input
+                type="password"
+                id="{{ user_form.password1.id_for_label }}"
+                name="{{ user_form.password1.html_name }}"
+                class="form-control {% if user_form.password1.errors %}is-invalid{% endif %}"
+                placeholder="Điền ở đây"
+                required
+            >
+            <div class="password-strength">
+                <div id="password-strength-bar" class="password-strength-bar"></div>
+            </div>
+            {% if user_form.password1.errors %}
+              <div class="invalid-feedback">
+                {{ user_form.password1.errors.0 }}
+              </div>
+            {% else %}
+              <div class="invalid-feedback">Vui lòng nhập mật khẩu.</div>
+            {% endif %}
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group">
+            <label for="{{ user_form.password2.id_for_label }}" class="form-label">
+                <div class="form-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                Xác nhận mật khẩu
+            </label>
+            <input
+                type="password"
+                id="{{ user_form.password2.id_for_label }}"
+                name="{{ user_form.password2.html_name }}"
+                class="form-control {% if user_form.password2.errors %}is-invalid{% endif %}"
+                placeholder="Điền ở đây"
+                required
+            >
+            {% if user_form.password2.errors %}
+              <div class="invalid-feedback">
+                {{ user_form.password2.errors.0 }}
+              </div>
+            {% else %}
+              <div class="invalid-feedback">Mật khẩu không khớp.</div>
+            {% endif %}
+        </div>
+
+        <!-- Số điện thoại -->
+        <div class="form-group">
+            <label for="{{ profile_form.SoDienThoai.id_for_label }}" class="form-label">
+                <div class="form-icon">
+                    <i class="fas fa-phone"></i>
+                </div>
+                Số điện thoại
+            </label>
+            <input
+                type="tel"
+                id="{{ profile_form.SoDienThoai.id_for_label }}"
+                name="{{ profile_form.SoDienThoai.html_name }}"
+                class="form-control {% if profile_form.SoDienThoai.errors %}is-invalid{% endif %}"
+                placeholder="Điền ở đây"
+                value="{{ profile_form.SoDienThoai.value|default_if_none:'' }}"
+                required
+            >
+            {% if profile_form.SoDienThoai.errors %}
+              <div class="invalid-feedback">
+                {{ profile_form.SoDienThoai.errors.0 }}
+              </div>
+            {% else %}
+              <div class="invalid-feedback">Vui lòng nhập số điện thoại hợp lệ.</div>
+            {% endif %}
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+            <label for="{{ profile_form.Email.id_for_label }}" class="form-label">
+                <div class="form-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                Email
+            </label>
+            <input
+                type="email"
+                id="{{ profile_form.Email.id_for_label }}"
+                name="{{ profile_form.Email.html_name }}"
+                class="form-control {% if profile_form.Email.errors %}is-invalid{% endif %}"
+                placeholder="Điền ở đây"
+                value="{{ profile_form.Email.value|default_if_none:'' }}"
+                required
+            >
+            {% if profile_form.Email.errors %}
+              <div class="invalid-feedback">
+                {{ profile_form.Email.errors.0 }}
+              </div>
+            {% else %}
+              <div class="invalid-feedback">Vui lòng nhập email hợp lệ.</div>
+            {% endif %}
+        </div>
+
+        <!-- Phòng ban -->
+        <div class="form-group">
+            <label for="{{ profile_form.MaPhong.id_for_label }}" class="form-label">
+                <div class="form-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                Phòng ban
+            </label>
+            <select
+                id="{{ profile_form.MaPhong.id_for_label }}"
+                name="{{ profile_form.MaPhong.html_name }}"
+                class="form-select {% if profile_form.MaPhong.errors %}is-invalid{% endif %}"
+                required
+            >
+                <option value="" disabled {% if not profile_form.MaPhong.value %}selected{% endif %}>Chọn phòng ban</option>
+                {% for phong in phong_ban_list %}
+                    <option
+                      value="{{ phong.id }}"
+                      {% if profile_form.MaPhong.value == phong.id %}selected{% endif %}
+                    >
+                      {{ phong.TenPhong }}
+                    </option>
+                {% endfor %}
+            </select>
+            {% if profile_form.MaPhong.errors %}
+              <div class="invalid-feedback">
+                {{ profile_form.MaPhong.errors.0 }}
+              </div>
+            {% else %}
+              <div class="invalid-feedback">Vui lòng chọn phòng ban.</div>
+            {% endif %}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Tạo tài khoản</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize Lucide icons
-        lucide.createIcons();
+        // Lấy đúng ID các trường mật khẩu từ Django form
+        const passwordInput = document.getElementById('{{ user_form.password1.id_for_label }}');
+        const confirmPasswordInput = document.getElementById('{{ user_form.password2.id_for_label }}');
+        const strengthBar = document.getElementById('password-strength-bar');
 
-        // Profile image upload functionality
-        const profileUploadArea = document.querySelector('.profile-upload-area');
-        const avatarUploadCircle = document.querySelector('.avatar-upload-circle');
+        // Chỉ gắn sự kiện khi passwordInput và strengthBar tồn tại
+        if (passwordInput && strengthBar) {
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
 
-        profileUploadArea.addEventListener('click', function() {
-            // Create a file input and trigger it
-            const fileInput = document.createElement('input');
-            fileInput.type = 'file';
-            fileInput.accept = 'image/*';
-            fileInput.style.display = 'none';
+                if (password.length === 0) {
+                    strengthBar.style.width = '0%';
+                    strengthBar.className = 'password-strength-bar';
+                } else if (password.length < 6) {
+                    strengthBar.style.width = '25%';
+                    strengthBar.className = 'password-strength-bar weak';
+                } else if (password.length < 10) {
+                    strengthBar.style.width = '50%';
+                    strengthBar.className = 'password-strength-bar medium';
+                } else if (/[A-Z]/.test(password) && /[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password)) {
+                    strengthBar.style.width = '100%';
+                    strengthBar.className = 'password-strength-bar strong';
+                } else {
+                    strengthBar.style.width = '75%';
+                    strengthBar.className = 'password-strength-bar good';
+                }
+            });
+        }
 
-            fileInput.addEventListener('change', function(e) {
-                if (e.target.files && e.target.files[0]) {
-                    const reader = new FileReader();
+        // Xác nhận mật khẩu (client-side)
+        if (confirmPasswordInput && passwordInput) {
+            confirmPasswordInput.addEventListener('input', function() {
+                if (this.value !== passwordInput.value) {
+                    this.setCustomValidity('Mật khẩu không khớp');
+                } else {
+                    this.setCustomValidity('');
+                }
+            });
+        }
 
-                    reader.onload = function(event) {
-                        profileUploadArea.style.backgroundImage = `url(${event.target.result})`;
-                        profileUploadArea.style.backgroundSize = 'cover';
-                        profileUploadArea.style.backgroundPosition = 'center';
+        // Xử lý submit form với validation
+        const form = document.querySelector('.register-form');
+        if (form) {
+            form.addEventListener('submit', function(event) {
+                const previousInvalids = form.querySelectorAll('.is-invalid');
+                previousInvalids.forEach(el => el.classList.remove('is-invalid'));
+                const previousFeedbacks = form.querySelectorAll('.invalid-feedback');
+                previousFeedbacks.forEach(el => el.style.display = 'none');
 
-                        // Hide the camera icon and text
-                        profileUploadArea.innerHTML = '';
-                    };
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
 
-                    reader.readAsDataURL(e.target.files[0]);
+                    const invalidInputs = form.querySelectorAll(':invalid');
+                    invalidInputs.forEach(input => {
+                        input.classList.add('is-invalid');
+                        const feedback = input.nextElementSibling;
+                        if (feedback && feedback.classList.contains('invalid-feedback')) {
+                            feedback.style.display = 'block';
+                        }
+                    });
                 }
             });
 
-            document.body.appendChild(fileInput);
-            fileInput.click();
-            document.body.removeChild(fileInput);
-        });
+            // Ẩn feedback khi gõ lại
+            const inputs = form.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    this.classList.remove('is-invalid');
+                    const feedback = this.nextElementSibling;
+                    if (feedback && feedback.classList.contains('invalid-feedback')) {
+                        feedback.style.display = 'none';
+                    }
+                });
+            });
+        }
 
-        avatarUploadCircle.addEventListener('click', function() {
-            // Create a file input and trigger it
-            const fileInput = document.createElement('input');
-            fileInput.type = 'file';
-            fileInput.accept = 'image/*';
-            fileInput.style.display = 'none';
-
-            fileInput.addEventListener('change', function(e) {
-                if (e.target.files && e.target.files[0]) {
+        // Avatar upload
+        const avatarUpload = document.getElementById('avatar-upload');
+        const avatarInput = document.getElementById('{{ profile_form.Avatar.id_for_label }}');
+        if (avatarUpload && avatarInput) {
+            avatarUpload.addEventListener('click', function() {
+                avatarInput.click();
+            });
+            avatarInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
                     const reader = new FileReader();
-
-                    reader.onload = function(event) {
-                        avatarUploadCircle.style.backgroundImage = `url(${event.target.result})`;
-                        avatarUploadCircle.style.backgroundSize = 'cover';
-                        avatarUploadCircle.style.backgroundPosition = 'center';
-
-                        // Hide the camera icon and text
-                        avatarUploadCircle.innerHTML = '';
+                    reader.onload = function(e) {
+                        avatarUpload.innerHTML = `
+                            <img src="${e.target.result}" alt="Avatar">
+                            <div class="upload-overlay">
+                                <p class="overlay-text">Thay đổi ảnh</p>
+                            </div>
+                            <input type="file" id="{{ profile_form.Avatar.id_for_label }}" name="{{ profile_form.Avatar.html_name }}" class="file-input" accept="image/*">
+                        `;
+                        avatarUpload.classList.add('has-image');
+                        document.getElementById('{{ profile_form.Avatar.id_for_label }}').addEventListener('change', avatarInput.onchange);
                     };
-
-                    reader.readAsDataURL(e.target.files[0]);
+                    reader.readAsDataURL(this.files[0]);
                 }
             });
+        }
 
-            document.body.appendChild(fileInput);
-            fileInput.click();
-            document.body.removeChild(fileInput);
-        });
+        // Cover photo upload
+        const coverPhotoArea = document.getElementById('cover-photo-area');
+        const coverPhotoInput = document.getElementById('{{ profile_form.AnhBia.id_for_label }}');
+        if (coverPhotoArea && coverPhotoInput) {
+            coverPhotoArea.addEventListener('click', function() {
+                coverPhotoInput.click();
+            });
+            coverPhotoInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        coverPhotoArea.style.backgroundImage = `url(${e.target.result})`;
+                        coverPhotoArea.classList.add('has-image');
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        }
     });
 </script>
 {% endblock %}

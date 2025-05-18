@@ -1,7 +1,9 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 urlpatterns = [
-path('', views.index, name='index'),
+# path('', views.index, name='index'),
     path('conversation/<int:conversation_id>/', views.conversation, name='conversation'),
     path('create-private-chat/', views.create_private_chat, name='create_private_chat'),
     path('create-group-chat/', views.create_group_chat, name='create_group_chat'),
@@ -17,16 +19,14 @@ path('binh_chon/<int:pk>/', views.chi_tiet_binh_chon, name='chi-tiet-binh-chon')
 
     # path('login/',views.DangNhap,name='dang_nhap'),
     path('', views.Trangchu, name='trang_chu'),
-    path('bai-viet/', views.danh_sach_bai_viet, name='danh_sach_bai_viet'),
-    path('bai-viet/tao/', views.tao_bai_viet, name='tao_bai_viet'),
-    path('bai-viet/sua/<int:pk>/', views.sua_bai_viet, name='sua_bai_viet'),
-    path('bai-viet/xoa/<int:pk>/', views.xoa_bai_viet, name='xoa_bai_viet'),
-    # path('tao_bai_viet/', views.TaoBaiViet, name='tao_bv'),
-    # path('sua_bai_viet/', views.SuaBaiViet, name='sua_bv'),
+
     path('login/',views.login_view,name='dang_nhap'),
     path('logout/', views.logout_view, name='logout'),
-    # path('trang_chu/',views.Trangchu,name='trang_chu'),
+    path('',views.Trangchu,name='trang_chu'),
     path('quen_pass/',views.Quenpass,name='Quenpass')
 
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
