@@ -202,3 +202,248 @@ def Trangchu(request):
     return render(request,"Trangchu.html")
 def Quenpass(request):
     return render(request,"Quenpass.html")
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.db.models import Q
+from django.utils import timezone
+from .models import (
+    CuocTroChuyen, NguoiDung, TinNhanChiTiet,
+    ThanhVienCuocTroChuyen, PhongBan
+)
+from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+
+@login_required
+def index(request):
+    """
+    Main chat page showing all conversations
+    """
+    user = request.user
+    nguoi_dung = NguoiDung.objects.get(user=user)
+
+    # Get all conversations where the user is a member
+    conversations = CuocTroChuyen.objects.filter(
+        thanhviencuoctrochuyen__MaNguoiDung=nguoi_dung
+    ).distinct()
+
+    # Get the last message for each conversation
+    conversations_with_last_message = []
+    for conv in conversations:
+        last_message = TinNhanChiTiet.objects.filter(
+            MaCuocTroChuyen=conv
+        ).order_by('-NgayTao').first()
+
+        conversations_with_last_message.append({
+            'conversation': conv,
+            'last_message': last_message
+        })
+
+    return render(request, 'chat/index.html', {
+        'conversations': conversations_with_last_message,
+        'current_user': nguoi_dung
+    })
+
+
+@login_required
+def conversation(request, conversation_id):
+    """
+    View a specific conversation
+    """
+    user = request.user
+    nguoi_dung = NguoiDung.objects.get(user=user)
+
+    # Get the conversation
+    conversation = get_object_or_404(CuocTroChuyen, id=conversation_id)
+
+    # Check if user is a member of this conversation
+    is_member = ThanhVienCuocTroChuyen.objects.filter(
+        MaCuocTroChuyen=conversation,
+        MaNguoiDung=nguoi_dung
+    ).exists()
+
+    if not is_member:
+        return redirect('chat:index')
+
+    # Get all messages in this conversation
+    messages = TinNhanChiTiet.objects.filter(
+        MaCuocTroChuyen=conversation
+    ).order_by('NgayTao')
+
+    # Get all members of this conversation
+    members = ThanhVienCuocTroChuyen.objects.filter(
+        MaCuocTroChuyen=conversation
+    )
+
+    # Get all conversations where the user is a member (for sidebar)
+    all_conversations = CuocTroChuyen.objects.filter(
+        thanhviencuoctrochuyen__MaNguoiDung=nguoi_dung
+    ).distinct()
+
+    return render(request, 'chat/conversation.html', {
+        'conversation': conversation,
+        'messages': messages,
+        'members': members,
+        'all_conversations': all_conversations,
+        'current_user': nguoi_dung
+    })
+
+
+@login_required
+def create_private_chat(request):
+    """
+    Create a private chat between two users
+    """
+    if request.method == 'POST':
+        user = request.user
+        nguoi_dung = NguoiDung.objects.get(user=user)
+        other_user_id = request.POST.get('user_id')
+        other_nguoi_dung = get_object_or_404(NguoiDung, id=other_user_id)
+
+        # Check if a private conversation already exists between these users
+        existing_conversation = CuocTroChuyen.objects.filter(
+            Loai=False,  # Private chat
+            thanhviencuoctrochuyen__MaNguoiDung=nguoi_dung
+        ).filter(
+            thanhviencuoctrochuyen__MaNguoiDung=other_nguoi_dung
+        ).distinct()
+
+        if existing_conversation.exists() and existing_conversation.count() == 1:
+            # If exists, redirect to that conversation
+            return redirect('chat:conversation', conversation_id=existing_conversation.first().id)
+
+        # Create a new private conversation
+        conversation = CuocTroChuyen.objects.create(
+            Loai=False,  # Private chat
+            TenNhom=None,
+            HinhAnh=None
+        )
+
+        # Add both users as members
+        ThanhVienCuocTroChuyen.objects.create(
+            MaCuocTroChuyen=conversation,
+            MaNguoiDung=nguoi_dung,
+            NgayGiaNhap=timezone.now()
+        )
+
+        ThanhVienCuocTroChuyen.objects.create(
+            MaCuocTroChuyen=conversation,
+            MaNguoiDung=other_nguoi_dung,
+            NgayGiaNhap=timezone.now()
+        )
+
+        return redirect('chat:conversation', conversation_id=conversation.id)
+
+    # If GET request, show form to select a user
+    user = request.user
+    nguoi_dung = NguoiDung.objects.get(user=user)
+
+    # Get all users except current user
+    other_users = NguoiDung.objects.exclude(id=nguoi_dung.id)
+
+    return render(request, 'chat/create_private_chat.html', {
+        'users': other_users,
+        'current_user': nguoi_dung
+    })
+
+
+@login_required
+def create_group_chat(request):
+    """
+    Create a group chat
+    """
+    if request.method == 'POST':
+        user = request.user
+        nguoi_dung = NguoiDung.objects.get(user=user)
+        group_name = request.POST.get('group_name')
+        member_ids = request.POST.getlist('member_ids')
+
+        # Create a new group conversation
+        conversation = CuocTroChuyen.objects.create(
+            Loai=True,  # Group chat
+            TenNhom=group_name,
+            HinhAnh=request.FILES.get('group_image', None)
+        )
+
+        # Add current user as a member
+        ThanhVienCuocTroChuyen.objects.create(
+            MaCuocTroChuyen=conversation,
+            MaNguoiDung=nguoi_dung,
+            NgayGiaNhap=timezone.now()
+        )
+
+        # Add selected users as members
+        for member_id in member_ids:
+            member = NguoiDung.objects.get(id=member_id)
+            if member.id != nguoi_dung.id:  # Don't add current user twice
+                ThanhVienCuocTroChuyen.objects.create(
+                    MaCuocTroChuyen=conversation,
+                    MaNguoiDung=member,
+                    NgayGiaNhap=timezone.now()
+                )
+
+        return redirect('chat:conversation', conversation_id=conversation.id)
+
+    # If GET request, show form to create a group
+    user = request.user
+    nguoi_dung = NguoiDung.objects.get(user=user)
+
+    # Get all users except current user
+    other_users = NguoiDung.objects.exclude(id=nguoi_dung.id)
+
+    return render(request, 'chat/create_group_chat.html', {
+        'users': other_users,
+        'current_user': nguoi_dung
+    })
+
+
+@login_required
+def search_users(request):
+    """
+    API endpoint to search for users
+    """
+    query = request.GET.get('q', '')
+    user = request.user
+    nguoi_dung = NguoiDung.objects.get(user=user)
+
+    users = NguoiDung.objects.filter(
+        Q(HoTen__icontains=query) |
+        Q(Email__icontains=query)
+    ).exclude(id=nguoi_dung.id)[:10]
+
+    results = []
+    for user in users:
+        results.append({
+            'id': user.id,
+            'name': user.HoTen,
+            'email': user.Email,
+            'avatar': user.Avatar.url if user.Avatar else None,
+            'department': user.MaPhong.TenPhong
+        })
+
+    return JsonResponse({'results': results})
+
+
+@csrf_exempt
+@login_required
+def upload_attachment(request):
+    """
+    API endpoint to upload file attachments
+    """
+    if request.method == 'POST' and request.FILES.get('file'):
+        file = request.FILES['file']
+        # Process the file (you might want to validate file type, size, etc.)
+
+        # For simplicity, we'll just return the URL
+        # In a real app, you'd save this to your storage and return the URL
+        return JsonResponse({
+            'success': True,
+            'file_url': '/media/tepdinhkem/' + file.name,
+            'file_size': file.size
+        })
+
+    return JsonResponse({'success': False, 'error': 'No file provided'})

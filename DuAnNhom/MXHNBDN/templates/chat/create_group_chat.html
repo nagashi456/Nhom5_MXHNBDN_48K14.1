@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="create-group-container">
+        <h1>Tạo nhóm trò chuyện</h1>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="group_name">Tên nhóm</label>
+                <input type="text" id="group_name" name="group_name" required>
+            </div>
+            <div class="form-group">
+                <label for="group_image">Hình ảnh nhóm (tùy chọn)</label>
+                <input type="file" id="group_image" name="group_image" accept="image/*">
+                <div id="imagePreview" class="image-preview"></div>
+            </div>
+            <div class="form-group">
+                <label>Thành viên</label>
+                <div class="search-container">
+                    <input type="text" id="userSearch" placeholder="Tìm kiếm người dùng...">
+                    <div id="searchResults" class="search-results"></div>
+                </div>
+                <div id="selectedMembers" class="selected-members">
+                    <p>Đã chọn: <span id="memberCount">0</span> người</p>
+                    <div id="memberList" class="member-list"></div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <a href="{% url 'chat:index' %}" class="btn btn-secondary">Hủy</a>
+                <button type="submit" class="btn btn-primary">Tạo nhóm</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const userSearch = document.getElementById('userSearch');
+    const searchResults = document.getElementById('searchResults');
+    const selectedMembers = document.getElementById('selectedMembers');
+    const memberList = document.getElementById('memberList');
+    const memberCount = document.getElementById('memberCount');
+    const groupImage = document.getElementById('group_image');
+    const imagePreview = document.getElementById('imagePreview');
+
+    const selectedUsers = new Set();
+
+    // Search functionality
+    userSearch.addEventListener('input', debounce(function() {
+        const query = this.value.trim();
+        if (query.length < 2) {
+            searchResults.innerHTML = '';
+            return;
+        }
+
+        fetch(`{% url 'chat:search_users' %}?q=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                searchResults.innerHTML = '';
+                data.results.forEach(user => {
+                    // Skip if already selected
+                    if (selectedUsers.has(user.id.toString())) {
+                        return;
+                    }
+
+                    const userElement = document.createElement('div');
+                    userElement.className = 'search-result-item';
+                    userElement.innerHTML = `
+                        <div class="user-avatar">
+                            ${user.avatar ? `<img src="${user.avatar}" alt="${user.name}">` : `<div class="avatar-placeholder">${user.name.charAt(0)}</div>`}
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">${user.name}</div>
+                            <div class="user-email">${user.email}</div>
+                        </div>
+                    `;
+                    userElement.addEventListener('click', () => {
+                        addMember(user);
+                        searchResults.innerHTML = '';
+                        userSearch.value = '';
+                    });
+                    searchResults.appendChild(userElement);
+                });
+            })
+            .catch(error => {
+                console.error('Error searching users:', error);
+            });
+    }, 300));
+
+    // Add member to selected list
+    function addMember(user) {
+        if (selectedUsers.has(user.id.toString())) {
+            return;
+        }
+
+        selectedUsers.add(user.id.toString());
+
+        const memberElement = document.createElement('div');
+        memberElement.className = 'member-item';
+        memberElement.dataset.id = user.id;
+        memberElement.innerHTML = `
+            <div class="user-avatar">
+                ${user.avatar ? `<img src="${user.avatar}" alt="${user.name}">` : `<div class="avatar-placeholder">${user.name.charAt(0)}</div>`}
+            </div>
+            <div class="user-info">
+                <div class="user-name">${user.name}</div>
+            </div>
+            <button type="button" class="remove-member">×</button>
+            <input type="hidden" name="member_ids" value="${user.id}">
+        `;
+
+        const removeBtn = memberElement.querySelector('.remove-member');
+        removeBtn.addEventListener('click', () => {
+            memberElement.remove();
+            selectedUsers.delete(user.id.toString());
+            updateMemberCount();
+        });
+
+        memberList.appendChild(memberElement);
+        updateMemberCount();
+    }
+
+    // Update member count
+    function updateMemberCount() {
+        memberCount.textContent = selectedUsers.size;
+    }
+
+    // Image preview
+    groupImage.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreview.innerHTML = `
+                    <img src="${e.target.result}" alt="Group Image Preview">
+                    <button type="button" class="remove-image">×</button>
+                `;
+
+                const removeBtn = imagePreview.querySelector('.remove-image');
+                removeBtn.addEventListener('click', () => {
+                    imagePreview.innerHTML = '';
+                    groupImage.value = '';
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Debounce function to limit API calls
+    function debounce(func, wait) {
+        let timeout;
+        return function() {
+            const context = this;
+            const args = arguments;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                func.apply(context, args);
+            }, wait);
+        };
+    }
+</script>
+{% endblock %}

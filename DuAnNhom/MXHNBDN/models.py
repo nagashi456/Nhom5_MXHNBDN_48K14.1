@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import ManyToManyField
 
 baiUser = get_user_model()
 
@@ -76,10 +77,10 @@ class LuotCamXuc(models.Model):
 
 
 class CuocTroChuyen(models.Model):
-    Loai = models.CharField(max_length=50)
+    LoaiRiengTu = models.BooleanField(default=False)
     TenNhom = models.CharField(max_length=255, blank=True, null=True)
-    ThanhVien = models.TextField(blank=True, null=True)
-    HinhAnh = models.TextField(blank=True, null=True)
+    HinhAnh = models.ImageField(upload_to='hinhanhavanhom/')
+    ThanhVien = models.ManyToManyField(User,related_name='Cuoc_tro_chuyen')
 
     def __str__(self):
         return self.TenNhom if self.TenNhom else f'Cuộc trò chuyện {self.id}'
