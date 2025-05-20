@@ -1,0 +1,488 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="chat-container">
+    <div class="chat-sidebar">
+        <div class="chat-header">
+            <h1>Tin nhắn</h1>
+        </div>
+        <div class="chat-filters">
+            <button class="filter-btn active">Tất cả</button>
+            <button class="filter-btn">Cá nhân</button>
+            <button class="filter-btn">Nhóm</button>
+            <button class="create-group-btn" id="createGroupBtn">Tạo nhóm</button>
+        </div>
+        <div class="chat-list">
+            {% for conv in all_conversations %}
+                <a href="{% url 'chat:conversation' conv.id %}" class="chat-item {% if conv.id == conversation.id %}active{% endif %}">
+                    <div class="chat-avatar">
+                        {% if conv.Loai %}
+                            {% if conv.HinhAnh %}
+                                <img src="{{ conv.HinhAnh.url }}" alt="{{ conv.TenNhom }}">
+                            {% else %}
+                                <div class="group-avatar">{{ conv.TenNhom|slice:":1" }}</div>
+                            {% endif %}
+                        {% else %}
+                            {% for member in conv.thanhviencuoctrochuyen_set.all %}
+                                {% if member.MaNguoiDung.id != current_user.id %}
+                                    {% if member.MaNguoiDung.Avatar %}
+                                        <img src="{{ member.MaNguoiDung.Avatar.url }}" alt="{{ member.MaNguoiDung.HoTen }}">
+                                    {% else %}
+                                        <div class="user-avatar">{{ member.MaNguoiDung.HoTen|slice:":1" }}</div>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="chat-info">
+                        <div class="chat-name">
+                            {% if conv.Loai %}
+                                {{ conv.TenNhom }}
+                            {% else %}
+                                {% for member in conv.thanhviencuoctrochuyen_set.all %}
+                                    {% if member.MaNguoiDung.id != current_user.id %}
+                                        {{ member.MaNguoiDung.HoTen }}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="chat-preview">
+                            {% with last_message=conv.tinnhanchitiet_set.last %}
+                                {% if last_message %}
+                                    {% if last_message.NguoiDung.id == current_user.id %}
+                                        Bạn:
+                                    {% else %}
+                                        {{ last_message.NguoiDung.HoTen }}:
+                                    {% endif %}
+                                    {{ last_message.NoiDung|truncatechars:30 }}
+                                {% else %}
+                                    Chưa có tin nhắn
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+        <div class="new-chat">
+            <button id="newChatBtn" class="btn">
+                <i class="fas fa-plus"></i> Tin nhắn mới
+            </button>
+        </div>
+    </div>
+    <div class="chat-main">
+        <div class="chat-header">
+            <div class="chat-header-info">
+                {% if conversation.Loai %}
+                    <div class="chat-avatar">
+                        {% if conversation.HinhAnh %}
+                            <img src="{{ conversation.HinhAnh.url }}" alt="{{ conversation.TenNhom }}">
+                        {% else %}
+                            <div class="group-avatar">{{ conversation.TenNhom|slice:":1" }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="chat-name">{{ conversation.TenNhom }}</div>
+                {% else %}
+                    {% for member in members %}
+                        {% if member.MaNguoiDung.id != current_user.id %}
+                            <div class="chat-avatar">
+                                {% if member.MaNguoiDung.Avatar %}
+                                    <img src="{{ member.MaNguoiDung.Avatar.url }}" alt="{{ member.MaNguoiDung.HoTen }}">
+                                {% else %}
+                                    <div class="user-avatar">{{ member.MaNguoiDung.HoTen|slice:":1" }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="chat-name">{{ member.MaNguoiDung.HoTen }}</div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            {% for message in messages %}
+                <div class="message {% if message.NguoiDung.id == current_user.id %}message-own{% endif %}">
+                    <div class="message-avatar">
+                        {% if message.NguoiDung.Avatar %}
+                            <img src="{{ message.NguoiDung.Avatar.url }}" alt="{{ message.NguoiDung.HoTen }}">
+                        {% else %}
+                            <div class="avatar-placeholder">{{ message.NguoiDung.HoTen|slice:":1" }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-sender">{{ message.NguoiDung.HoTen }}</span>
+                            <span class="message-time">{{ message.NgayTao|date:"H:i" }}</span>
+                        </div>
+                        <div class="message-text">{{ message.NoiDung }}</div>
+                        {% if message.HinhAnh %}
+                            <div class="message-image">
+                                <img src="{{ message.HinhAnh.url }}" alt="Hình ảnh">
+                            </div>
+                        {% endif %}
+                        {% if message.TepDinhKem %}
+                            <div class="message-attachment">
+                                <a href="{{ message.TepDinhKem.url }}" target="_blank" download>
+                                    <i class="fas fa-file"></i> {{ message.TepDinhKem.name }}
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="chat-input">
+            <form id="chatForm" class="chat-form">
+                <div class="input-container">
+                    <input type="text" id="messageInput" placeholder="Aa" autocomplete="off">
+                    <div class="input-actions">
+                        <button type="button" id="emojiBtn" class="action-btn">
+                            <i class="far fa-smile"></i>
+                        </button>
+                        <label for="imageUpload" class="action-btn">
+                            <i class="far fa-image"></i>
+                            <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+                        </label>
+                        <label for="fileUpload" class="action-btn">
+                            <i class="fas fa-paperclip"></i>
+                            <input type="file" id="fileUpload" style="display: none;">
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="send-btn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for creating new chat -->
+<div id="newChatModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Tạo tin nhắn mới</h2>
+        <div class="search-container">
+            <input type="text" id="userSearch" placeholder="Tìm kiếm người dùng...">
+            <div id="searchResults" class="search-results"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // WebSocket setup
+    const roomName = "{{ conversation.id }}";
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat/' + roomName + '/'
+    );
+
+    const messageInput = document.getElementById('messageInput');
+    const chatForm = document.getElementById('chatForm');
+    const chatMessages = document.getElementById('chatMessages');
+    const imageUpload = document.getElementById('imageUpload');
+    const fileUpload = document.getElementById('fileUpload');
+
+    let currentAttachment = null;
+    let currentImage = null;
+
+    // WebSocket message handler
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        addMessage(data);
+        scrollToBottom();
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    // Form submission
+    chatForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const message = messageInput.value.trim();
+        if (message === '' && !currentAttachment && !currentImage) {
+            return;
+        }
+
+        chatSocket.send(JSON.stringify({
+            'type': 'message',
+            'message': message,
+            'attachment': currentAttachment,
+            'image': currentImage
+        }));
+
+        messageInput.value = '';
+        currentAttachment = null;
+        currentImage = null;
+
+        // Reset file input displays
+        const filePreview = document.querySelector('.file-preview');
+        if (filePreview) {
+            filePreview.remove();
+        }
+
+        const imagePreview = document.querySelector('.image-preview');
+        if (imagePreview) {
+            imagePreview.remove();
+        }
+    });
+
+    // File upload handler
+    fileUpload.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+        fetch('{% url "chat:upload_attachment" %}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                currentAttachment = data.file_url;
+
+                // Show file preview
+                const filePreview = document.createElement('div');
+                filePreview.className = 'file-preview';
+                filePreview.innerHTML = `
+                    <div class="file-info">
+                        <i class="fas fa-file"></i>
+                        <span>${file.name}</span>
+                    </div>
+                    <button type="button" class="remove-file">×</button>
+                `;
+
+                const inputContainer = document.querySelector('.input-container');
+                inputContainer.appendChild(filePreview);
+
+                // Add remove button functionality
+                const removeBtn = filePreview.querySelector('.remove-file');
+                removeBtn.addEventListener('click', function() {
+                    filePreview.remove();
+                    currentAttachment = null;
+                    fileUpload.value = '';
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error uploading file:', error);
+        });
+    });
+
+    // Image upload handler
+    imageUpload.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+        fetch('{% url "chat:upload_attachment" %}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                currentImage = data.file_url;
+
+                // Show image preview
+                const imagePreview = document.createElement('div');
+                imagePreview.className = 'image-preview';
+
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-image';
+                removeBtn.textContent = '×';
+
+                imagePreview.appendChild(img);
+                imagePreview.appendChild(removeBtn);
+
+                const inputContainer = document.querySelector('.input-container');
+                inputContainer.appendChild(imagePreview);
+
+                // Add remove button functionality
+                removeBtn.addEventListener('click', function() {
+                    imagePreview.remove();
+                    currentImage = null;
+                    imageUpload.value = '';
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error uploading image:', error);
+        });
+    });
+
+    // Function to add a message to the chat
+    function addMessage(data) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${data.user_id == {{ current_user.id }} ? 'message-own' : ''}`;
+
+        let avatarHtml = '';
+        if (data.avatar) {
+            avatarHtml = `<img src="${data.avatar}" alt="${data.username}">`;
+        } else {
+            avatarHtml = `<div class="avatar-placeholder">${data.username.charAt(0)}</div>`;
+        }
+
+        let messageContent = `
+            <div class="message-avatar">
+                ${avatarHtml}
+            </div>
+            <div class="message-content">
+                <div class="message-header">
+                    <span class="message-sender">${data.username}</span>
+                    <span class="message-time">${formatTime(data.timestamp)}</span>
+                </div>
+                <div class="message-text">${data.message}</div>
+        `;
+
+        if (data.image) {
+            messageContent += `
+                <div class="message-image">
+                    <img src="${data.image}" alt="Hình ảnh">
+                </div>
+            `;
+        }
+
+        if (data.attachment) {
+            const fileName = data.attachment.split('/').pop();
+            messageContent += `
+                <div class="message-attachment">
+                    <a href="${data.attachment}" target="_blank" download>
+                        <i class="fas fa-file"></i> ${fileName}
+                    </a>
+                </div>
+            `;
+        }
+
+        messageContent += `</div>`;
+        messageDiv.innerHTML = messageContent;
+
+        chatMessages.appendChild(messageDiv);
+    }
+
+    // Function to format timestamp
+    function formatTime(timestamp) {
+        const date = new Date(timestamp);
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // Function to scroll to bottom of chat
+    function scrollToBottom() {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Scroll to bottom on page load
+    scrollToBottom();
+
+    // Modal functionality
+    const newChatBtn = document.getElementById('newChatBtn');
+    const modal = document.getElementById('newChatModal');
+    const closeBtn = document.querySelector('.close');
+    const userSearch = document.getElementById('userSearch');
+    const searchResults = document.getElementById('searchResults');
+    const createGroupBtn = document.getElementById('createGroupBtn');
+
+    // Open modal
+    function openModal() {
+        modal.style.display = 'block';
+    }
+
+    // Close modal
+    function closeModal() {
+        modal.style.display = 'none';
+    }
+
+    // Event listeners
+    newChatBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+    createGroupBtn.addEventListener('click', () => {
+        window.location.href = "{% url 'chat:create_group_chat' %}";
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Search functionality
+    userSearch.addEventListener('input', debounce(function() {
+        const query = this.value.trim();
+        if (query.length < 2) {
+            searchResults.innerHTML = '';
+            return;
+        }
+
+        fetch(`{% url 'chat:search_users' %}?q=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                searchResults.innerHTML = '';
+                data.results.forEach(user => {
+                    const userElement = document.createElement('div');
+                    userElement.className = 'search-result-item';
+                    userElement.innerHTML = `
+                        <div class="user-avatar">
+                            ${user.avatar ? `<img src="${user.avatar}" alt="${user.name}">` : `<div class="avatar-placeholder">${user.name.charAt(0)}</div>`}
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">${user.name}</div>
+                            <div class="user-email">${user.email}</div>
+                        </div>
+                    `;
+                    userElement.addEventListener('click', () => {
+                        // Create a form to submit
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = "{% url 'chat:create_private_chat' %}";
+
+                        // Add CSRF token
+                        const csrfToken = document.createElement('input');
+                        csrfToken.type = 'hidden';
+                        csrfToken.name = 'csrfmiddlewaretoken';
+                        csrfToken.value = '{{ csrf_token }}';
+                        form.appendChild(csrfToken);
+
+                        // Add user ID
+                        const userIdInput = document.createElement('input');
+                        userIdInput.type = 'hidden';
+                        userIdInput.name = 'user_id';
+                        userIdInput.value = user.id;
+                        form.appendChild(userIdInput);
+
+                        // Submit the form
+                        document.body.appendChild(form);
+                        form.submit();
+                    });
+                    searchResults.appendChild(userElement);
+                });
+            })
+            .catch(error => {
+                console.error('Error searching users:', error);
+            });
+    }, 300));
+
+    // Debounce function to limit API calls
+    function debounce(func, wait) {
+        let timeout;
+        return function() {
+            const context = this;
+            const args = arguments;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                func.apply(context, args);
+            }, wait);
+        };
+    }
+</script>
+{% endblock %}

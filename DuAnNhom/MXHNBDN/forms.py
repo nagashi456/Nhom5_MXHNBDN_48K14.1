@@ -1,22 +1,43 @@
-from django.contrib.auth.forms import UserCreationForm
-from .models import NguoiDung
-from django import forms
-from django.forms import inlineformset_factory, BaseInlineFormSet
+from django.utils import timezone
+from .models import PhongBan
+from django.core.exceptions import ValidationError
+from django.forms import inlineformset_factory
 from .models import BinhChon, LuaChonBinhChon
 from django.contrib.auth import authenticate, get_user_model
-class BaseLuaChonFormSet(BaseInlineFormSet):
-    def clean(self):
-        super().clean()
-        count = 0
-        for form in self.forms:
-            if form.cleaned_data.get('noi_dung') and not form.cleaned_data.get('DELETE', False):
-                count += 1
 
-        if count < 2:
-            raise forms.ValidationError("Bạn phải nhập ít nhất 2 lựa chọn.")
+# forms.py
 
-User = get_user_model()
+from django import forms
+from django.contrib.auth.models import User
+from .models import NguoiDung
 
+class UserRegistrationForm(forms.ModelForm):
+    password1 = forms.CharField(label='Mật khẩu', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Xác nhận mật khẩu', widget=forms.PasswordInput)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email']
+
+    def clean_password2(self):
+        pw1 = self.cleaned_data.get('password1')
+        pw2 = self.cleaned_data.get('password2')
+        if pw1 and pw2 and pw1 != pw2:
+            raise forms.ValidationError("Mật khẩu không khớp")
+        return pw2
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data['password1'])
+        if commit:
+            user.save()
+        return user
+
+class NguoiDungForm(forms.ModelForm):
+    class Meta:
+        model = NguoiDung
+        fields = ['HoTen', 'SoDienThoai', 'Email', 'MaPhong', 'Avatar', 'AnhBia']
+        # Hoặc các field mà bạn thực sự cần lưu trong NguoiDung
 
 class LoginForm(forms.Form):
     username_or_email = forms.CharField(
@@ -51,85 +72,176 @@ class LoginForm(forms.Form):
             cleaned_data['user'] = user
 
         return cleaned_data
-# class NguoiDungForm(UserCreationForm):
-#     class Meta:
-#         model = NguoiDung
-#         fields = ['username', 'email', 'so_dien_thoai', 'avatar', 'password1', 'password2', 'vai_tro']
-#         widgets = {
-#             'vai_tro': forms.Select(attrs={'class': 'form-input'}),
-#         }
-#
-#     def __init__(self, *args, **kwargs):
-#         super(NguoiDungForm, self).__init__(*args, **kwargs)
-#         for field_name, field in self.fields.items():
-#             field.widget.attrs['class'] = 'form-input'
-#             field.widget.attrs['placeholder'] = 'Điền ở đây'
-
 from django import forms
-from django.forms import inlineformset_factory
-from .models import BinhChon, LuaChonBinhChon
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import PasswordChangeForm
+from .models import NguoiDung
+
+class UserProfileForm(forms.ModelForm):
+    """Form cho thông tin người dùng cơ bản"""
+    class Meta:
+        model = NguoiDung
+        fields = ['HoTen', 'Email', 'SoDienThoai', 'Avatar', 'AnhBia']
+        widgets = {
+            'HoTen': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Họ và tên'}),
+            'Email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
+            'SoDienThoai': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Số điện thoại'}),
+            'Avatar': forms.FileInput(attrs={'class': 'form-control-file', 'style': 'display: none;', 'id': 'avatar-upload'}),
+            'AnhBia': forms.FileInput(attrs={'class': 'form-control-file', 'style': 'display: none;', 'id': 'cover-upload'}),
+        }
+        labels = {
+            'HoTen': 'Họ tên',
+            'Email': 'Email',
+            'SoDienThoai': 'Số điện thoại',
+            'Avatar': 'Ảnh đại diện',
+            'AnhBia': 'Ảnh bìa',
+        }
+
+class UsernameChangeForm(forms.ModelForm):
+    """Form cho việc thay đổi tên đăng nhập"""
+    class Meta:
+        model = User
+        fields = ['username']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Tên đăng nhập mới'})
+        }
+        labels = {
+            'username': 'Tên đăng nhập',
+        }
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    """Form tùy chỉnh cho việc thay đổi mật khẩu"""
+    old_password = forms.CharField(
+        label="Mật khẩu cũ",
+        strip=False,
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Nhập mật khẩu cũ'}),
+    )
+    new_password1 = forms.CharField(
+        label="Mật khẩu mới",
+        strip=False,
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Nhập mật khẩu mới'}),
+    )
+    new_password2 = forms.CharField(
+        label="Xác nhận mật khẩu mới",
+        strip=False,
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Xác nhận mật khẩu mới'}),
+    )
+
+
+
+
+
+class UserProfileForm(forms.ModelForm):
+    """Form cho thông tin người dùng cơ bản"""
+    class Meta:
+        model = NguoiDung
+        fields = ['HoTen', 'Email', 'SoDienThoai', 'Avatar', 'AnhBia']
+        widgets = {
+            'HoTen': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Họ và tên'}),
+            'Email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
+            'SoDienThoai': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Số điện thoại'}),
+            'Avatar': forms.FileInput(attrs={'class': 'form-control-file', 'style': 'display: none;', 'id': 'avatar-upload'}),
+            'AnhBia': forms.FileInput(attrs={'class': 'form-control-file', 'style': 'display: none;', 'id': 'cover-upload'}),
+        }
+        labels = {
+            'HoTen': 'Họ tên',
+            'Email': 'Email',
+            'SoDienThoai': 'Số điện thoại',
+            'Avatar': 'Ảnh đại diện',
+            'AnhBia': 'Ảnh bìa',
+        }
+
+class UsernameChangeForm(forms.ModelForm):
+    """Form cho việc thay đổi tên đăng nhập"""
+    class Meta:
+        model = User
+        fields = ['username']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Tên đăng nhập mới'})
+        }
+        labels = {
+            'username': 'Tên đăng nhập',
+        }
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    """Form tùy chỉnh cho việc thay đổi mật khẩu"""
+    old_password = forms.CharField(
+        label="Mật khẩu cũ",
+        strip=False,
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Nhập mật khẩu cũ'}),
+    )
+    new_password1 = forms.CharField(
+        label="Mật khẩu mới",
+        strip=False,
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Nhập mật khẩu mới'}),
+    )
+    new_password2 = forms.CharField(
+        label="Xác nhận mật khẩu mới",
+        strip=False,
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Xác nhận mật khẩu mới'}),
+    )
+
+
+
+class LuaChonBinhChonForm(forms.ModelForm):
+    class Meta:
+        model = LuaChonBinhChon
+        fields = ['noi_dung']
+        widgets = {
+            'noi_dung': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Nhập lựa chọn'
+            })
+        }
+
 
 class BinhChonForm(forms.ModelForm):
+    phong_ban = forms.ModelMultipleChoiceField(
+        queryset=PhongBan.objects.all(),
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'phong-ban-checkbox'}),
+        required=True,
+        label="Phòng ban"
+    )
+
     class Meta:
         model = BinhChon
         fields = ['TenTieuDe', 'ThoiGianKetThucBC', 'MoTa']
         widgets = {
             'TenTieuDe': forms.TextInput(attrs={
-                'class': 'form-input',
-                'placeholder': 'Nhập tiêu đề bình chọn',
-                'required': True
+                'class': 'form-control',
+                'placeholder': 'Nhập tiêu đề bình chọn'
             }),
             'ThoiGianKetThucBC': forms.DateTimeInput(attrs={
-                'class': 'form-input',
-                'placeholder': 'Nhập thời gian kết thúc bình chọn',
-                'type': 'text',  # sẽ chuyển sang datetime-local khi focus
-                'required': True
+                'class': 'form-control',
+                'type': 'datetime-local',
+                'placeholder': 'Nhập thời gian kết thúc bình chọn'
             }),
             'MoTa': forms.Textarea(attrs={
-                'class': 'form-textarea',
-                'placeholder': 'Nhập mô tả',
-                'rows': 5
+                'class': 'form-control',
+                'placeholder': 'Nhập mô tả (tùy chọn)',
+                'rows': 4
             }),
         }
+        labels = {
+            'TenTieuDe': 'Tiêu đề',
+            'ThoiGianKetThucBC': 'Thời gian kết thúc',
+            'MoTa': 'Mô tả',
+        }
 
-# Tạo inline formset để quản lý các lựa chọn của một BinhChon
-LuaChonFormSet = inlineformset_factory(
+    def clean_ThoiGianKetThucBC(self):
+        end_date = self.cleaned_data.get('ThoiGianKetThucBC')
+        if end_date and end_date < timezone.now():
+            raise ValidationError("Thời gian kết thúc không được nhỏ hơn thời gian hiện tại.")
+        return end_date
+
+
+# Tạo formset cho các lựa chọn bình chọn
+LuaChonBinhChonFormSet = inlineformset_factory(
     BinhChon,
     LuaChonBinhChon,
-    fields=['noi_dung'],
-    extra=0,
-    can_delete=True,
-    formset=BaseLuaChonFormSet,
-    widgets={
-        'noi_dung': forms.TextInput(attrs={
-            'class': 'form-input',
-            'placeholder': 'Nhập lựa chọn',
-            'required': True
-        }),
-    }
+    form=LuaChonBinhChonForm,
+    extra=4,  # Số lượng form trống ban đầu
+    min_num=2,  # Số lượng form tối thiểu
+    validate_min=True,  # Bắt buộc phải có ít nhất min_num form
+    can_delete=True
 )
-
-# from django import forms
-# from .models import BaiViet
-#
-# class BaiVietForm(forms.ModelForm):
-#     class Meta:
-#         model = BaiViet
-#         fields = ['noi_dung', 'hinh_anh', 'tep_dinh_kem']
-#         widgets = {
-#             'noi_dung': forms.Textarea(attrs={
-#                 'placeholder': 'Bạn đang nghĩ gì?',
-#                 'class': 'post-textarea',
-#                 'rows': 10
-#             }),
-#             'hinh_anh': forms.FileInput(attrs={
-#                 'class': 'hidden-input',
-#                 'id': 'hinh_anh_input',
-#                 'accept': 'image/*'
-#             }),
-#             'tep_dinh_kem': forms.FileInput(attrs={
-#                 'class': 'hidden-input',
-#                 'id': 'tep_dinh_kem_input',
-#                 'accept': '.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip,.rar'
-#             }),
-#         }

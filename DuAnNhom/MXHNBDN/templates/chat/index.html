@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="chat-container">
+    <div class="chat-sidebar">
+        <div class="chat-header">
+            <h1>Tin nhắn</h1>
+        </div>
+        <div class="chat-filters">
+            <button class="filter-btn active">Tất cả</button>
+            <button class="filter-btn">Cá nhân</button>
+            <button class="filter-btn">Nhóm</button>
+            <button class="create-group-btn" id="createGroupBtn">Tạo nhóm</button>
+        </div>
+        <div class="chat-list">
+            {% for item in conversations %}
+                <a href="{% url 'chat:conversation' item.conversation.id %}" class="chat-item">
+                    <div class="chat-avatar">
+                        {% if item.conversation.Loai %}
+                            {% if item.conversation.HinhAnh %}
+                                <img src="{{ item.conversation.HinhAnh.url }}" alt="{{ item.conversation.TenNhom }}">
+                            {% else %}
+                                <div class="group-avatar">{{ item.conversation.TenNhom|slice:":1" }}</div>
+                            {% endif %}
+                        {% else %}
+                            {% for member in item.conversation.thanhviencuoctrochuyen_set.all %}
+                                {% if member.MaNguoiDung.id != current_user.id %}
+                                    {% if member.MaNguoiDung.Avatar %}
+                                        <img src="{{ member.MaNguoiDung.Avatar.url }}" alt="{{ member.MaNguoiDung.HoTen }}">
+                                    {% else %}
+                                        <div class="user-avatar">{{ member.MaNguoiDung.HoTen|slice:":1" }}</div>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="chat-info">
+                        <div class="chat-name">
+                            {% if item.conversation.Loai %}
+                                {{ item.conversation.TenNhom }}
+                            {% else %}
+                                {% for member in item.conversation.thanhviencuoctrochuyen_set.all %}
+                                    {% if member.MaNguoiDung.id != current_user.id %}
+                                        {{ member.MaNguoiDung.HoTen }}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="chat-preview">
+                            {% if item.last_message %}
+                                {% if item.last_message.NguoiDung.id == current_user.id %}
+                                    Bạn:
+                                {% else %}
+                                    {{ item.last_message.NguoiDung.HoTen }}:
+                                {% endif %}
+                                {{ item.last_message.NoiDung|truncatechars:30 }}
+                            {% else %}
+                                Chưa có tin nhắn
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+            {% empty %}
+                <div class="no-conversations">
+                    <p>Bạn chưa có cuộc trò chuyện nào</p>
+                    <button id="startChatBtn" class="btn">Bắt đầu trò chuyện</button>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="new-chat">
+            <button id="newChatBtn" class="btn">
+                <i class="fas fa-plus"></i> Tin nhắn mới
+            </button>
+        </div>
+    </div>
+    <div class="chat-welcome">
+        <div class="welcome-content">
+            <h2>Chào mừng đến với tin nhắn</h2>
+            <p>Chọn một cuộc trò chuyện hoặc bắt đầu một cuộc trò chuyện mới</p>
+            <button id="welcomeNewChatBtn" class="btn">Tin nhắn mới</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for creating new chat -->
+<div id="newChatModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Tạo tin nhắn mới</h2>
+        <div class="search-container">
+            <input type="text" id="userSearch" placeholder="Tìm kiếm người dùng...">
+            <div id="searchResults" class="search-results"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Modal functionality
+    const newChatBtn = document.getElementById('newChatBtn');
+    const welcomeNewChatBtn = document.getElementById('welcomeNewChatBtn');
+    const startChatBtn = document.getElementById('startChatBtn');
+    const createGroupBtn = document.getElementById('createGroupBtn');
+    const modal = document.getElementById('newChatModal');
+    const closeBtn = document.querySelector('.close');
+    const userSearch = document.getElementById('userSearch');
+    const searchResults = document.getElementById('searchResults');
+
+    // Open modal
+    function openModal() {
+        modal.style.display = 'block';
+    }
+
+    // Close modal
+    function closeModal() {
+        modal.style.display = 'none';
+    }
+
+    // Event listeners
+    if (newChatBtn) newChatBtn.addEventListener('click', openModal);
+    if (welcomeNewChatBtn) welcomeNewChatBtn.addEventListener('click', openModal);
+    if (startChatBtn) startChatBtn.addEventListener('click', openModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (createGroupBtn) createGroupBtn.addEventListener('click', () => {
+        window.location.href = "{% url 'chat:create_group_chat' %}";
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Search functionality
+    if (userSearch) {
+        userSearch.addEventListener('input', debounce(function() {
+            const query = this.value.trim();
+            if (query.length < 2) {
+                searchResults.innerHTML = '';
+                return;
+            }
+
+            fetch(`{% url 'chat:search_users' %}?q=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    searchResults.innerHTML = '';
+                    data.results.forEach(user => {
+                        const userElement = document.createElement('div');
+                        userElement.className = 'search-result-item';
+                        userElement.innerHTML = `
+                            <div class="user-avatar">
+                                ${user.avatar ? `<img src="${user.avatar}" alt="${user.name}">` : `<div class="avatar-placeholder">${user.name.charAt(0)}</div>`}
+                            </div>
+                            <div class="user-info">
+                                <div class="user-name">${user.name}</div>
+                                <div class="user-email">${user.email}</div>
+                            </div>
+                        `;
+                        userElement.addEventListener('click', () => {
+                            // Create a form to submit
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = "{% url 'chat:create_private_chat' %}";
+
+                            // Add CSRF token
+                            const csrfToken = document.createElement('input');
+                            csrfToken.type = 'hidden';
+                            csrfToken.name = 'csrfmiddlewaretoken';
+                            csrfToken.value = '{{ csrf_token }}';
+                            form.appendChild(csrfToken);
+
+                            // Add user ID
+                            const userIdInput = document.createElement('input');
+                            userIdInput.type = 'hidden';
+                            userIdInput.name = 'user_id';
+                            userIdInput.value = user.id;
+                            form.appendChild(userIdInput);
+
+                            // Submit the form
+                            document.body.appendChild(form);
+                            form.submit();
+                        });
+                        searchResults.appendChild(userElement);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error searching users:', error);
+                });
+        }, 300));
+    }
+
+    // Debounce function to limit API calls
+    function debounce(func, wait) {
+        let timeout;
+        return function() {
+            const context = this;
+            const args = arguments;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                func.apply(context, args);
+            }, wait);
+        };
+    }
+</script>
+{% endblock %}

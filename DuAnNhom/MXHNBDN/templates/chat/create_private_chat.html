@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="create-chat-container">
+        <h1>Tạo tin nhắn mới</h1>
+        <div class="search-container">
+            <input type="text" id="userSearch" placeholder="Tìm kiếm người dùng...">
+            <div id="searchResults" class="search-results"></div>
+        </div>
+        <div class="user-list">
+            <h2>Tất cả người dùng</h2>
+            <div class="user-grid">
+                {% for user in users %}
+                    <div class="user-card" data-id="{{ user.id }}">
+                        <div class="user-avatar">
+                            {% if user.Avatar %}
+                                <img src="{{ user.Avatar.url }}" alt="{{ user.HoTen }}">
+                            {% else %}
+                                <div class="avatar-placeholder">{{ user.HoTen|slice:":1" }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">{{ user.HoTen }}</div>
+                            <div class="user-department">{{ user.MaPhong.TenPhong }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const userSearch = document.getElementById('userSearch');
+    const searchResults = document.getElementById('searchResults');
+    const userCards = document.querySelectorAll('.user-card');
+
+    // Search functionality
+    userSearch.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+
+        if (query.length === 0) {
+            searchResults.innerHTML = '';
+            return;
+        }
+
+        // Filter users based on search query
+        const filteredUsers = Array.from(userCards).filter(card => {
+            const name = card.querySelector('.user-name').textContent.toLowerCase();
+            const department = card.querySelector('.user-department').textContent.toLowerCase();
+            return name.includes(query) || department.includes(query);
+        });
+
+        // Display search results
+        searchResults.innerHTML = '';
+        if (filteredUsers.length === 0) {
+            searchResults.innerHTML = '<div class="no-results">Không tìm thấy người dùng</div>';
+        } else {
+            filteredUsers.forEach(user => {
+                const userClone = user.cloneNode(true);
+                searchResults.appendChild(userClone);
+
+                userClone.addEventListener('click', function() {
+                    createPrivateChat(this.dataset.id);
+                });
+            });
+        }
+    });
+
+    // Add click event to user cards
+    userCards.forEach(card => {
+        card.addEventListener('click', function() {
+            createPrivateChat(this.dataset.id);
+        });
+    });
+
+    // Function to create private chat
+    function createPrivateChat(userId) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = "{% url 'chat:create_private_chat' %}";
+
+        // Add CSRF token
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = 'csrfmiddlewaretoken';
+        csrfToken.value = '{{ csrf_token }}';
+        form.appendChild(csrfToken);
+
+        // Add user ID
+        const userIdInput = document.createElement('input');
+        userIdInput.type = 'hidden';
+        userIdInput.name = 'user_id';
+        userIdInput.value = userId;
+        form.appendChild(userIdInput);
+
+        // Submit the form
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
+{% endblock %}

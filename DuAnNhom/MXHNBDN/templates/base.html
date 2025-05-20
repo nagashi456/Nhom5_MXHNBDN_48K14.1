@@ -9,48 +9,85 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
+        :root {
+            --primary: #5858fa;
+            --primary-dark: #4646e8;
+            --secondary: #f1f1ff;
+            --dark-text: #050041;
+            --light-text: #686868;
+            --border-color: #e4e4e4;
+            --white: #ffffff;
+            --sidebar-width: 220px;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Inter', Arial, sans-serif;
-            color: #000000;
-            background-color: #ffffff;
+            color: var(--dark-text);
+            background-color: #f9f9f9;
+            min-height: 100vh;
         }
 
-        .app-container { display: flex; flex-direction: column; min-height: 100vh; }
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100%; /* Đảm bảo container chiếm toàn bộ chiều rộng */
+        }
 
         .header {
-            background-color: #5858fa;
-            height: 48px;
+            background-color: var(--primary);
+            height: 60px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 16px;
+            padding: 0 20px;
             color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            width: 100%; /* Đảm bảo header luôn full width */
         }
 
-        .logo-icon { color: white; }
+        .logo-icon {
+            color: white;
+            height: 40px;
+        }
 
-        .main-container { display: flex; flex: 1; }
+        .main-container {
+            display: flex;
+            flex: 1;
+            width: 100%; /* Đảm bảo container chiếm toàn bộ chiều rộng */
+        }
 
         .sidebar {
-            width: 200px;
-            border-right: 1px solid #e4e4e4;
+            width: var(--sidebar-width);
+            background-color: white;
+            border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
+            position: sticky;
+            top: 60px;
+            height: calc(100vh - 60px);
+            overflow-y: auto;
         }
 
         .profile {
             display: flex;
             justify-content: center;
-            padding: 16px 0;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .profile-image {
-            width: 80px;
-            height: 80px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             overflow: hidden;
+            border: 3px solid var(--secondary);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .profile-image img {
@@ -59,112 +96,286 @@
             object-fit: cover;
         }
 
-        .nav-menu { flex: 1; }
+        .nav-menu {
+            flex: 1;
+            padding: 10px 0;
+        }
 
-        .nav-menu ul { list-style: none; }
+        .nav-menu ul {
+            list-style: none;
+        }
 
         .nav-item {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 10px 16px;
+            padding: 12px 16px;
             text-decoration: none;
-            color: #000000;
+            color: var(--light-text);
             font-size: 14px;
+            border-radius: 8px;
+            margin: 4px 8px;
+            transition: all 0.2s ease;
         }
 
-        .nav-item:hover { background-color: #f1f1f1; }
+        .nav-item:hover {
+            background-color: var(--secondary);
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background-color: var(--secondary);
+            color: var(--primary);
+            font-weight: 500;
+        }
 
         .nav-icon {
-            color: #a8a8a8;
-            width: 18px;
-            height: 18px;
+            color: inherit;
+            width: 20px;
+            height: 20px;
         }
 
         .main-content {
             flex: 1;
             display: flex;
             flex-direction: column;
+            min-height: calc(100vh - 60px);
         }
 
         .search-container {
-            padding: 16px;
+            padding: 16px 20px;
             display: flex;
             justify-content: flex-end;
+            background-color: white;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .search-box { width: 180px; }
+        .search-box {
+            width: 250px;
+            position: relative;
+        }
 
         .search-input {
             width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #e4e4e4;
-            border-radius: 4px;
+            padding: 10px 15px 10px 40px;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
             font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(88, 88, 250, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--light-text);
         }
 
         .content-area {
             flex: 1;
-            display: flex;
-            justify-content: center;
+            padding: 20px;
+            background-color: #f9f9f9;
         }
 
         .footer {
-            padding: 16px;
-            display: flex;
-            justify-content: center;
+            padding: 20px;
+            background-color: white;
+            border-top: 1px solid var(--border-color);
         }
 
-        .footer-content { text-align: center; }
+        .footer-content {
+            text-align: center;
+        }
 
         .footer-logo {
             display: flex;
             justify-content: center;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .footer-text {
-            font-size: 12px;
-            color: #a8a8a8;
+            font-size: 13px;
+            color: var(--light-text);
         }
 
         .username-display {
             font-weight: 500;
             margin-right: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                transition: left 0.3s ease;
+                z-index: 99;
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .content-area {
+                padding: 15px;
+            }
+        }
+
+        /* For pages without sidebar */
+        .no-sidebar .main-container {
+            justify-content: flex-start; /* Thay đổi từ center thành flex-start */
+        }
+
+        .no-sidebar .main-content {
+            width: 100%;
+        }
+
+        /* Chỉ căn giữa phần nội dung, không ảnh hưởng đến header */
+        .no-sidebar .content-area {
+            max-width: 800px; /* Giới hạn chiều rộng của nội dung */
+            margin: 0 auto; /* Căn giữa nội dung */
+            width: 100%;
+        }
+
+        /* Messages */
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message.warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+
+        .message.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        {% block extra_css %}{% endblock %}
     </style>
+    {% block head_extra %}{% endblock %}
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
 <div class="app-container">
 
     <!-- Header -->
     <header class="header">
         <div class="logo">
-            <img src="{% static 'img/logo_hd.png' %}" alt="logo" width="40" height="40" class="logo-icon">
+            <img src="{% static 'img/logo_hd.png' %}" alt="logo" class="logo-icon">
+        </div>
+
+        <div class="header-right">
+            {% if user.is_authenticated %}
+            <div class="username-display">
+                <div class="user-avatar">
+                  {% if nguoidung and nguoidung.Avatar %}
+                    <img src="{{ nguoidung.Avatar.url }}" alt="Avatar">
+                  {% else %}
+                    <i class="fa fa-user" style="font-size:32px; color:white;"></i>
+                  {% endif %}
+                </div>
+
+                <span>{{ user.username }}</span>
+            </div>
+            {% endif %}
         </div>
     </header>
 
     <div class="main-container">
-        {% if user.is_authenticated %}
+        {% if user.is_authenticated and not hide_sidebar %}
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="profile">
                 <div class="profile-image">
-                    <img src="{% static 'img/avatar_tm.jpg' %}" alt="Profile">
+                  {% if nguoidung and nguoidung.Avatar %}
+                    <img src="{{ nguoidung.Avatar.url }}" alt="Profile">
+                  {% else %}
+                    <i class="fa fa-user" style="font-size:100px; color:#ccc;"></i>
+                  {% endif %}
                 </div>
+
             </div>
 
             <nav class="nav-menu">
                 <ul>
-                    <li><a href="{% url 'trang_chu' %}" class="nav-item"><i data-lucide="home" class="nav-icon"></i><span>Trang chủ</span></a></li>
-                    <li><a href="#" class="nav-item"><i data-lucide="search" class="nav-icon"></i><span>Tìm kiếm</span></a></li>
-                    <li><a href="{% url 'nhantin' %}" class="nav-item"><i data-lucide="message-square" class="nav-icon"></i><span>Tin nhắn</span></a></li>
-                    <li><a href="http://127.0.0.1:8000/tao_bai_viet/" class="nav-item"><i data-lucide="file-text" class="nav-icon"></i><span>Tạo bài viết</span></a></li>
-                    <li><a href="#" class="nav-item"><i data-lucide="help-circle" class="nav-icon"></i><span>Hỏi đáp</span></a></li>
-                    <li><a href="{% url 'profile_detail' %}" class="nav-item"><i data-lucide="user" class="nav-icon"></i><span>Hồ sơ</span></a></li>
-                    <li><a href="{% url 'binhchon' %}" class="nav-item"><i data-lucide="bar-chart-2" class="nav-icon"></i><span>Tạo bình chọn</span></a></li>
-                    <li><a href="{% url 'tao_tai_khoan' %}" class="nav-item"><i data-lucide="user-plus" class="nav-icon"></i><span>Tạo tài khoản</span></a></li>
-                    <li><a href="{% url 'logout' %}" class="nav-item"><i data-lucide="log-out" class="nav-icon"></i><span>Đăng xuất</span></a></li>
+                    <li><a href="{% url 'trang_chu' %}" class="nav-item {% if request.resolver_match.url_name == 'trang_chu' %}active{% endif %}">
+                        <i data-lucide="home" class="nav-icon"></i><span>Trang chủ</span>
+                    </a></li>
+                    <li><a href="#" class="nav-item {% if request.resolver_match.url_name == 'tim_kiem' %}active{% endif %}">
+                        <i data-lucide="search" class="nav-icon"></i><span>Tìm kiếm</span>
+                    </a></li>
+                    <li><a href="{% url 'nhantin' %}" class="nav-item {% if request.resolver_match.url_name == 'nhantin' %}active{% endif %}">
+                        <i data-lucide="message-square" class="nav-icon"></i><span>Tin nhắn</span>
+                    </a></li>
+                    <li><a href="#" class="nav-item {% if request.resolver_match.url_name == 'tao_bai_viet' %}active{% endif %}">
+                        <i data-lucide="file-text" class="nav-icon"></i><span>Tạo bài viết</span>
+                    </a></li>
+                    <li><a href="#" class="nav-item {% if request.resolver_match.url_name == 'hoi_dap' %}active{% endif %}">
+                        <i data-lucide="help-circle" class="nav-icon"></i><span>Hỏi đáp</span>
+                    </a></li>
+                    <li><a href="{% url 'profile_detail' %}" class="nav-item {% if request.resolver_match.url_name == 'profile_detail' %}active{% endif %}">
+                        <i data-lucide="user" class="nav-icon"></i><span>Hồ sơ</span>
+                    </a></li>
+                    <li><a href="{% url 'tao_binh_chon' %}" class="nav-item {% if request.resolver_match.url_name == 'binhchon' %}active{% endif %}">
+                        <i data-lucide="bar-chart-2" class="nav-icon"></i><span>Tạo bình chọn</span>
+                    </a></li>
+                    <li><a href="{% url 'tao_tai_khoan' %}" class="nav-item {% if request.resolver_match.url_name == 'tao_tai_khoan' %}active{% endif %}">
+                        <i data-lucide="user-plus" class="nav-icon"></i><span>Tạo tài khoản</span>
+                    </a></li>
+                    <li><a href="{% url 'logout' %}" class="nav-item">
+                        <i data-lucide="log-out" class="nav-icon"></i><span>Đăng xuất</span>
+                    </a></li>
                 </ul>
             </nav>
         </aside>
@@ -172,9 +383,26 @@
 
         <!-- Main Content -->
         <main class="main-content">
+            {% if show_search %}
+            <div class="search-container">
+                <div class="search-box">
+                    <i data-lucide="search" class="search-icon" style="width: 16px; height: 16px;"></i>
+                    <input type="text" class="search-input" placeholder="Tìm kiếm...">
+                </div>
+            </div>
+            {% endif %}
+
             <div class="content-area">
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li class="message {{ message.tags }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
                 {% block content %}
-                    <h1>Welcome to Bookr!</h1>
+                    <h1>Chào mừng đến với mạng xã hội!</h1>
                 {% endblock %}
             </div>
 
@@ -193,6 +421,17 @@
 
 <script>
     lucide.createIcons();
+
+    // Mobile menu toggle
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', function() {
+                document.querySelector('.sidebar').classList.toggle('active');
+            });
+        }
+    });
 </script>
+{% block scripts %}{% endblock %}
 </body>
 </html>

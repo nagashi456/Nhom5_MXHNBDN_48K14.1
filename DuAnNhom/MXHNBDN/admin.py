@@ -39,10 +39,10 @@ class LuotCamXucAdmin(admin.ModelAdmin):
     list_display = ('id', 'MaNguoiDung', 'MaBaiViet', 'is_like', 'ThoiGian')
     list_filter = ('is_like',)
 
-@admin.register(models.CuocTroChuyen)
-class CuocTroChuyenAdmin(admin.ModelAdmin):
-    list_display = ('id', 'Loai', 'TenNhom')
-    search_fields = ('Loai', 'TenNhom')
+# @admin.register(models.CuocTroChuyen)
+# class CuocTroChuyenAdmin(admin.ModelAdmin):
+#     list_display = ('id', 'Loai', 'TenNhom')
+#     search_fields = ('Loai', 'TenNhom')
 
 @admin.register(models.ThanhVienCuocTroChuyen)
 class ThanhVienCuocTroChuyenAdmin(admin.ModelAdmin):

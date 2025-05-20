@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import ManyToManyField
 
 baiUser = get_user_model()
 
@@ -77,10 +78,10 @@ class LuotCamXuc(models.Model):
 
 
 class CuocTroChuyen(models.Model):
-    Loai = models.CharField(max_length=50)
+    LoaiRiengTu = models.BooleanField(default=False)
     TenNhom = models.CharField(max_length=255, blank=True, null=True)
-    ThanhVien = models.TextField(blank=True, null=True)
-    HinhAnh = models.TextField(blank=True, null=True)
+    HinhAnh = models.ImageField(upload_to='hinhanhavanhom/')
+    ThanhVien = models.ManyToManyField(User,related_name='Cuoc_tro_chuyen')
 
     def __str__(self):
         return self.TenNhom if self.TenNhom else f'Cuộc trò chuyện {self.id}'
@@ -150,7 +151,7 @@ class LuaChonBinhChon(models.Model):
     noi_dung = models.CharField(max_length=255)
 
     def __str__(self):
-        return f'{self.binh_chon.ten_tieu_de} - {self.noi_dung}'
+        return f'{self.binh_chon.TenTieuDe} - {self.noi_dung}'
 #Bình chọn người dung *
 class BinhChonNguoiDung(models.Model):
     nguoi_dung = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)
