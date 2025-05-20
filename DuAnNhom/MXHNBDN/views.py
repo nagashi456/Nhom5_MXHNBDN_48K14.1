@@ -576,32 +576,38 @@ def them_binh_luan(request, bai_viet_id):
 
     return redirect('trang_chu')
 
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 @login_required
 def xu_ly_cam_xuc(request):
     if request.method == 'POST':
         bai_viet_id = request.POST.get('bai_viet_id')
-        loai_cam_xuc = request.POST.get('loai_cam_xuc') == 'true'  # 'true' -> True, 'false' -> False
+        loai_cam_xuc = request.POST.get('loai_cam_xuc') == 'true'
 
         bai_viet = get_object_or_404(BaiViet, id=bai_viet_id)
         nguoi_dung = get_object_or_404(NguoiDung, user=request.user)
 
-        # Kiểm tra xem người dùng đã bày tỏ cảm xúc chưa
         try:
-            luot_cam_xuc = LuotCamXuc.objects.get(MaBaiViet=bai_viet, MaNguoiDung=nguoi_dung)
+            luot_cam_xuc = LuotCamXuc.objects.get(
+                MaBaiViet=bai_viet,
+                MaNguoiDung=nguoi_dung
+            )
 
-            # Nếu cùng loại cảm xúc, xóa cảm xúc
             if luot_cam_xuc.is_like == loai_cam_xuc:
-                luot_cam_xuc.delete()
-                action = 'removed'
+                # Đã bày tỏ cùng loại cảm xúc, không làm gì thêm
+                action = 'unchanged'
             else:
-                # Nếu khác loại cảm xúc, cập nhật
+                # Cập nhật sang loại cảm xúc mới
                 luot_cam_xuc.is_like = loai_cam_xuc
                 luot_cam_xuc.ThoiGian = timezone.now()
                 luot_cam_xuc.save()
                 action = 'changed'
+
         except LuotCamXuc.DoesNotExist:
-            # Nếu chưa có cảm xúc, tạo mới
+            # Chưa có cảm xúc trước đó → tạo mới
             LuotCamXuc.objects.create(
                 MaBaiViet=bai_viet,
                 MaNguoiDung=nguoi_dung,
@@ -611,8 +617,12 @@ def xu_ly_cam_xuc(request):
             action = 'added'
 
         # Đếm số lượt thích và không thích
-        so_luot_thich = LuotCamXuc.objects.filter(MaBaiViet=bai_viet, is_like=True).count()
-        so_luot_khong_thich = LuotCamXuc.objects.filter(MaBaiViet=bai_viet, is_like=False).count()
+        so_luot_thich = LuotCamXuc.objects.filter(
+            MaBaiViet=bai_viet, is_like=True
+        ).count()
+        so_luot_khong_thich = LuotCamXuc.objects.filter(
+            MaBaiViet=bai_viet, is_like=False
+        ).count()
 
         return JsonResponse({
             'success': True,
@@ -622,6 +632,7 @@ def xu_ly_cam_xuc(request):
         })
 
     return JsonResponse({'success': False})
+
 
 
 @login_required
