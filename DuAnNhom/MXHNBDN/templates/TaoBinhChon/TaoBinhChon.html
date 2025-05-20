@@ -3,311 +3,491 @@
 
 {% block title %}Tạo Bình Chọn{% endblock %}
 
-{% block content %}
+{% block extra_css %}
 <style>
-    /* Layout chính */
-    .main-wrapper {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    /* Tiêu đề trang */
-    .page-title {
-        font-size: 24px;
-        font-weight: bold;
-        color: #000;
-        margin-bottom: 24px;
-        text-align: center;
-        width: 100%;
-    }
-    .text-danger {
-    color: red;
-    font-size: 13px;
-    margin-top: 4px;
-}
-
-    /* Container form bình chọn */
-    .poll-form-container {
-        background-color: #f1f1f1;
-        border-radius: 4px;
-        padding: 24px;
-        width: 100%;
-        max-width: 600px;
-    }
-
-    /* Header của form */
-    .poll-form-header {
-        display: flex;
-        align-items: center;
+    .card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         margin-bottom: 20px;
     }
 
-    .poll-icon {
-        width: 32px;
-        height: 32px;
-        background-color: #050041;
-        border-radius: 4px;
+    .card-header {
+        display: flex;
+        align-items: center;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .card-icon {
+        background-color: var(--primary);
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 6px;
         display: flex;
         align-items: center;
         justify-content: center;
         margin-right: 12px;
     }
 
-    .poll-icon svg {
-        width: 20px;
-        height: 20px;
-        color: white;
-    }
-
-    .poll-form-title {
-        color: #050041;
-        font-weight: 500;
+    .card-title {
+        font-weight: 600;
         font-size: 16px;
+        color: var(--dark-text);
     }
 
-    /* Form inputs */
+    .card-body {
+        padding: 20px;
+    }
+
     .form-group {
-        margin-bottom: 16px;
-        width: 100%;
+        margin-bottom: 20px;
     }
 
-    .form-input {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #d9d9d9;
-        border-radius: 4px;
-        background-color: white;
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
         font-size: 14px;
+        color: var(--dark-text);
     }
 
-    .form-textarea {
+    .form-control {
         width: 100%;
-        padding: 12px;
-        border: 1px solid #d9d9d9;
-        border-radius: 4px;
-        background-color: white;
+        padding: 10px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
         font-size: 14px;
-        min-height: 120px;
-        resize: vertical;
+        transition: all 0.2s ease;
     }
 
-    /* Date input container */
-    .date-input-container {
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(88, 88, 250, 0.2);
+    }
+
+    .input-group {
         position: relative;
+        display: flex;
     }
 
-    .date-icon {
+    .input-group-text {
         position: absolute;
-        right: 12px;
+        right: 10px;
         top: 50%;
         transform: translateY(-50%);
+        color: var(--light-text);
+        background: none;
+        border: none;
+        pointer-events: none;
     }
 
-    /* Option input container */
-    .option-input-container {
+    .option-container {
         position: relative;
+        margin-bottom: 10px;
     }
 
-    .remove-option-btn {
+    .remove-option {
         position: absolute;
-        right: 12px;
+        right: 10px;
         top: 50%;
         transform: translateY(-50%);
         background: none;
         border: none;
+        color: var(--light-text);
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #a9a9a9;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
     }
 
-    /* Add option link */
-    .add-option-link {
-        color: #050041;
+    .remove-option:hover {
+        background-color: rgba(0,0,0,0.05);
+    }
+
+    .add-option-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--primary);
+        background: none;
+        border: none;
+        padding: 6px 0;
+        font-size: 14px;
         font-weight: 500;
         cursor: pointer;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        margin-bottom: 16px;
     }
 
-    /* Submit button */
-    .form-actions {
-        display: flex;
-        justify-content: flex-end;
+    .add-option-btn:hover {
+        color: var(--primary-dark);
     }
 
-    .submit-btn {
-        background-color: #050041;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        padding: 8px 24px;
-        cursor: pointer;
-        font-size: 14px;
-    }
-
-    /* Hidden elements */
-    .hidden {
+    .phong-ban-container {
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 10px;
+        margin-top: 5px;
         display: none;
     }
+
+    .phong-ban-display {
+        cursor: pointer;
+    }
+
+    .phong-ban-item {
+        display: flex;
+        align-items: center;
+        padding: 6px 0;
+    }
+
+    .phong-ban-item input {
+        margin-right: 10px;
+    }
+
+    .selected-phong-ban {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 10px;
+    }
+
+    .selected-phong-ban-item {
+        background-color: var(--secondary);
+        color: var(--primary);
+        padding: 6px 12px;
+        border-radius: 16px;
+        font-size: 13px;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .remove-phong-ban {
+        margin-left: 6px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 6px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+    }
+
+    .error-message {
+        color: #e53935;
+        font-size: 13px;
+        margin-top: 5px;
+    }
+
+    .required {
+        color: #e53935;
+    }
 </style>
+{% endblock %}
 
-<div class="main-wrapper">
-    <h1 class="page-title">Bình chọn</h1>
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Bình chọn</h2>
 
-    <div class="poll-form-container">
-        <div class="poll-form-header">
-            <div class="poll-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect width="18" height="18" x="3" y="3" rx="2"/>
-                    <line x1="8" y1="10" x2="16" y2="10"/>
-                    <line x1="8" y1="14" x2="16" y2="14"/>
-                    <line x1="8" y1="18" x2="12" y2="18"/>
-                </svg>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon">
+                <i data-lucide="bar-chart-2" style="width: 20px; height: 20px;"></i>
             </div>
-            <span class="poll-form-title">Tạo bình chọn</span>
+            <div class="card-title">Tạo bình chọn</div>
         </div>
+        <div class="card-body">
+            <form method="post" id="binh-chon-form">
+                {% csrf_token %}
 
-<form method="post" class="poll-form">
-    {% csrf_token %}
-
-    <!-- Trường Tiêu đề -->
-    <div class="form-group">
-        {{ form.TenTieuDe }}
-    </div>
-
-    <!-- Trường Thời gian kết thúc -->
-<div class="form-group">
-    <div class="date-input-container">
-        {{ form.ThoiGianKetThucBC }}
-        {% if form.ThoiGianKetThucBC.errors %}
-            <div class="text-danger">
-                Hãy nhập đúng kiểu dữ liệu ngày
-            </div>
-        {% endif %}
-    </div>
-</div>
-
-    <div id="options-container">
-        {{ formset.management_form }}
-        {% if formset.non_form_errors %}
-    <div class="text-danger">
-        {{ formset.non_form_errors }}
-    </div>
-{% endif %}
-
-        {% for f in formset %}
-            <div class="form-group option-form">
-                <div class="option-input-container">
-                    {{ f.NoiDung }}
-                    {% if formset.can_delete %}
-                        {{ f.DELETE }}  <!-- Quan trọng để Django xử lý xoá -->
-                        <button type="button" class="remove-option-btn">X</button>
-
+                <!-- Tiêu đề -->
+                <div class="form-group">
+                    <label for="{{ form.TenTieuDe.id_for_label }}" class="form-label">
+                        {{ form.TenTieuDe.label }} <span class="required">*</span>
+                    </label>
+                    {{ form.TenTieuDe }}
+                    {% if form.TenTieuDe.errors %}
+                        <div class="error-message">{{ form.TenTieuDe.errors }}</div>
                     {% endif %}
                 </div>
-            </div>
-        {% endfor %}
-    </div>
 
-    <a href="javascript:void(0)" id="add-option-btn" class="add-option-link">+ Thêm lựa chọn</a>
+                <!-- Thời gian kết thúc -->
+                <div class="form-group">
+                    <label for="{{ form.ThoiGianKetThucBC.id_for_label }}" class="form-label">
+                        {{ form.ThoiGianKetThucBC.label }} <span class="required">*</span>
+                    </label>
+                    <div class="input-group">
+                        {{ form.ThoiGianKetThucBC }}
+                        <div class="input-group-text">
+                            <i data-lucide="calendar" style="width: 16px; height: 16px;"></i>
+                        </div>
+                    </div>
+                    {% if form.ThoiGianKetThucBC.errors %}
+                        <div class="error-message">{{ form.ThoiGianKetThucBC.errors }}</div>
+                    {% endif %}
+                </div>
 
-    <!-- Trường Mô tả -->
-    <div class="form-group">
-        {{ form.MoTa }}
-    </div>
+                <!-- Lựa chọn bình chọn -->
+                <div class="form-group">
+                    <label class="form-label">Lựa chọn <span class="required">*</span></label>
+                    {{ formset.management_form }}
 
-    <div class="form-actions">
-        <button type="submit" class="submit-btn">Đăng</button>
-    </div>
-</form>
+                    <div id="options-container">
+                        {% for form in formset %}
+                            <div class="option-container">
+                                {{ form.id }}
+                                <div class="input-group">
+                                    {{ form.noi_dung }}
+                                    {% if forloop.counter > 2 %}
+                                        <button type="button" class="remove-option">
+                                            <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+                                        </button>
+                                    {% endif %}
+                                </div>
+                                {% if form.noi_dung.errors %}
+                                    <div class="error-message">{{ form.noi_dung.errors }}</div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
 
+                    <button type="button" id="add-option" class="add-option-btn">
+                        <i data-lucide="plus" style="width: 16px; height: 16px;"></i> Thêm lựa chọn
+                    </button>
+
+                    <div id="options-error" class="error-message" style="display: none;">
+                        Vui lòng nhập ít nhất 2 lựa chọn
+                    </div>
+                </div>
+
+                <!-- Mô tả -->
+                <div class="form-group">
+                    <label for="{{ form.MoTa.id_for_label }}" class="form-label">
+                        {{ form.MoTa.label }}
+                    </label>
+                    {{ form.MoTa }}
+                    {% if form.MoTa.errors %}
+                        <div class="error-message">{{ form.MoTa.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Phòng ban -->
+                <div class="form-group">
+                    <label class="form-label">Phòng ban <span class="required">*</span></label>
+                    <div class="input-group">
+                        <input type="text" id="phong-ban-display" class="form-control phong-ban-display" placeholder="Chọn phòng ban" readonly>
+                    </div>
+
+                    <div class="phong-ban-container" id="phong-ban-container">
+                        {% for phong_ban in phong_bans %}
+                            <div class="phong-ban-item">
+                                <input type="checkbox" name="phong_ban" value="{{ phong_ban.id }}" id="phong-ban-{{ phong_ban.id }}" class="phong-ban-checkbox">
+                                <label for="phong-ban-{{ phong_ban.id }}">{{ phong_ban.TenPhong }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="selected-phong-ban" id="selected-phong-ban"></div>
+
+                    <div id="phong-ban-error" class="error-message" style="display: none;">
+                        Vui lòng chọn ít nhất một phòng ban
+                    </div>
+                </div>
+
+                <div class="text-end mt-4">
+                    <button type="submit" class="btn-primary">Đăng</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const optionsContainer = document.getElementById('options-container');
-    const totalFormsInput = document.querySelector('input[name="luachonbinhchon_set-TOTAL_FORMS"]');
-
-    function updateOptionPlaceholders() {
-        const inputs = optionsContainer.querySelectorAll('.option-form .form-input');
-        inputs.forEach((input, index) => {
-            input.placeholder = `Nhập lựa chọn ${index + 1}`;
+    document.addEventListener('DOMContentLoaded', function() {
+        // Xử lý hiển thị/ẩn phòng ban
+        document.getElementById('phong-ban-display').addEventListener('click', function() {
+            document.getElementById('phong-ban-container').style.display =
+                document.getElementById('phong-ban-container').style.display === 'none' ? 'block' : 'none';
         });
-    }
 
-    // Xử lý thêm lựa chọn mới
-    document.getElementById('add-option-btn').addEventListener('click', function() {
-        const currentIndex = parseInt(totalFormsInput.value);
-        const newForm = document.createElement('div');
-        newForm.className = 'form-group option-form';
-        newForm.innerHTML = `
-            <div class="option-input-container">
-                <input type="text" name="luachonbinhchon_set-${currentIndex}-noi_dung" class="form-input" placeholder="Nhập lựa chọn ${currentIndex + 1}" required>
-                <input type="hidden" name="luachonbinhchon_set-${currentIndex}-id" id="id_luachonbinhchon_set-${currentIndex}-id">
-                <input type="checkbox" name="luachonbinhchon_set-${currentIndex}-DELETE" id="id_luachonbinhchon_set-${currentIndex}-DELETE" style="display:none;">
-                <button type="button" class="remove-option-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 6 6 18"/>
-                        <path d="m6 6 12 12"/>
-                    </svg>
-                </button>
-            </div>
-        `;
-        optionsContainer.appendChild(newForm);
-        totalFormsInput.value = currentIndex + 1;
+        // Xử lý chọn phòng ban
+        const phongBanCheckboxes = document.querySelectorAll('.phong-ban-checkbox');
+        phongBanCheckboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', updateSelectedPhongBan);
+        });
 
-        const removeBtn = newForm.querySelector('.remove-option-btn');
-        removeBtn.addEventListener('click', function() {
-            const optionForm = this.closest('.option-form');
-            const deleteCheckbox = optionForm.querySelector('input[type="checkbox"]');
-            if (deleteCheckbox) {
-                deleteCheckbox.checked = true;
-                optionForm.style.display = 'none';  // Ẩn chứ không xóa để Django xử lý
+        // Cập nhật hiển thị phòng ban đã chọn
+        function updateSelectedPhongBan() {
+            const selectedContainer = document.getElementById('selected-phong-ban');
+            selectedContainer.innerHTML = '';
+
+            let selectedCount = 0;
+            phongBanCheckboxes.forEach(function(checkbox) {
+                if (checkbox.checked) {
+                    const id = checkbox.value;
+                    const name = document.querySelector(`label[for="phong-ban-${id}"]`).textContent;
+                    selectedCount++;
+
+                    const item = document.createElement('div');
+                    item.className = 'selected-phong-ban-item';
+                    item.innerHTML = name +
+                        `<span class="remove-phong-ban" data-id="${id}">
+                            <i data-lucide="x" style="width: 14px; height: 14px;"></i>
+                        </span>`;
+
+                    selectedContainer.appendChild(item);
+                }
+            });
+
+            // Cập nhật text hiển thị
+            if (selectedCount > 0) {
+                document.getElementById('phong-ban-display').value = selectedCount + ' phòng ban đã chọn';
+                document.getElementById('phong-ban-error').style.display = 'none';
             } else {
-                optionForm.remove();  // Nếu là form mới thêm thì xóa hẳn
+                document.getElementById('phong-ban-display').value = '';
+                document.getElementById('phong-ban-error').style.display = 'block';
             }
-            updateOptionPlaceholders();
+
+            // Tạo lại icons
+            lucide.createIcons();
+        }
+
+        // Xử lý xóa phòng ban đã chọn
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.remove-phong-ban')) {
+                const id = e.target.closest('.remove-phong-ban').dataset.id;
+                document.getElementById(`phong-ban-${id}`).checked = false;
+                updateSelectedPhongBan();
+            }
         });
 
-        updateOptionPlaceholders();
-    });
+        // Xử lý thêm lựa chọn
+        document.getElementById('add-option').addEventListener('click', function() {
+            const optionsContainer = document.getElementById('options-container');
+            const totalForms = document.getElementById('id_luachonbinhchon_set-TOTAL_FORMS');
+            const formCount = parseInt(totalForms.value);
 
-    // Xử lý nút xoá cho form có sẵn
-    const removeButtons = document.querySelectorAll('.remove-option-btn');
-    removeButtons.forEach(function(button) {
-        button.addEventListener('click', function() {
-            const optionForm = this.closest('.option-form');
-            const deleteCheckbox = optionForm.querySelector('input[type="checkbox"]');
-            if (deleteCheckbox) {
-                deleteCheckbox.checked = true;
-                optionForm.style.display = 'none';
+            // Clone form cuối cùng
+            const lastForm = optionsContainer.lastElementChild;
+            const newForm = lastForm.cloneNode(true);
+
+            // Cập nhật ID và name
+            const inputs = newForm.querySelectorAll('input');
+            inputs.forEach(function(input) {
+                const name = input.getAttribute('name');
+                if (name) {
+                    const newName = name.replace(`-${formCount-1}-`, `-${formCount}-`);
+                    input.setAttribute('name', newName);
+                    input.setAttribute('id', `id_${newName}`);
+                    input.value = '';
+                }
+            });
+
+            // Thêm nút xóa nếu chưa có
+            if (!newForm.querySelector('.remove-option')) {
+                const inputGroup = newForm.querySelector('.input-group');
+                const removeButton = document.createElement('button');
+                removeButton.type = 'button';
+                removeButton.className = 'remove-option';
+                removeButton.innerHTML = '<i data-lucide="x" style="width: 16px; height: 16px;"></i>';
+                inputGroup.appendChild(removeButton);
+            }
+
+            // Thêm form mới
+            optionsContainer.appendChild(newForm);
+
+            // Cập nhật số lượng form
+            totalForms.value = formCount + 1;
+
+            // Tạo lại icons
+            lucide.createIcons();
+        });
+
+        // Xử lý xóa lựa chọn
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.remove-option')) {
+                const optionContainer = e.target.closest('.option-container');
+                const totalForms = document.getElementById('id_luachonbinhchon_set-TOTAL_FORMS');
+                const formCount = parseInt(totalForms.value);
+
+                // Nếu có ít nhất 3 lựa chọn, cho phép xóa
+                if (formCount > 2) {
+                    optionContainer.remove();
+
+                    // Cập nhật lại index của các form sau form bị xóa
+                    const optionContainers = document.querySelectorAll('#options-container .option-container');
+                    optionContainers.forEach(function(container, index) {
+                        const inputs = container.querySelectorAll('input');
+                        inputs.forEach(function(input) {
+                            const name = input.getAttribute('name');
+                            if (name) {
+                                const newName = name.replace(/-\d+-/, `-${index}-`);
+                                input.setAttribute('name', newName);
+                                input.setAttribute('id', `id_${newName}`);
+                            }
+                        });
+                    });
+
+                    // Cập nhật số lượng form
+                    totalForms.value = formCount - 1;
+                }
+            }
+        });
+
+        // Validate form trước khi submit
+        document.getElementById('binh-chon-form').addEventListener('submit', function(e) {
+            let isValid = true;
+
+            // Kiểm tra phòng ban
+            if (document.querySelectorAll('.phong-ban-checkbox:checked').length === 0) {
+                document.getElementById('phong-ban-error').style.display = 'block';
+                isValid = false;
             } else {
-                optionForm.remove();
+                document.getElementById('phong-ban-error').style.display = 'none';
             }
-            updateOptionPlaceholders();
+
+            // Kiểm tra lựa chọn
+            let validOptions = 0;
+            document.querySelectorAll('#options-container input[type="text"]').forEach(function(input) {
+                if (input.value.trim() !== '') {
+                    validOptions++;
+                }
+            });
+
+            if (validOptions < 2) {
+                document.getElementById('options-error').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('options-error').style.display = 'none';
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+            }
         });
+
+        // Khởi tạo ban đầu
+        updateSelectedPhongBan();
     });
-
-    // Chuyển đổi input ngày tháng
-    const dateInput = document.getElementById('id_thoi_gian_ket_thuc');
-    if (dateInput) {
-        dateInput.addEventListener('focus', function () {
-            this.type = 'datetime-local';
-        });
-
-        dateInput.addEventListener('blur', function () {
-            if (!this.value) {
-                this.type = 'text';
-            }
-        });
-    }
-});
 </script>
-
 {% endblock %}

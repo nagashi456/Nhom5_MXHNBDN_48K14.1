@@ -151,7 +151,7 @@ class LuaChonBinhChon(models.Model):
     noi_dung = models.CharField(max_length=255)
 
     def __str__(self):
-        return f'{self.binh_chon.ten_tieu_de} - {self.noi_dung}'
+        return f'{self.binh_chon.TenTieuDe} - {self.noi_dung}'
 #Bình chọn người dung *
 class BinhChonNguoiDung(models.Model):
     nguoi_dung = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)

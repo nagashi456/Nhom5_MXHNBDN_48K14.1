@@ -319,12 +319,13 @@
             {% if user.is_authenticated %}
             <div class="username-display">
                 <div class="user-avatar">
-                    {% if user.nguoidung.Avatar %}
-                    <img src="{{ user.nguoidung.Avatar.url }}" alt="Avatar">
-                    {% else %}
-                    <img src="{% static 'img/avatar_tm.jpg' %}" alt="Avatar">
-                    {% endif %}
+                  {% if nguoidung and nguoidung.Avatar %}
+                    <img src="{{ nguoidung.Avatar.url }}" alt="Avatar">
+                  {% else %}
+                    <i class="fa fa-user" style="font-size:32px; color:white;"></i>
+                  {% endif %}
                 </div>
+
                 <span>{{ user.username }}</span>
             </div>
             {% endif %}
@@ -337,12 +338,13 @@
         <aside class="sidebar">
             <div class="profile">
                 <div class="profile-image">
-                    {% if user.nguoidung.Avatar %}
-                    <img src="{{ user.nguoidung.Avatar.url }}" alt="Profile">
-                    {% else %}
-                    <img src="{% static 'img/avatar_tm.jpg' %}" alt="Profile">
-                    {% endif %}
+                  {% if nguoidung and nguoidung.Avatar %}
+                    <img src="{{ nguoidung.Avatar.url }}" alt="Profile">
+                  {% else %}
+                    <i class="fa fa-user" style="font-size:100px; color:#ccc;"></i>
+                  {% endif %}
                 </div>
+
             </div>
 
             <nav class="nav-menu">
@@ -356,7 +358,7 @@
                     <li><a href="{% url 'nhantin' %}" class="nav-item {% if request.resolver_match.url_name == 'nhantin' %}active{% endif %}">
                         <i data-lucide="message-square" class="nav-icon"></i><span>Tin nhắn</span>
                     </a></li>
-                    <li><a href="http://127.0.0.1:8000/tao_bai_viet/" class="nav-item {% if request.resolver_match.url_name == 'tao_bai_viet' %}active{% endif %}">
+                    <li><a href="#" class="nav-item {% if request.resolver_match.url_name == 'tao_bai_viet' %}active{% endif %}">
                         <i data-lucide="file-text" class="nav-icon"></i><span>Tạo bài viết</span>
                     </a></li>
                     <li><a href="#" class="nav-item {% if request.resolver_match.url_name == 'hoi_dap' %}active{% endif %}">
@@ -365,7 +367,7 @@
                     <li><a href="{% url 'profile_detail' %}" class="nav-item {% if request.resolver_match.url_name == 'profile_detail' %}active{% endif %}">
                         <i data-lucide="user" class="nav-icon"></i><span>Hồ sơ</span>
                     </a></li>
-                    <li><a href="{% url 'binhchon' %}" class="nav-item {% if request.resolver_match.url_name == 'binhchon' %}active{% endif %}">
+                    <li><a href="{% url 'tao_binh_chon' %}" class="nav-item {% if request.resolver_match.url_name == 'binhchon' %}active{% endif %}">
                         <i data-lucide="bar-chart-2" class="nav-icon"></i><span>Tạo bình chọn</span>
                     </a></li>
                     <li><a href="{% url 'tao_tai_khoan' %}" class="nav-item {% if request.resolver_match.url_name == 'tao_tai_khoan' %}active{% endif %}">

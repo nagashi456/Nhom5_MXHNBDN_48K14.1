@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Danh Sách Bình Chọn{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+    
+    .page-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--dark-text);
+    }
+    
+    .btn-create {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-create:hover {
+        background-color: var(--primary-dark);
+        color: white;
+    }
+    
+    .poll-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+    
+    .poll-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        overflow: hidden;
+        transition: all 0.2s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .poll-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .poll-header {
+        padding: 16px;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .poll-title {
+        font-weight: 600;
+        font-size: 16px;
+        color: var(--dark-text);
+        margin: 0;
+    }
+    
+    .poll-body {
+        padding: 16px;
+        flex: 1;
+    }
+    
+    .poll-description {
+        color: var(--light-text);
+        font-size: 14px;
+        margin-bottom: 16px;
+    }
+    
+    .poll-options {
+        margin-top: 12px;
+    }
+    
+    .poll-option {
+        padding: 8px 12px;
+        background-color: var(--secondary);
+        border-radius: 6px;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+    
+    .poll-departments {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 16px;
+    }
+    
+    .poll-department {
+        background-color: #f1f1f1;
+        color: var(--light-text);
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+    }
+    
+    .poll-footer {
+        padding: 12px 16px;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13px;
+        color: var(--light-text);
+    }
+    
+    .poll-creator {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .poll-end-date {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .section-label {
+        font-weight: 500;
+        font-size: 14px;
+        margin-bottom: 8px;
+        color: var(--dark-text);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .empty-icon {
+        margin-bottom: 16px;
+        color: var(--light-text);
+    }
+    
+    .empty-text {
+        font-size: 16px;
+        color: var(--light-text);
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1 class="page-title">Danh sách bình chọn</h1>
+        <a href="{% url 'tao_binh_chon' %}" class="btn-create">
+            <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
+            Tạo bình chọn mới
+        </a>
+    </div>
+    
+    {% if binh_chons %}
+        <div class="poll-grid">
+            {% for binh_chon in binh_chons %}
+                <div class="poll-card">
+                    <div class="poll-header">
+                        <h3 class="poll-title">{{ binh_chon.TenTieuDe }}</h3>
+                    </div>
+                    <div class="poll-body">
+                        {% if binh_chon.MoTa %}
+                            <p class="poll-description">{{ binh_chon.MoTa|truncatechars:100 }}</p>
+                        {% else %}
+                            <p class="poll-description"><em>Không có mô tả</em></p>
+                        {% endif %}
+                        
+                        <div class="section-label">Lựa chọn:</div>
+                        <div class="poll-options">
+                            {% for lua_chon in binh_chon.luachonbinhchon_set.all %}
+                                <div class="poll-option">{{ lua_chon.noi_dung }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="section-label">Phòng ban:</div>
+                        <div class="poll-departments">
+                            {% for phong_ban in binh_chon.PhongBans.all %}
+                                <span class="poll-department">{{ phong_ban.TenPhong }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="poll-footer">
+                        <div class="poll-creator">
+                            <i data-lucide="user" style="width: 14px; height: 14px;"></i>
+                            {{ binh_chon.MaNguoiDung.HoTen }}
+                        </div>
+                        <div class="poll-end-date">
+                            <i data-lucide="clock" style="width: 14px; height: 14px;"></i>
+                            Kết thúc: {{ binh_chon.ThoiGianKetThucBC|date:"d/m/Y H:i" }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i data-lucide="bar-chart-2" style="width: 48px; height: 48px;"></i>
+            </div>
+            <p class="empty-text">Chưa có bình chọn nào. Hãy tạo bình chọn mới!</p>
+            <a href="{% url 'tao_binh_chon' %}" class="btn-create">
+                <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
+                Tạo bình chọn mới
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

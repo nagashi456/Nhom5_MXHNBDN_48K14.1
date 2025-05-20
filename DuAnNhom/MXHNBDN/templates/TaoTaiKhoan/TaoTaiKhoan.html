@@ -130,18 +130,21 @@
         background-color: #e8e8ff;
     }
 
+    .avatar-upload.has-image {
+        background-size: cover;
+        background-position: center;
+    }
+
     .avatar-upload.has-image .upload-icon {
         display: none;
     }
 
-    .avatar-upload.has-image:hover .upload-overlay {
+    .avatar-upload.has-image .upload-overlay {
         opacity: 1;
     }
 
     .avatar-upload img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+        display: none; /* Nếu bạn muốn hiện <img> bên trong, nhưng chúng ta sẽ dùng background */
     }
 
     .form-group {
@@ -286,7 +289,6 @@
     <form method="post" enctype="multipart/form-data" class="register-form" novalidate>
         {% csrf_token %}
 
-        {# Hiển thị alert khi có lỗi ở user_form hoặc profile_form #}
         {% if user_form.errors or profile_form.errors %}
           <div class="alert alert-danger">
             Vui lòng sửa lỗi bên dưới
@@ -618,7 +620,7 @@
             });
         }
 
-        // Avatar upload
+        // Avatar upload (dùng background, không xóa input gốc)
         const avatarUpload = document.getElementById('avatar-upload');
         const avatarInput = document.getElementById('{{ profile_form.Avatar.id_for_label }}');
         if (avatarUpload && avatarInput) {
@@ -629,15 +631,8 @@
                 if (this.files && this.files[0]) {
                     const reader = new FileReader();
                     reader.onload = function(e) {
-                        avatarUpload.innerHTML = `
-                            <img src="${e.target.result}" alt="Avatar">
-                            <div class="upload-overlay">
-                                <p class="overlay-text">Thay đổi ảnh</p>
-                            </div>
-                            <input type="file" id="{{ profile_form.Avatar.id_for_label }}" name="{{ profile_form.Avatar.html_name }}" class="file-input" accept="image/*">
-                        `;
+                        avatarUpload.style.backgroundImage = `url(${e.target.result})`;
                         avatarUpload.classList.add('has-image');
-                        document.getElementById('{{ profile_form.Avatar.id_for_label }}').addEventListener('change', avatarInput.onchange);
                     };
                     reader.readAsDataURL(this.files[0]);
                 }

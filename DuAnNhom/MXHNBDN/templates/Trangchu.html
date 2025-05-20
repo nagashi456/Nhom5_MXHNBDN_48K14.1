@@ -1,173 +1,667 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
 
+{% block title %}Trang chủ - Mạng xã hội nội bộ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .content-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .card {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 12px;
+        overflow: hidden;
+    }
+
+    .user-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .user-name {
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .post-time {
+        font-size: 12px;
+        color: var(--light-text);
+    }
+
+    .card-body {
+        padding: 15px;
+    }
+
+    .post-content {
+        margin-bottom: 15px;
+        white-space: pre-line;
+    }
+
+    .poll-container {
+        background-color: var(--secondary);
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .poll-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .poll-icon {
+        width: 24px;
+        height: 24px;
+        background-color: var(--primary);
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+    }
+
+    .poll-icon span {
+        color: white;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .poll-question {
+        font-weight: 500;
+        color: var(--dark-text);
+    }
+
+    .poll-option {
+        background-color: #e4e4e4;
+        border-radius: 8px;
+        padding: 10px 15px;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .poll-option:hover {
+        background-color: #d9d9d9;
+    }
+
+    .poll-option.selected {
+        background-color: rgba(88, 88, 250, 0.1);
+        border: 1px solid var(--primary);
+    }
+
+    .poll-option .count {
+        color: var(--primary);
+        font-weight: 500;
+    }
+
+    .poll-footer {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: var(--light-text);
+        margin-top: 10px;
+    }
+
+    .post-images {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .post-image-container {
+        position: relative;
+        padding-bottom: 75%; /* 4:3 Aspect Ratio */
+        height: 0;
+        overflow: hidden;
+        border-radius: 8px;
+    }
+
+    .post-image-container img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .post-actions {
+        display: flex;
+        border-top: 1px solid var(--border-color);
+        padding-top: 12px;
+    }
+
+    .action-btn {
+        display: flex;
+        align-items: center;
+        background: none;
+        border: none;
+        padding: 8px 12px;
+        margin-right: 15px;
+        cursor: pointer;
+        color: var(--light-text);
+        font-size: 14px;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+    }
+
+    .action-btn:hover {
+        background-color: var(--secondary);
+    }
+
+    .action-btn.active {
+        color: var(--primary);
+    }
+
+    .action-btn i {
+        margin-right: 5px;
+    }
+
+    .comments-section {
+        margin-top: 15px;
+        border-top: 1px solid var(--border-color);
+        padding-top: 15px;
+    }
+
+    .comment-form {
+        display: flex;
+        margin-bottom: 15px;
+    }
+
+    .comment-input {
+        flex: 1;
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 8px 15px;
+        font-size: 14px;
+        margin-right: 10px;
+    }
+
+    .comment-input:focus {
+        outline: none;
+        border-color: var(--primary);
+    }
+
+    .comment-btn {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 20px;
+        padding: 8px 15px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .comment-btn:hover {
+        background-color: var(--primary-dark);
+    }
+
+    .comment {
+        display: flex;
+        margin-bottom: 12px;
+    }
+
+    .comment-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        margin-right: 10px;
+        overflow: hidden;
+    }
+
+    .comment-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .comment-content {
+        flex: 1;
+        background-color: var(--secondary);
+        border-radius: 8px;
+        padding: 10px;
+    }
+
+    .comment-author {
+        font-weight: 500;
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+
+    .comment-text {
+        font-size: 13px;
+    }
+
+    .comment-time {
+        font-size: 11px;
+        color: var(--light-text);
+        margin-top: 4px;
+    }
+
+    .file-attachment {
+        display: flex;
+        align-items: center;
+        background-color: var(--secondary);
+        border-radius: 8px;
+        padding: 10px 15px;
+        margin-bottom: 10px;
+    }
+
+    .file-icon {
+        color: var(--primary);
+        margin-right: 10px;
+    }
+
+    .file-name {
+        flex: 1;
+        font-size: 14px;
+    }
+
+    .file-download {
+        color: var(--primary);
+        cursor: pointer;
+    }
+
+    .create-post-card {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+    }
+
+    .post-input-container {
+        flex: 1;
+        margin-left: 12px;
+    }
+
+    .post-input {
+        width: 100%;
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 10px 15px;
+        font-size: 14px;
+        background-color: var(--secondary);
+        cursor: pointer;
+    }
+
+    .post-options {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+    }
+
+    .post-option {
+        display: flex;
+        align-items: center;
+        background: none;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+        color: var(--light-text);
+    }
+
+    .post-option i {
+        margin-right: 5px;
+    }
+
+    .post-option.photo {
+        color: #4CAF50;
+    }
+
+    .post-option.poll {
+        color: var(--primary);
+    }
+
+    .post-option.attachment {
+        color: #FF9800;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .post-options {
+            flex-wrap: wrap;
+        }
+
+        .post-option {
+            flex: 1;
+            justify-content: center;
+            padding: 8px 5px;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div style="max-width: 800px; width: 100%; padding: 0 16px;">
-    <!-- Page Title -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <h1 style="font-size: 20px; font-weight: 600; color: #050041;">Trang chủ</h1>
-        <button style="background: none; border: none; cursor: pointer;">
-            <i data-lucide="menu" style="color: #787878;"></i>
-        </button>
-    </div>
 
-    <!-- Poll Card -->
-    <div style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px;">
-        <div style="padding: 16px; display: flex; align-items: center; gap: 12px;">
-            <div style="width: 40px; height: 40px; border-radius: 50%; background-color: #5858fa; display: flex; align-items: center; justify-content: center;">
-                <img src="{% static 'img/avatar_nguyn.jpg' %}" alt="User" style="width: 40px; height: 40px; border-radius: 50%;">
-            </div>
-            <div>
-                <div style="display: flex; align-items: center; gap: 4px;">
-                    <span style="font-weight: 500;">Đoàn Phúc Nguyên</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#5858fa" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                    </svg>
-                </div>
-            </div>
-        </div>
+<div class="content-container">
+    <h1 class="mb-4">Trang chủ</h1>
 
-        <div style="padding: 0 16px 16px;">
-            <div style="background-color: #f1f1f1; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-                    <div style="width: 24px; height: 24px; background-color: #5858fa; color: white; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-size: 12px;">
-                        M
-                    </div>
-                    <span style="font-size: 14px;">Mọi người muốn cuộc họp vào thứ mấy?</span>
-                </div>
 
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <div style="display: flex; justify-content: space-between; background-color: #e4e4e4; padding: 8px; border-radius: 4px;">
-                        <span style="font-size: 14px;">Thứ 2</span>
-                        <span style="font-size: 14px; color: #5858fa; font-weight: 500;">33</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; background-color: #e4e4e4; padding: 8px; border-radius: 4px;">
-                        <span style="font-size: 14px;">Thứ 3</span>
-                        <span style="font-size: 14px; color: #5858fa; font-weight: 500;">12</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; background-color: #e4e4e4; padding: 8px; border-radius: 4px;">
-                        <span style="font-size: 14px;">Chủ Nhật</span>
-                        <span style="font-size: 14px; color: #5858fa; font-weight: 500;">41</span>
-                    </div>
-                </div>
-
-                <div style="display: flex; justify-content: space-between; margin-top: 12px; font-size: 12px; color: #787878;">
-                    <span>77 Bình chọn</span>
-                    <span>7 phút trước</span>
-                </div>
-            </div>
-
-            <div style="display: flex; align-items: center; gap: 16px;">
-                <button style="background: none; border: none; cursor: pointer;">
-                    <i data-lucide="thumbs-up" style="color: #787878; width: 18px; height: 18px;"></i>
-                </button>
-                <button style="background: none; border: none; cursor: pointer;">
-                    <i data-lucide="message-square" style="color: #787878; width: 18px; height: 18px;"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Post 1 -->
-    <div style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px;">
-        <div style="padding: 16px; display: flex; justify-content: space-between; align-items: center;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden;">
-                    <img src="{% static 'img/avatar_ta.jpg' %}" alt="User" style="width: 100%; height: 100%; object-fit: cover;">
+    <!-- Danh sách bình chọn -->
+    {% for binh_chon in binh_chon_list %}
+    <div class="card">
+        <div class="card-header">
+            <div class="user-info">
+                <div class="user-avatar">
+                    {% if binh_chon.MaNguoiDung.Avatar %}
+                    <img src="{{ binh_chon.MaNguoiDung.Avatar.url }}" alt="Avatar">
+                    {% else %}
+                    <i class="fa fa-user" style="font-size:40px; color:#ccc;"></i>
+                    {% endif %}
                 </div>
                 <div>
-                    <div style="font-weight: 500;">Nguyễn Thị Trâm Anh</div>
+                    <div class="user-name">{{ binh_chon.MaNguoiDung.HoTen }}</div>
+                    <div class="post-time">{{ binh_chon.ThoiGianKetThucBC|timesince }} trước</div>
                 </div>
             </div>
-            <div style="font-size: 12px; color: #787878;">3/3/2025</div>
         </div>
 
-        <div style="padding: 0 16px 16px;">
-            <div style="margin-bottom: 12px;">
-                <p style="font-weight: 700; margin-bottom: 8px;">⚠️ THÔNG BÁO: BÃI XE MỚI TẠI ĐÀ NẴNG 🚛</p>
-                <p style="font-size: 14px; margin-bottom: 4px;">Kính gửi toàn thể tài xế và nhân viên công ty,</p>
-                <p style="font-size: 14px; margin-bottom: 4px;">
-                    Nhằm hỗ trợ tốt hơn cho việc đỗ xe và điều phối vận tải, công ty xin thông báo về bãi đỗ xe mới vừa
-                    được đưa vào sử dụng tại Đà Nẵng. Bãi đỗ xe mới có các tiện ích giúp tối ưu việc đỗ, bảo trì và xuất
-                    bến.
-                </p>
-                <p style="font-size: 14px; margin-bottom: 4px;">📍 Địa chỉ bãi đỗ xe mới: [Địa chỉ đầy đủ tại đây]</p>
-                <p style="font-size: 14px; margin-bottom: 4px;">✅ Thời gian hoạt động: 24/7</p>
-                <p style="font-size: 14px; margin-bottom: 4px;">✅ Hệ thống an ninh 24/7</p>
-                <p style="font-size: 14px; margin-bottom: 4px;">✅ Khu vực công tác an toàn</p>
-                <p style="font-size: 14px; margin-bottom: 4px;">✅ Có bảo vệ trực trực</p>
-                <p style="font-size: 14px; margin-bottom: 4px;">✅ Khu vực nghỉ ngơi và cơ bản</p>
-                <p style="font-size: 14px; margin-bottom: 4px;">
-                    Anh em tài xế lưu ý tuân thủ nội quy và tuân thủ quy định khi sử dụng bãi đỗ. Mọi thắc mắc xin liên
-                    hệ phòng điều phối để được hỗ trợ.
-                </p>
-                <p style="font-size: 14px;">Cảm ơn anh em đã hợp tác! 👍</p>
-            </div>
+        <div class="card-body">
+            <div class="poll-container">
+                <div class="poll-header">
+                    <div class="poll-icon">
+                        <span>M</span>
+                    </div>
+                    <div class="poll-question">{{ binh_chon.TenTieuDe }}</div>
+                </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px;">
-                <img src="{% static 'img/trucks1.jpg' %}" alt="Truck yard 1" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">
-                <div style="display: grid; grid-template-rows: 1fr 1fr; gap: 8px;">
-                    <img src="{% static 'img/trucks2.jpg' %}" alt="Truck yard 2" style="width: 100%; height: 96px; object-fit: cover; border-radius: 8px;">
-                    <img src="{% static 'img/trucks3.jpg' %}" alt="Truck yard 3" style="width: 100%; height: 96px; object-fit: cover; border-radius: 8px;">
+                {% for lua_chon in binh_chon.lua_chon_list %}
+                <div id="lua-chon-{{ lua_chon.id }}"
+                     class="poll-option {% if binh_chon.lua_chon_da_chon == lua_chon.id %}selected{% endif %}"
+                     data-binh-chon-id="{{ binh_chon.id }}"
+                     onclick="xuLyBinhChon('{{ lua_chon.id }}')">
+                    <span>{{ lua_chon.noi_dung }}</span>
+                    <span id="count-{{ lua_chon.id }}" class="count">{{ lua_chon.so_luot_chon }}</span>
+                </div>
+                {% endfor %}
+
+                <div class="poll-footer">
+                    <div>{{ binh_chon.tong_so_binh_chon }} bình chọn</div>
+                    <div>{{ binh_chon.thoi_gian_con_lai }}</div>
                 </div>
             </div>
 
-            <div style="display: flex; align-items: center; gap: 16px; border-top: 1px solid #e4e4e4; padding-top: 12px;">
-                <button style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-                    <i data-lucide="thumbs-up" style="width: 18px; height: 18px;"></i>
-                    <span style="font-size: 14px;">122</span>
+            <div class="post-actions">
+                <button class="action-btn">
+                    <i class="far fa-thumbs-up"></i>
+                    <span>Thích</span>
                 </button>
-                <button style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-                    <i data-lucide="thumbs-down" style="width: 18px; height: 18px;"></i>
-                    <span style="font-size: 14px;">0</span>
-                </button>
-                <button style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-                    <i data-lucide="share-2" style="width: 18px; height: 18px;"></i>
-                    <span style="font-size: 14px;">5</span>
+                <button class="action-btn">
+                    <i class="far fa-comment"></i>
+                    <span>Bình luận</span>
                 </button>
             </div>
         </div>
     </div>
+    {% endfor %}
 
-    <!-- Post 2 -->
-    <div style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px;">
-        <div style="padding: 16px; display: flex; justify-content: space-between; align-items: center;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden;">
-                    <img src="{% static 'img/avatar_tm.jpg' %}" alt="User" style="width: 100%; height: 100%; object-fit: cover;">
+    <!-- Danh sách bài viết -->
+    {% for bai_viet in bai_viet_list %}
+    <div class="card">
+        <div class="card-header">
+            <div class="user-info">
+                <div class="user-avatar">
+                    {% if bai_viet.MaNguoiDung.Avatar %}
+                    <img src="{{ bai_viet.MaNguoiDung.Avatar.url }}" alt="Avatar">
+                    {% else %}
+                    <i class="fa fa-user" style="font-size:40px; color:#ccc;"></i>
+                    {% endif %}
                 </div>
                 <div>
-                    <div style="font-weight: 500;">Nguyễn Thị Trà My</div>
-                    <div style="font-size: 12px; color: #787878;">@tramy</div>
+                    <div class="user-name">{{ bai_viet.MaNguoiDung.HoTen }}</div>
+                    <div class="post-time">{{ bai_viet.ThoiGianTao|timesince }} trước</div>
                 </div>
             </div>
-            <div style="font-size: 12px; color: #787878;">5/3/2025</div>
+            <div class="post-date">{{ bai_viet.ThoiGianTao|date:"d/m/Y" }}</div>
         </div>
 
-        <div style="padding: 0 16px 16px;">
-            <div style="margin-bottom: 12px;">
-                <p style="font-weight: 700; margin-bottom: 8px;">THÔNG BÁO LƯƠNG THÁNG 03/2025</p>
-                <p style="font-size: 14px; margin-bottom: 12px;">
-                    Hôm nay ngày 05/03/2025, kế toán đã thanh toán lương cho toàn bộ nhân viên. Hiện nay có sự thay đổi
-                    về bảng số lương. Mọi người nếu có thắc mắc hãy điền đơn kiến nghị được đính kèm sau:
-                </p>
+        <div class="card-body">
+            <div class="post-content">
+                {{ bai_viet.NoiDung|linebreaks }}
+            </div>
 
-                <div style="background-color: #f1f1f1; padding: 12px; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                    <i data-lucide="file-text" style="width: 16px; height: 16px;"></i>
-                    <span style="font-size: 14px; font-weight: 500;">MẪU ĐƠN KIẾN NGHỊ</span>
+            {% if bai_viet.hinh_anh_list %}
+            <div class="post-images">
+                {% if bai_viet.hinh_anh_list.count == 1 %}
+                <div class="post-image-container" style="grid-column: 1 / -1;">
+                    <img src="{{ bai_viet.hinh_anh_list.0.Anh.url }}" alt="Hình ảnh">
                 </div>
+                {% elif bai_viet.hinh_anh_list.count == 2 %}
+                {% for hinh_anh in bai_viet.hinh_anh_list %}
+                <div class="post-image-container">
+                    <img src="{{ hinh_anh.Anh.url }}" alt="Hình ảnh">
+                </div>
+                {% endfor %}
+                {% elif bai_viet.hinh_anh_list.count >= 3 %}
+                <div class="post-image-container" style="grid-column: 1 / -1;">
+                    <img src="{{ bai_viet.hinh_anh_list.0.Anh.url }}" alt="Hình ảnh">
+                </div>
+                {% for hinh_anh in bai_viet.hinh_anh_list|slice:"1:3" %}
+                <div class="post-image-container">
+                    <img src="{{ hinh_anh.Anh.url }}" alt="Hình ảnh">
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+            {% endif %}
 
-                <div style="border: 1px solid #e4e4e4; border-radius: 8px; overflow: hidden; margin-bottom: 12px;">
-                    <img src="{% static 'img/salary.png' %}" alt="Salary table" style="width: 100%; height: auto;">
+            {% if bai_viet.tep_dinh_kem_list %}
+            <div class="file-attachments">
+                {% for tep in bai_viet.tep_dinh_kem_list %}
+                <div class="file-attachment">
+                    <i class="fas fa-file-alt file-icon"></i>
+                    <div class="file-name">{{ tep.Tep.name }}</div>
+                    <a href="{{ tep.Tep.url }}" download class="file-download">
+                        <i class="fas fa-download"></i>
+                    </a>
                 </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="post-actions">
+                <button id="like-btn-{{ bai_viet.id }}"
+                        class="action-btn {% if bai_viet.da_thich == True %}active{% endif %}"
+                        onclick="xuLyCamXuc('{{ bai_viet.id }}', true)">
+                    <i class="far fa-thumbs-up"></i>
+                    <span id="like-count-{{ bai_viet.id }}">{{ bai_viet.so_luot_thich }}</span>
+                </button>
+                <button id="dislike-btn-{{ bai_viet.id }}"
+                        class="action-btn {% if bai_viet.da_thich == False %}active{% endif %}"
+                        onclick="xuLyCamXuc('{{ bai_viet.id }}', false)">
+                    <i class="far fa-thumbs-down"></i>
+                    <span id="dislike-count-{{ bai_viet.id }}">{{ bai_viet.so_luot_khong_thich }}</span>
+                </button>
+                <button class="action-btn" onclick="toggleComments('comments-{{ bai_viet.id }}')">
+                    <i class="far fa-comment"></i>
+                    <span>{{ bai_viet.binh_luan_list.count }}</span>
+                </button>
+            </div>
+
+            <div id="comments-{{ bai_viet.id }}" class="comments-section" style="display: none;">
+                <form action="{% url 'them_binh_luan' bai_viet.id %}" method="post" class="comment-form">
+                    {% csrf_token %}
+                    <input type="text" name="NoiDung" class="comment-input" placeholder="Viết bình luận...">
+                    <button type="submit" class="comment-btn">Gửi</button>
+                </form>
+
+                {% if bai_viet.binh_luan_list %}
+                <div class="comments">
+                    {% for binh_luan in bai_viet.binh_luan_list|slice:":3" %}
+                    <div class="comment">
+                        <div class="comment-avatar">
+                            {% if binh_luan.MaNguoiDung.Avatar %}
+                            <img src="{{ binh_luan.MaNguoiDung.Avatar.url }}" alt="Avatar">
+                            {% else %}
+                            <i class="fa fa-user" style="font-size:32px; color:#ccc;"></i>
+                            {% endif %}
+                        </div>
+                        <div class="comment-content">
+                            <div class="comment-author">{{ binh_luan.MaNguoiDung.HoTen }}</div>
+                            <div class="comment-text">{{ binh_luan.NoiDung }}</div>
+                            <div class="comment-time">{{ binh_luan.NgayTao|timesince }} trước</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    {% if bai_viet.binh_luan_list.count > 3 %}
+                    <div class="text-center">
+                        <button class="action-btn" onclick="loadMoreComments('{{ bai_viet.id }}')">
+                            Xem thêm bình luận
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
+    {% empty %}
+    <div class="card">
+        <div class="card-body">
+            <p>Chưa có bài viết nào. Hãy là người đầu tiên tạo bài viết!</p>
+        </div>
+    </div>
+    {% endfor %}
 </div>
+{% endblock %}
 
-<!-- Add search box to the right side -->
-<div style="position: absolute; top: 50px; right: 16px; width: 240px;">
-    <input type="text" placeholder="Tìm kiếm" style="width: 100%; padding: 8px 12px; border: 1px solid #e4e4e4; border-radius: 4px; font-size: 14px;">
-</div>
+{% block scripts %}
+<script>
+    // Xử lý cảm xúc (like/dislike)
+    function xuLyCamXuc(baiVietId, loaiCamXuc) {
+        fetch('{% url "xu_ly_cam_xuc" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: `bai_viet_id=${baiVietId}&loai_cam_xuc=${loaiCamXuc}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Cập nhật số lượt thích và không thích
+                document.getElementById(`like-count-${baiVietId}`).textContent = data.so_luot_thich;
+                document.getElementById(`dislike-count-${baiVietId}`).textContent = data.so_luot_khong_thich;
+
+                // Cập nhật trạng thái nút
+                const likeBtn = document.getElementById(`like-btn-${baiVietId}`);
+                const dislikeBtn = document.getElementById(`dislike-btn-${baiVietId}`);
+
+                if (data.action === 'removed') {
+                    if (loaiCamXuc) {
+                        likeBtn.classList.remove('active');
+                    } else {
+                        dislikeBtn.classList.remove('active');
+                    }
+                } else if (data.action === 'added') {
+                    if (loaiCamXuc) {
+                        likeBtn.classList.add('active');
+                        dislikeBtn.classList.remove('active');
+                    } else {
+                        dislikeBtn.classList.add('active');
+                        likeBtn.classList.remove('active');
+                    }
+                } else if (data.action === 'changed') {
+                    if (loaiCamXuc) {
+                        likeBtn.classList.add('active');
+                        dislikeBtn.classList.remove('active');
+                    } else {
+                        dislikeBtn.classList.add('active');
+                        likeBtn.classList.remove('active');
+                    }
+                }
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    // Xử lý bình chọn
+    function xuLyBinhChon(luaChonId) {
+        fetch('{% url "xu_ly_binh_chon" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: `lua_chon_id=${luaChonId}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Cập nhật số lượt cho mỗi lựa chọn
+                for (const [id, count] of Object.entries(data.ket_qua)) {
+                    document.getElementById(`count-${id}`).textContent = count;
+                }
+
+                // Cập nhật trạng thái lựa chọn
+                const luaChonElement = document.getElementById(`lua-chon-${luaChonId}`);
+                const binhChonId = luaChonElement.getAttribute('data-binh-chon-id');
+
+                if (data.action === 'removed') {
+                    luaChonElement.classList.remove('selected');
+                } else if (data.action === 'added' || data.action === 'changed') {
+                    // Xóa selected cho tất cả các lựa chọn trong cùng bình chọn
+                    document.querySelectorAll(`.poll-option[data-binh-chon-id="${binhChonId}"]`).forEach(el => {
+                        el.classList.remove('selected');
+                    });
+                    // Thêm selected cho lựa chọn hiện tại
+                    luaChonElement.classList.add('selected');
+                }
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    // Hiển thị/ẩn phần bình luận
+    function toggleComments(commentsId) {
+        const commentsSection = document.getElementById(commentsId);
+        if (commentsSection.style.display === 'none') {
+            commentsSection.style.display = 'block';
+        } else {
+            commentsSection.style.display = 'none';
+        }
+    }
+
+    // Tải thêm bình luận
+    function loadMoreComments(baiVietId) {
+        // Implement AJAX để tải thêm bình luận
+        console.log(`Tải thêm bình luận cho bài viết ${baiVietId}`);
+    }
+</script>
 {% endblock %}
