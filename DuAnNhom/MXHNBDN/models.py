@@ -100,10 +100,10 @@ class TinNhanChiTiet(models.Model):
     TepDinhKem = models.FileField(upload_to='uploads/attachments/', blank=True, null=True)
     HinhAnh = models.ImageField(upload_to='uploads/images/', blank=True, null=True)
     MaCuocTroChuyen = models.ForeignKey(CuocTroChuyen, on_delete=models.CASCADE)
-    NguoiDung = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)
+    NguoiDung = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.NguoiDung.HoTen}: {self.NoiDung[:30]}'
+        return f'{self.NguoiDung.username}: {self.NoiDung[:30]}'
 
 
 class BangHoi(models.Model):
