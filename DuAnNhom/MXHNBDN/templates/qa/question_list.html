@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if questions %}
+    <div class="row">
+        {% for question in questions %}
+            <div class="col-12 mb-3">
+                <div class="card question-card border-0 shadow-sm">
+                    <div class="card-body p-3 p-md-4">
+                        <div class="d-flex justify-content-between mb-3">
+                            <h5 class="card-title fw-bold">
+                                <a href="{% url 'question_detail' question_id=question.id %}" class="text-decoration-none question-link">
+                                    {{ question.NoiDung|truncatechars:100 }}
+                                </a>
+                            </h5>
+                            <small class="text-muted ms-2 flex-shrink-0">
+                                <i class="far fa-calendar-alt me-1"></i>{{ question.NgayTao|date:"d/m/Y H:i" }}
+                            </small>
+                        </div>
+
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                {% if question.MaNguoiDung.Avatar %}
+                                    <img src="{{ question.MaNguoiDung.Avatar.url }}" alt="{{ question.MaNguoiDung.HoTen }}" class="rounded-circle avatar" width="38" height="38">
+                                {% else %}
+                                    <div class="avatar-placeholder">
+                                        {{ question.MaNguoiDung.HoTen|first }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <p class="mb-0 fw-semibold">{{ question.MaNguoiDung.HoTen }}</p>
+                                <small class="text-muted">{{ question.MaNguoiDung.MaPhong.TenPhong }}</small>
+                            </div>
+                            <div class="ms-auto">
+                                <span class="badge bg-light text-primary rounded-pill px-3 py-2">
+                                    <i class="far fa-comment-dots me-1"></i>{{ question.answer_count }} câu trả lời
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state text-center p-5 bg-light rounded-3 shadow-sm">
+        <div class="py-4">
+            <i class="far fa-comments fa-4x text-muted mb-3"></i>
+            <h3 class="fw-bold">Chưa có câu hỏi nào</h3>
+            <p class="text-muted mb-4">Hãy là người đầu tiên đặt câu hỏi!</p>
+            <a href="{% url 'question_create' %}" class="btn btn-primary rounded-pill px-4">
+                <i class="fas fa-plus-circle me-2"></i>Đặt câu hỏi đầu tiên
+            </a>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
