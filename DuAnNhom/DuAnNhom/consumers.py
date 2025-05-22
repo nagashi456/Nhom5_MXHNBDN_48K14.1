@@ -1,17 +1,28 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from django.utils import timezone
 from django.contrib.auth.models import User
-from MXHNBDN.models import CuocTroChuyen, TinNhanChiTiet, NguoiDung, ThanhVienCuocTroChuyen
+from django.utils import timezone
+from MXHNBDN.models import CuocTroChuyen, TinNhanChiTiet
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = f'chat_{self.room_name}'
+        self.user = self.scope["user"]
 
-        # Join room group
+        if not self.user.is_authenticated:
+            await self.close()
+            return
+
+        self.room_id = self.scope['url_route']['kwargs']['room_id']
+        self.room_group_name = f'chat_{self.room_id}'
+
+        # Kiểm tra người dùng có thuộc cuộc trò chuyện không
+        is_participant = await self.is_room_participant(self.room_id, self.user.id)
+        if not is_participant:
+            await self.close()
+            return
+
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
@@ -20,94 +31,114 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
-        # Leave room group
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
         )
 
-    # Receive message from WebSocket
     async def receive(self, text_data):
         data = json.loads(text_data)
-        message_type = data.get('type', 'message')
+        message_type = data.get('type')
 
-        if message_type == 'message':
-            message = data['message']
-            user_id = self.scope['user'].id
-            conversation_id = int(self.room_name)
+        if message_type == 'chat_message':
+            message = data.get('message', '')
+            attachment_id = data.get('attachment_id', None)  # ID của tệp đã tải lên
+            image_id = data.get('image_id', None)  # ID của hình ảnh đã tải lên
 
-            # Save message to database
-            message_id = await self.save_message(
-                user_id=user_id,
-                conversation_id=conversation_id,
-                message=message,
-                attachment=data.get('attachment', None),
-                image=data.get('image', None)
+            # Lưu tin nhắn với tệp đính kèm hoặc hình ảnh nếu có
+            message_obj = await self.save_message(
+                self.room_id,
+                self.user.id,
+                message,
+                attachment_id,
+                image_id
             )
 
-            # Get user info
-            user_info = await self.get_user_info(user_id)
+            # Chuẩn bị dữ liệu để gửi
+            message_data = {
+                'type': 'chat_message',
+                'message': message,
+                'sender_id': self.user.id,
+                'sender_name': self.user.username,
+                'timestamp': message_obj.NgayTao.isoformat(),
+                'message_id': message_obj.id,
+            }
 
-            # Send message to room group
+            # Thêm thông tin về tệp đính kèm nếu có
+            if message_obj.TepDinhKem:
+                message_data['attachment'] = {
+                    'url': message_obj.TepDinhKem.url,
+                    'name': message_obj.TepDinhKem.name.split('/')[-1],
+                    'size': message_obj.TepDinhKem.size
+                }
+
+            # Thêm thông tin về hình ảnh nếu có
+            if message_obj.HinhAnh:
+                message_data['image'] = {
+                    'url': message_obj.HinhAnh.url,
+                    'name': message_obj.HinhAnh.name.split('/')[-1],
+                    'size': message_obj.HinhAnh.size
+                }
+
+            # Gửi tin nhắn cho tất cả thành viên trong phòng
             await self.channel_layer.group_send(
                 self.room_group_name,
-                {
-                    'type': 'chat_message',
-                    'message': message,
-                    'user_id': user_id,
-                    'username': user_info['username'],
-                    'avatar': user_info['avatar'],
-                    'message_id': message_id,
-                    'timestamp': timezone.now().isoformat(),
-                    'attachment': data.get('attachment', None),
-                    'image': data.get('image', None)
-                }
+                message_data
             )
 
-    # Receive message from room group
     async def chat_message(self, event):
-        # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': event['message'],
-            'user_id': event['user_id'],
-            'username': event['username'],
-            'avatar': event['avatar'],
-            'message_id': event['message_id'],
-            'timestamp': event['timestamp'],
-            'attachment': event.get('attachment', None),
-            'image': event.get('image', None)
-        }))
+        # Tạo bản sao của event để tránh thay đổi dữ liệu gốc
+        message_data = event.copy()
+
+        # Loại bỏ trường 'type' vì nó được sử dụng bởi channel layer
+        message_type = message_data.pop('type')
+
+        # Thêm lại trường 'type' với giá trị 'chat_message' cho client
+        message_data['type'] = 'chat_message'
+
+        # Gửi dữ liệu đến client
+        await self.send(text_data=json.dumps(message_data))
 
     @database_sync_to_async
-    def save_message(self, user_id, conversation_id, message, attachment=None, image=None):
-        user = NguoiDung.objects.get(user_id=user_id)
-        conversation = CuocTroChuyen.objects.get(id=conversation_id)
+    def is_room_participant(self, room_id, user_id):
+        try:
+            room = CuocTroChuyen.objects.get(id=room_id)
+            return room.ThanhVien.filter(id=user_id).exists()
+        except CuocTroChuyen.DoesNotExist:
+            return False
 
-        # Check if user is a member of this conversation
-        is_member = ThanhVienCuocTroChuyen.objects.filter(
-            MaCuocTroChuyen=conversation,
-            MaNguoiDung=user
-        ).exists()
+    @database_sync_to_async
+    def save_message(self, room_id, user_id, content, attachment_id=None, image_id=None):
+        room = CuocTroChuyen.objects.get(id=room_id)
+        user = User.objects.get(id=user_id)
 
-        if not is_member:
-            raise Exception("User is not a member of this conversation")
-
-        # Create and save the message
-        message = TinNhanChiTiet.objects.create(
+        # Tạo tin nhắn mới
+        message = TinNhanChiTiet(
+            MaCuocTroChuyen=room,
+            NguoiDung=user,
             NgayTao=timezone.now(),
-            NoiDung=message,
-            TepDinhKem=attachment,
-            HinhAnh=image,
-            MaCuocTroChuyen=conversation,
-            NguoiDung=user
+            NoiDung=content
         )
 
-        return message.id
+        # Nếu có ID tệp đính kèm, lấy tệp từ bảng tạm và gán cho tin nhắn
+        if attachment_id:
+            from MXHNBDN.models import TempFile  # Import tại đây để tránh circular import
+            try:
+                temp_file = TempFile.objects.get(id=attachment_id, user=user)
+                message.TepDinhKem = temp_file.file
+                temp_file.delete()  # Xóa tệp tạm sau khi đã gán cho tin nhắn
+            except TempFile.DoesNotExist:
+                pass
 
-    @database_sync_to_async
-    def get_user_info(self, user_id):
-        user = NguoiDung.objects.get(user_id=user_id)
-        return {
-            'username': user.HoTen,
-            'avatar': user.Avatar.url if user.Avatar else None
-        }
+        # Nếu có ID hình ảnh, lấy hình ảnh từ bảng tạm và gán cho tin nhắn
+        if image_id:
+            from MXHNBDN.models import TempImage  # Import tại đây để tránh circular import
+            try:
+                temp_image = TempImage.objects.get(id=image_id, user=user)
+                message.HinhAnh = temp_image.image
+                temp_image.delete()  # Xóa hình ảnh tạm sau khi đã gán cho tin nhắn
+            except TempImage.DoesNotExist:
+                pass
+
+        message.save()
+        return message
