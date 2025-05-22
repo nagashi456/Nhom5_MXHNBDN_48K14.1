@@ -1,0 +1,474 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Chỉnh sửa bài viết - Mạng xã hội nội bộ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .edit-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .edit-card {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+
+    .edit-header {
+        padding: 20px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .edit-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--dark-text);
+    }
+
+    .edit-body {
+        padding: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--dark-text);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(88, 88, 250, 0.2);
+    }
+
+    textarea.form-control {
+        min-height: 150px;
+        resize: vertical;
+    }
+
+    .current-images {
+        margin-bottom: 15px;
+    }
+
+    .image-preview {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .image-item {
+        position: relative;
+        border-radius: 8px;
+        overflow: hidden;
+        padding-bottom: 75%; /* 4:3 Aspect Ratio */
+        height: 0;
+    }
+
+    .image-item img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .image-remove {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background-color: rgba(0,0,0,0.5);
+        color: white;
+        border: none;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 12px;
+    }
+
+    .current-files {
+        margin-bottom: 15px;
+    }
+
+    .file-item {
+        display: flex;
+        align-items: center;
+        background-color: var(--secondary);
+        border-radius: 8px;
+        padding: 10px 15px;
+        margin-bottom: 8px;
+    }
+
+    .file-icon {
+        color: var(--primary);
+        margin-right: 10px;
+    }
+
+    .file-name {
+        flex: 1;
+        font-size: 14px;
+    }
+
+    .file-remove {
+        color: #e53935;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+    }
+
+    .custom-file-upload {
+        display: inline-block;
+        padding: 10px 15px;
+        background-color: var(--secondary);
+        color: var(--primary);
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.2s;
+    }
+
+    .custom-file-upload:hover {
+        background-color: #e4e4ff;
+    }
+
+    .custom-file-upload i {
+        margin-right: 8px;
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    .edit-footer {
+        padding: 20px;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        border: none;
+        transition: background-color 0.2s;
+    }
+
+    .btn-cancel {
+        background-color: #f1f1f1;
+        color: var(--dark-text);
+        margin-right: 10px;
+    }
+
+    .btn-cancel:hover {
+        background-color: #e4e4e4;
+    }
+
+    .btn-save {
+        background-color: var(--primary);
+        color: white;
+    }
+
+    .btn-save:hover {
+        background-color: var(--primary-dark);
+    }
+
+    /* Modal xác nhận */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 100;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-container {
+        background-color: white;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 400px;
+        padding: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .modal-header {
+        margin-bottom: 15px;
+    }
+
+    .modal-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--dark-text);
+    }
+
+    .modal-body {
+        margin-bottom: 20px;
+        color: var(--light-text);
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .modal-btn {
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+        border: none;
+        margin-left: 10px;
+    }
+
+    .modal-btn-cancel {
+        background-color: #f1f1f1;
+        color: var(--dark-text);
+    }
+
+    .modal-btn-confirm {
+        background-color: var(--primary);
+        color: white;
+    }
+
+    /* Hiển thị modal */
+    .modal-overlay.show {
+        display: flex;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-container">
+    <h1 class="mb-4">Chỉnh sửa bài viết</h1>
+
+    <div class="edit-card">
+        <div class="edit-header">
+            <div class="edit-title">Chỉnh sửa bài viết</div>
+        </div>
+
+        <form id="edit-form" method="post" enctype="multipart/form-data" action="{% url 'sua_bai_viet' bai_viet.id %}">
+            {% csrf_token %}
+
+            <div class="edit-body">
+                <div class="form-group">
+                    <label for="noi_dung" class="form-label">Nội dung</label>
+                    <textarea id="noi_dung" name="NoiDung" class="form-control" required>{{ bai_viet.NoiDung }}</textarea>
+                </div>
+
+                <!-- Hình ảnh hiện tại -->
+                {% if hinh_anh_list %}
+                <div class="form-group current-images">
+                    <label class="form-label">Hình ảnh hiện tại</label>
+                    <div class="image-preview">
+                        {% for hinh_anh in hinh_anh_list %}
+                        <div class="image-item">
+                            <img src="{{ hinh_anh.Anh.url }}" alt="Hình ảnh">
+                            <button type="button" class="image-remove" onclick="removeImage({{ hinh_anh.id }})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <input type="hidden" name="hinh_anh_giu_lai" value="{{ hinh_anh.id }}">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Thêm hình ảnh mới -->
+                <div class="form-group">
+                    <label class="form-label">Thêm hình ảnh mới</label>
+                    <label for="hinh_anh_moi" class="custom-file-upload">
+                        <i class="fas fa-image"></i> Chọn hình ảnh
+                    </label>
+                    <input type="file" id="hinh_anh_moi" name="hinh_anh_moi" multiple accept="image/*">
+                    <div id="new-image-preview" class="image-preview mt-2"></div>
+                </div>
+
+                <!-- Tệp đính kèm hiện tại -->
+                {% if tep_dinh_kem_list %}
+                <div class="form-group current-files">
+                    <label class="form-label">Tệp đính kèm hiện tại</label>
+                    {% for tep in tep_dinh_kem_list %}
+                    <div class="file-item">
+                        <i class="fas fa-file-alt file-icon"></i>
+                        <div class="file-name">{{ tep.Tep.name }}</div>
+                        <button type="button" class="file-remove" onclick="removeFile({{ tep.id }})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <input type="hidden" name="tep_giu_lai" value="{{ tep.id }}">
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Thêm tệp đính kèm mới -->
+                <div class="form-group">
+                    <label class="form-label">Thêm tệp đính kèm mới</label>
+                    <label for="tep_dinh_kem_moi" class="custom-file-upload">
+                        <i class="fas fa-paperclip"></i> Chọn tệp
+                    </label>
+                    <input type="file" id="tep_dinh_kem_moi" name="tep_dinh_kem_moi" multiple>
+                    <div id="new-file-preview" class="mt-2"></div>
+                </div>
+            </div>
+
+            <div class="edit-footer">
+                <a href="{% url 'trang_chu' %}" class="btn btn-cancel">Hủy</a>
+                <button type="button" class="btn btn-save" onclick="showSaveModal()">Lưu thay đổi</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal xác nhận lưu -->
+<div id="save-modal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3 class="modal-title">Xác nhận lưu thay đổi</h3>
+        </div>
+        <div class="modal-body">
+            <p>Bạn có chắc chắn muốn lưu những thay đổi này?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-cancel" onclick="hideSaveModal()">Hủy</button>
+            <button class="modal-btn modal-btn-confirm" onclick="submitForm()">Lưu thay đổi</button>
+        </div>
+    </div>
+</div>
+
+<!-- Danh sách hình ảnh đã xóa -->
+<div id="removed-images-container" style="display: none;">
+    <!-- Sẽ được thêm bởi JavaScript -->
+</div>
+
+<!-- Danh sách tệp đã xóa -->
+<div id="removed-files-container" style="display: none;">
+    <!-- Sẽ được thêm bởi JavaScript -->
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Hiển thị preview hình ảnh mới
+    document.getElementById('hinh_anh_moi').addEventListener('change', function(event) {
+        const preview = document.getElementById('new-image-preview');
+        preview.innerHTML = '';
+
+        for (const file of event.target.files) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const imageItem = document.createElement('div');
+                imageItem.className = 'image-item';
+
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = 'Preview';
+
+                imageItem.appendChild(img);
+                preview.appendChild(imageItem);
+            };
+
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Hiển thị preview tệp mới
+    document.getElementById('tep_dinh_kem_moi').addEventListener('change', function(event) {
+        const preview = document.getElementById('new-file-preview');
+        preview.innerHTML = '';
+
+        for (const file of event.target.files) {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+
+            const icon = document.createElement('i');
+            icon.className = 'fas fa-file-alt file-icon';
+
+            const fileName = document.createElement('div');
+            fileName.className = 'file-name';
+            fileName.textContent = file.name;
+
+            fileItem.appendChild(icon);
+            fileItem.appendChild(fileName);
+            preview.appendChild(fileItem);
+        }
+    });
+
+    // Xóa hình ảnh
+    function removeImage(imageId) {
+        // Thêm input hidden để đánh dấu hình ảnh cần xóa
+        const container = document.getElementById('removed-images-container');
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'hinh_anh_xoa';
+        input.value = imageId;
+        container.appendChild(input);
+
+        // Xóa phần tử hiển thị
+        const imageItem = event.target.closest('.image-item');
+        imageItem.remove();
+    }
+
+    // Xóa tệp đính kèm
+    function removeFile(fileId) {
+        // Thêm input hidden để đánh dấu tệp cần xóa
+        const container = document.getElementById('removed-files-container');
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'tep_xoa';
+        input.value = fileId;
+        container.appendChild(input);
+
+        // Xóa phần tử hiển thị
+        const fileItem = event.target.closest('.file-item');
+        fileItem.remove();
+    }
+
+    // Hiển thị modal xác nhận lưu
+    function showSaveModal() {
+        document.getElementById('save-modal').classList.add('show');
+    }
+
+    // Ẩn modal xác nhận lưu
+    function hideSaveModal() {
+        document.getElementById('save-modal').classList.remove('show');
+    }
+
+    // Submit form
+    function submitForm() {
+        document.getElementById('edit-form').submit();
+    }
+</script>
+{% endblock %}

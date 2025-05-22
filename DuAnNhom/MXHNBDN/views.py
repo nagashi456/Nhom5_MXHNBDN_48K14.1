@@ -1,12 +1,17 @@
 from django.contrib.auth import update_session_auth_hash
 from .forms import UserProfileForm, UsernameChangeForm, CustomPasswordChangeForm, LuaChonBinhChonFormSet
-from .models import NguoiDung, BaiViet, BinhChonNhom
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from .models import NguoiDung, BinhChon
+from .models import BaiViet, BinhChonNhom
 from .forms import BinhChonForm
 from django.contrib.auth import login, logout
 from .forms import UserRegistrationForm, NguoiDungForm
+from .models import (
+    CuocTroChuyen, TinNhanChiTiet,
+    ThanhVienCuocTroChuyen
+)
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+
+
 
 def DangNhap(request):
     return render(request,"DangNhap.html")
@@ -15,14 +20,10 @@ def Binhluan(request):
     return render(request,"TaoBinhLuan/Taobinhluan.html")
 # def BinhChon(request):
 #     return render(request,"TaoBinhChon/TaoBinhChon.html")
-def edit_profile(request):
-    return render(request,"Edit_profile/edit_profile.html")
 def Nhantin(request):
     return render(request,"NhanTin/NhanTin.html")
 def Quenpass(request):
     return render(request,"Quenpass.html")
-from django.shortcuts import render, redirect
-# from .forms import NguoiDungForm, BaiVietForm
 from django.contrib import messages
 from .forms import LoginForm
 
@@ -54,26 +55,86 @@ def ProfileDetail(request):
     return render(request,"Edit_profile/profile_details.html")
 
 
-@login_required
-def Trangchu(request):
-    return render(request,"Trangchu.html")
-def Quenpass(request):
-    return render(request,"Quenpass.html")
-
-
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-from django.db.models import Q
+from django.contrib import messages
+from .forms import BaiVietForm
+from .models import NguoiDung, HinhAnh, TepDinhKem, BaiViet
 from django.utils import timezone
-from .models import (
-    CuocTroChuyen, NguoiDung, TinNhanChiTiet,
-    ThanhVienCuocTroChuyen, PhongBan
-)
-from django.contrib.auth.models import User
-from django.views.decorators.csrf import csrf_exempt
-import json
 
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .forms import BaiVietForm
+from .models import NguoiDung, HinhAnh, TepDinhKem, BaiViet
+from django.utils import timezone
+
+
+@login_required
+def tao_bai_viet(request):
+    try:
+        nguoi_dung = NguoiDung.objects.get(user=request.user)
+
+        if request.method == 'POST':
+            form = BaiVietForm(request.POST)
+
+            if form.is_valid():
+                # Tạo bài viết mới
+                bai_viet = BaiViet(
+                    NgayTao=timezone.now(),
+                    NoiDung=form.cleaned_data['noi_dung'],
+                    MaNguoiDung=nguoi_dung
+                )
+                bai_viet.save()
+
+                # Xử lý hình ảnh
+                if 'hinh_anh[]' in request.FILES:
+                    for anh in request.FILES.getlist('hinh_anh[]'):
+                        # Tính kích thước file
+                        img_size = anh.size
+
+                        # Lưu hình ảnh
+                        hinh_anh = HinhAnh(
+                            Anh=anh,
+                            ImgSize=img_size,
+                            MaBaiViet=bai_viet
+                        )
+                        hinh_anh.save()
+
+                # Xử lý tệp đính kèm
+                if 'tep_dinh_kem[]' in request.FILES:
+                    for tep in request.FILES.getlist('tep_dinh_kem[]'):
+                        # Tính kích thước file
+                        file_size = tep.size
+
+                        # Lưu tệp
+                        tep_dinh_kem = TepDinhKem(
+                            Tep=tep,
+                            FileSize=file_size,
+                            MaBaiViet=bai_viet
+                        )
+                        tep_dinh_kem.save()
+
+                messages.success(request, 'Bài viết đã được tạo thành công!')
+                return redirect('trang_chu')
+            else:
+                # In ra lỗi để debug
+                print(form.errors)
+                messages.error(request, 'Có lỗi xảy ra khi tạo bài viết.')
+        else:
+            form = BaiVietForm()
+
+        context = {
+            'form': form,
+            'nguoidung': nguoi_dung,
+        }
+
+        return render(request, 'TaoBaiViet.html', context)
+    except Exception as e:
+        # In ra lỗi để debug
+        print(f"Lỗi: {e}")
+        messages.error(request, f"Đã xảy ra lỗi: {e}")
+        return redirect('trang_chu')
 
 @login_required
 def index(request):
@@ -339,10 +400,10 @@ def TaoTaiKhoan(request):
     })
 
 
+from django.contrib.auth import update_session_auth_hash
 
 @login_required
 def edit_profile(request):
-    # Lấy thông tin người dùng hiện tại
     user = request.user
     try:
         nguoi_dung = NguoiDung.objects.get(user=user)
@@ -350,10 +411,12 @@ def edit_profile(request):
         messages.error(request, "Không tìm thấy thông tin người dùng")
         return redirect('trang_chu')
 
-    # Đếm số bài viết
     post_count = BaiViet.objects.filter(MaNguoiDung=nguoi_dung).count()
 
-    # Xử lý form
+    profile_form = UserProfileForm(instance=nguoi_dung)
+    username_form = UsernameChangeForm(instance=user)
+    password_form = CustomPasswordChangeForm(user)
+
     if request.method == 'POST':
         action = request.POST.get('action')
 
@@ -375,13 +438,9 @@ def edit_profile(request):
             password_form = CustomPasswordChangeForm(user, request.POST)
             if password_form.is_valid():
                 user = password_form.save()
-                update_session_auth_hash(request, user)  # Giữ người dùng đăng nhập
+                update_session_auth_hash(request, user)
                 messages.success(request, "Cập nhật mật khẩu thành công!")
                 return redirect('edit_profile')
-    else:
-        profile_form = UserProfileForm(instance=nguoi_dung)
-        username_form = UsernameChangeForm(instance=user)
-        password_form = CustomPasswordChangeForm(user)
 
     context = {
         'profile_form': profile_form,
@@ -389,10 +448,9 @@ def edit_profile(request):
         'password_form': password_form,
         'nguoi_dung': nguoi_dung,
         'post_count': post_count,
-        'hide_sidebar': False,  # Hiển thị sidebar
-        'show_search': False,  # Không hiển thị thanh tìm kiếm
+        'hide_sidebar': False,
+        'show_search': False,
     }
-
     return render(request, 'Edit_Profile/edit_profile.html', context)
 
 from .models import NguoiDung
@@ -436,7 +494,7 @@ def tao_binh_chon(request):
         'phong_bans': PhongBan.objects.all(),
         'nguoidung': nguoi_dung,  # Thêm thông tin người dùng cho template
     }
-    return render(request, 'TaoBinhChon\TaoBinhChon.html', context)
+    return render(request, 'TaoBinhChon/TaoBinhChon.html', context)
 
 
 @login_required
@@ -448,7 +506,7 @@ def danh_sach_binh_chon(request):
         'binh_chons': binh_chons,
         'nguoidung': nguoi_dung,  # Thêm thông tin người dùng cho template
     }
-    return render(request, 'TaoBinhChon\danh_sach_binh_chon.html', context)
+    return render(request, 'TaoBinhChon/danh_sach_binh_chon.html', context)
 
 def current_profile(request):
     """
@@ -681,3 +739,185 @@ def xu_ly_binh_chon(request):
         })
 
     return JsonResponse({'success': False})
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse, HttpResponseForbidden
+from django.utils import timezone
+from django.db.models import Count, Q
+from django.contrib import messages
+from .models import (
+    PhongBan, NguoiDung, BaiViet, TepDinhKem, HinhAnh, BinhLuan,
+    LuotCamXuc, BinhChon, LuaChonBinhChon, BinhChonNguoiDung
+)
+
+
+# Các view hiện tại giữ nguyên
+
+@login_required
+def sua_bai_viet(request, bai_viet_id):
+    bai_viet = get_object_or_404(BaiViet, id=bai_viet_id)
+    nguoi_dung = get_object_or_404(NguoiDung, user=request.user)
+
+    # Kiểm tra quyền sửa bài viết
+    if bai_viet.MaNguoiDung.user.id != request.user.id:
+        return HttpResponseForbidden("Bạn không có quyền sửa bài viết này.")
+
+    hinh_anh_list = HinhAnh.objects.filter(MaBaiViet=bai_viet)
+    tep_dinh_kem_list = TepDinhKem.objects.filter(MaBaiViet=bai_viet)
+
+    if request.method == 'POST':
+        # Cập nhật nội dung bài viết
+        noi_dung = request.POST.get('NoiDung')
+        bai_viet.NoiDung = noi_dung
+        bai_viet.save()
+
+        # Xử lý xóa hình ảnh
+        hinh_anh_xoa = request.POST.getlist('hinh_anh_xoa')
+        for hinh_anh_id in hinh_anh_xoa:
+            try:
+                hinh_anh = HinhAnh.objects.get(id=hinh_anh_id, MaBaiViet=bai_viet)
+                hinh_anh.delete()
+            except HinhAnh.DoesNotExist:
+                pass
+
+        # Xử lý xóa tệp đính kèm
+        tep_xoa = request.POST.getlist('tep_xoa')
+        for tep_id in tep_xoa:
+            try:
+                tep = TepDinhKem.objects.get(id=tep_id, MaBaiViet=bai_viet)
+                tep.delete()
+            except TepDinhKem.DoesNotExist:
+                pass
+
+        # Xử lý thêm hình ảnh mới
+        hinh_anh_moi = request.FILES.getlist('hinh_anh_moi')
+        for hinh_anh in hinh_anh_moi:
+            if hinh_anh:
+                HinhAnh.objects.create(
+                    Anh=hinh_anh,
+                    MaBaiViet=bai_viet
+                )
+
+        # Xử lý thêm tệp đính kèm mới
+        tep_dinh_kem_moi = request.FILES.getlist('tep_dinh_kem_moi')
+        for tep in tep_dinh_kem_moi:
+            if tep:
+                TepDinhKem.objects.create(
+                    Tep=tep,
+                    MaBaiViet=bai_viet
+                )
+
+        messages.success(request, "Bài viết đã được cập nhật thành công.")
+        return redirect('trang_chu')
+
+    context = {
+        'bai_viet': bai_viet,
+        'hinh_anh_list': hinh_anh_list,
+        'tep_dinh_kem_list': tep_dinh_kem_list,
+        'nguoidung': nguoi_dung,
+    }
+
+    return render(request, 'SuaBaiViet.html', context)
+
+
+@login_required
+def xoa_bai_viet(request, bai_viet_id):
+    bai_viet = get_object_or_404(BaiViet, id=bai_viet_id)
+
+    # Kiểm tra quyền xóa bài viết
+    if bai_viet.MaNguoiDung.user.id != request.user.id:
+        return HttpResponseForbidden("Bạn không có quyền xóa bài viết này.")
+
+    # Xóa bài viết
+    bai_viet.delete()
+
+    messages.success(request, "Bài viết đã được xóa thành công.")
+    return redirect('trang_chu')
+
+
+@login_required
+def sua_binh_chon(request, binh_chon_id):
+    binh_chon = get_object_or_404(BinhChon, id=binh_chon_id)
+    nguoi_dung = get_object_or_404(NguoiDung, user=request.user)
+
+    # Kiểm tra quyền sửa bình chọn
+    if binh_chon.MaNguoiDung.user.id != request.user.id:
+        return HttpResponseForbidden("Bạn không có quyền sửa bình chọn này.")
+
+    lua_chon_list = LuaChonBinhChon.objects.filter(binh_chon=binh_chon)
+    phong_ban_list = PhongBan.objects.all()
+    phong_ban_da_chon = binh_chon.PhongBans.all()
+
+    if request.method == 'POST':
+        # Cập nhật thông tin bình chọn
+        tieu_de = request.POST.get('TenTieuDe')
+        mo_ta = request.POST.get('MoTa')
+        thoi_gian_ket_thuc = request.POST.get('ThoiGianKetThucBC')
+
+        binh_chon.TenTieuDe = tieu_de
+        binh_chon.MoTa = mo_ta
+        if thoi_gian_ket_thuc:
+            binh_chon.ThoiGianKetThucBC = thoi_gian_ket_thuc
+        binh_chon.save()
+
+        # Cập nhật phòng ban
+        binh_chon.PhongBans.clear()
+        phong_ban_ids = request.POST.getlist('phong_ban')
+        for pb_id in phong_ban_ids:
+            phong_ban = PhongBan.objects.get(id=pb_id)
+            binh_chon.PhongBans.add(phong_ban)
+
+        # Xử lý xóa lựa chọn
+        lua_chon_xoa = request.POST.getlist('lua_chon_xoa')
+        for lua_chon_id in lua_chon_xoa:
+            try:
+                lua_chon = LuaChonBinhChon.objects.get(id=lua_chon_id, binh_chon=binh_chon)
+                lua_chon.delete()
+            except LuaChonBinhChon.DoesNotExist:
+                pass
+
+        # Cập nhật lựa chọn hiện tại
+        for lua_chon in lua_chon_list:
+            noi_dung_moi = request.POST.get(f'lua_chon_{lua_chon.id}')
+            if noi_dung_moi:
+                lua_chon.noi_dung = noi_dung_moi
+                lua_chon.save()
+
+        # Thêm lựa chọn mới
+        lua_chon_moi = request.POST.getlist('lua_chon_moi')
+        for noi_dung in lua_chon_moi:
+            if noi_dung:
+                LuaChonBinhChon.objects.create(
+                    binh_chon=binh_chon,
+                    noi_dung=noi_dung
+                )
+
+        messages.success(request, "Bình chọn đã được cập nhật thành công.")
+        return redirect('trang_chu')
+
+    context = {
+        'binh_chon': binh_chon,
+        'lua_chon_list': lua_chon_list,
+        'phong_ban_list': phong_ban_list,
+        'phong_ban_da_chon': phong_ban_da_chon,
+        'nguoidung': nguoi_dung,
+    }
+
+    return render(request, 'sua_binh_chon.html', context)
+
+
+@login_required
+def xoa_binh_chon(request, binh_chon_id):
+    binh_chon = get_object_or_404(BinhChon, id=binh_chon_id)
+
+    # Kiểm tra quyền xóa bình chọn
+    if binh_chon.MaNguoiDung.user.id != request.user.id:
+        return HttpResponseForbidden("Bạn không có quyền xóa bình chọn này.")
+
+    # Xóa bình chọn
+    binh_chon.delete()
+
+    messages.success(request, "Bình chọn đã được xóa thành công.")
+    return redirect('trang_chu')

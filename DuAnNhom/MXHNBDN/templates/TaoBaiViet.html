@@ -1,199 +1,635 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}Tạo bài viết mới{% endblock %}
 
-
-{% block content %}
-
+{% block extra_css %}
 <style>
-    /* Post creation form styles */
-    .post-form-container {
-        width: 100%;
-        max-width: 600px;
-        margin: 0 auto;
+    .post-card {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        margin-bottom: 20px;
     }
 
-    .post-form-card {
-        background-color: #f1f1f1;
-        border-radius: 8px;
-        padding: 16px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    .post-header {
+        padding: 20px 20px 10px;
+        border-bottom: 1px solid var(--border-color);
     }
 
-    .post-textarea-container {
-        margin-bottom: 12px;
+    .post-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--dark-text);
+        margin-bottom: 5px;
+    }
+
+    .post-subtitle {
+        font-size: 14px;
+        color: var(--light-text);
+    }
+
+    .post-body {
+        padding: 20px;
     }
 
     .post-textarea {
         width: 100%;
-        padding: 12px;
-        border: 1px solid #e4e4e4;
-        border-radius: 8px;
-        background-color: lightgray;
-        font-family: 'Inter', Arial, sans-serif;
-        font-size: 14px;
-        resize: none;
-    }
-
-    .post-textarea:focus {
-        outline: none;
-        border-color: #5858fa;
-    }
-
-    .post-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding-top: 12px;
-        border-top: 1px solid #e4e4e4;
-    }
-
-    .post-media-buttons {
-        display: flex;
-        align-items: center;
-    }
-
-    .media-button {
-        background: none;
         border: none;
+        resize: none;
+        font-size: 16px;
+        font-family: 'Inter', sans-serif;
+        padding: 10px 0;
+        outline: none;
+        min-height: 120px;
+    }
+
+    .post-textarea::placeholder {
+        color: #aaa;
+    }
+
+    .post-attachments {
+        padding: 10px 20px;
+        display: flex;
+        gap: 10px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .attachment-button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 20px;
+        background-color: var(--secondary);
+        color: var(--primary);
+        border: none;
+        font-size: 14px;
         cursor: pointer;
-        padding: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .attachment-button:hover {
+        background-color: #e8e8ff;
+    }
+
+    .attachment-icon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .post-footer {
+        padding: 15px 20px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-cancel {
+        background-color: white;
+        color: var(--light-text);
+        border: 1px solid var(--border-color);
+    }
+
+    .btn-cancel:hover {
+        background-color: #f5f5f5;
+    }
+
+    .btn-post {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+    }
+
+    .btn-post:hover {
+        background-color: var(--primary-dark);
+    }
+
+    .file-preview {
+        margin-top: 15px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .preview-item {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+    }
+
+    .preview-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .preview-item .file-icon {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f5f5f5;
+        color: var(--light-text);
+    }
+
+    .preview-item .file-name {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0.6);
+        color: white;
+        font-size: 10px;
+        padding: 3px 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .remove-preview {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        width: 20px;
+        height: 20px;
+        background-color: rgba(0, 0, 0, 0.6);
+        color: white;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #686868;
+        cursor: pointer;
+        font-size: 12px;
     }
 
-    .media-button:hover {
-        background-color: #e4e4e4;
+    .preview-container {
+        margin-top: 15px;
     }
 
-    .media-button i {
-        width: 20px;
-        height: 20px;
+    .preview-title {
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 10px;
+        color: var(--light-text);
     }
 
-    .hidden-input {
+    .image-preview, .file-preview {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    /* Hiệu ứng loading khi đăng bài */
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        visibility: hidden;
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+
+    .loading-overlay.active {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid var(--secondary);
+        border-top-color: var(--primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Thêm hiệu ứng cho nút */
+    .btn {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 5px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.5);
+        opacity: 0;
+        border-radius: 100%;
+        transform: scale(1, 1) translate(-50%);
+        transform-origin: 50% 50%;
+    }
+
+    .btn:focus:not(:active)::after {
+        animation: ripple 1s ease-out;
+    }
+
+    @keyframes ripple {
+        0% {
+            transform: scale(0, 0);
+            opacity: 0.5;
+        }
+        20% {
+            transform: scale(25, 25);
+            opacity: 0.3;
+        }
+        100% {
+            opacity: 0;
+            transform: scale(40, 40);
+        }
+    }
+
+    /* Thêm hiệu ứng hover cho các nút đính kèm */
+    .attachment-button {
+        position: relative;
+        z-index: 1;
+    }
+
+    .attachment-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--primary);
+        border-radius: 20px;
+        z-index: -1;
+        transform: scale(0);
+        transition: transform 0.3s ease;
+    }
+
+    .attachment-button:hover {
+        color: white;
+    }
+
+    .attachment-button:hover::before {
+        transform: scale(1);
+    }
+
+    .attachment-button:hover .attachment-icon {
+        color: white;
+    }
+
+    /* Thêm hiệu ứng cho textarea */
+    .post-textarea {
+        transition: border 0.3s ease;
+        border-bottom: 2px solid transparent;
+    }
+
+    .post-textarea:focus {
+        border-bottom: 2px solid var(--primary);
+    }
+
+    /* Thêm hiệu ứng cho card */
+    .post-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .post-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Ẩn input file */
+    .file-input {
         display: none;
     }
 
-    .filename-display {
-        margin-left: 8px;
-        font-size: 12px;
-        color: #686868;
-        max-width: 120px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .post-submit-buttons {
-        display: flex;
-        gap: 8px;
-    }
-
-    .cancel-button {
-        padding: 6px 16px;
-        background: none;
-        border: none;
-        border-radius: 4px;
-        color: #686868;
-        font-size: 14px;
-        cursor: pointer;
-        text-decoration: none;
-    }
-
-    .cancel-button:hover {
-        background-color: #e4e4e4;
-    }
-
-    .submit-button {
-        padding: 6px 16px;
-        background-color: #150aa1;
-        border: none;
-        border-radius: 4px;
+    /* Hiển thị số lượng file đã chọn */
+    .file-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--primary);
         color: white;
-        font-size: 14px;
-        cursor: pointer;
-    }
-
-    .submit-button:hover {
-        background-color: #0f0880;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        font-size: 12px;
+        margin-left: 5px;
     }
 </style>
-<div class="post-form-container">
-    <div class="post-form-card">
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="post-textarea-container">
-                {{ form.noi_dung }}
-            </div>
+{% endblock %}
 
-            <div class="post-actions">
-                <div class="post-media-buttons">
-                    <!-- Image upload button -->
-                    <button type="button" class="media-button" id="hinh_anh_btn" title="Thêm hình ảnh">
-                        <i data-lucide="image"></i>
-                    </button>
-                    {{ form.hinh_anh }}
-                    <span id="hinh_anh_filename" class="filename-display"></span>
-
-                    <!-- File attachment button -->
-                    <button type="button" class="media-button" id="tep_dinh_kem_btn" title="Thêm tệp đính kèm">
-                        <i data-lucide="paperclip"></i>
-                    </button>
-                    {{ form.tep_dinh_kem }}
-                    <span id="tep_dinh_kem_filename" class="filename-display"></span>
-                </div>
-
-                <div class="post-submit-buttons">
-                    <a href="#" class="cancel-button">Hủy</a>
-                    <button type="submit" class="submit-button">Đăng</button>
-                </div>
-            </div>
-        </form>
+{% block content %}
+<div class="post-card">
+    <div class="post-header">
+        <h2 class="post-title">Tạo bài viết mới</h2>
+        <p class="post-subtitle">Chia sẻ suy nghĩ của bạn với mọi người</p>
     </div>
+
+    <form method="post" enctype="multipart/form-data" id="post-form">
+        {% csrf_token %}
+        <div class="post-body">
+            {{ form.noi_dung }}
+
+            <div class="preview-container" id="image-preview-container" style="display: none;">
+                <h3 class="preview-title">Hình ảnh đã chọn</h3>
+                <div class="image-preview" id="image-preview"></div>
+            </div>
+
+            <div class="preview-container" id="file-preview-container" style="display: none;">
+                <h3 class="preview-title">Tệp đã chọn</h3>
+                <div class="file-preview" id="file-preview"></div>
+            </div>
+        </div>
+
+        <div class="post-attachments">
+            <label for="image-upload-button" class="attachment-button" id="image-button">
+                <i data-lucide="image" class="attachment-icon"></i>
+                <span>Thêm ảnh</span>
+            </label>
+            <button type="button" id="image-upload-button" style="display: none;">Chọn ảnh</button>
+            <input type="file" name="hinh_anh[]" id="image-upload" class="file-input" accept="image/*" multiple>
+
+            <label for="file-upload-button" class="attachment-button" id="file-button">
+                <i data-lucide="file" class="attachment-icon"></i>
+                <span>Thêm tệp</span>
+            </label>
+            <button type="button" id="file-upload-button" style="display: none;">Chọn tệp</button>
+            <input type="file" name="tep_dinh_kem[]" id="file-upload" class="file-input" multiple>
+        </div>
+
+        <div class="post-footer">
+            <a href="{% url 'trang_chu' %}" class="btn btn-cancel">Hủy</a>
+            <button type="submit" class="btn btn-post" id="submit-post">Đăng</button>
+        </div>
+    </form>
 </div>
 
+<div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize Lucide icons
-        lucide.createIcons();
+    // Lưu trữ các file đã chọn
+    let selectedImages = new DataTransfer();
+    let selectedFiles = new DataTransfer();
 
-        // Image upload button
-        const hinhAnhBtn = document.getElementById('hinh_anh_btn');
-        const hinhAnhInput = document.getElementById('hinh_anh_input');
-        const hinhAnhFilename = document.getElementById('hinh_anh_filename');
+    // Xử lý thêm ảnh
+    const imageUpload = document.getElementById('image-upload');
+    const imageButton = document.getElementById('image-button');
+    const imageUploadButton = document.getElementById('image-upload-button');
+    const imagePreviewContainer = document.getElementById('image-preview-container');
+    const imagePreview = document.getElementById('image-preview');
 
-        hinhAnhBtn.addEventListener('click', function() {
-            hinhAnhInput.click();
-        });
+    // Khi click vào nút "Thêm ảnh"
+    imageButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        imageUpload.click();
+    });
 
-        hinhAnhInput.addEventListener('change', function() {
-            if (this.files.length > 0) {
-                hinhAnhFilename.textContent = this.files[0].name;
+    // Khi chọn ảnh
+    imageUpload.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            // Thêm các file mới vào DataTransfer
+            Array.from(this.files).forEach(file => {
+                selectedImages.items.add(file);
+            });
+
+            // Hiển thị preview cho tất cả các file
+            updateImagePreview();
+        }
+    });
+
+    // Hàm cập nhật preview ảnh
+    function updateImagePreview() {
+        // Xóa tất cả preview hiện tại
+        imagePreview.innerHTML = '';
+
+        if (selectedImages.files.length > 0) {
+            imagePreviewContainer.style.display = 'block';
+
+            // Cập nhật số lượng ảnh trên nút
+            const imageCount = document.querySelector('#image-button .file-count');
+            if (imageCount) {
+                imageCount.textContent = selectedImages.files.length;
             } else {
-                hinhAnhFilename.textContent = '';
+                const countSpan = document.createElement('span');
+                countSpan.className = 'file-count';
+                countSpan.textContent = selectedImages.files.length;
+                imageButton.appendChild(countSpan);
             }
-        });
 
-        // File attachment button
-        const tepDinhKemBtn = document.getElementById('tep_dinh_kem_btn');
-        const tepDinhKemInput = document.getElementById('tep_dinh_kem_input');
-        const tepDinhKemFilename = document.getElementById('tep_dinh_kem_filename');
+            // Tạo preview cho từng ảnh
+            Array.from(selectedImages.files).forEach((file, index) => {
+                const reader = new FileReader();
 
-        tepDinhKemBtn.addEventListener('click', function() {
-            tepDinhKemInput.click();
-        });
+                reader.onload = function(e) {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'preview-item';
 
-        tepDinhKemInput.addEventListener('change', function() {
-            if (this.files.length > 0) {
-                tepDinhKemFilename.textContent = this.files[0].name;
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+
+                    const removeBtn = document.createElement('div');
+                    removeBtn.className = 'remove-preview';
+                    removeBtn.innerHTML = '×';
+                    removeBtn.dataset.index = index;
+                    removeBtn.dataset.type = 'image';
+
+                    previewItem.appendChild(img);
+                    previewItem.appendChild(removeBtn);
+                    imagePreview.appendChild(previewItem);
+                }
+
+                reader.readAsDataURL(file);
+            });
+
+            // Cập nhật lại input file
+            imageUpload.files = selectedImages.files;
+        } else {
+            imagePreviewContainer.style.display = 'none';
+
+            // Xóa số lượng ảnh trên nút
+            const imageCount = document.querySelector('#image-button .file-count');
+            if (imageCount) {
+                imageButton.removeChild(imageCount);
+            }
+        }
+    }
+
+    // Xử lý thêm tệp
+    const fileUpload = document.getElementById('file-upload');
+    const fileButton = document.getElementById('file-button');
+    const fileUploadButton = document.getElementById('file-upload-button');
+    const filePreviewContainer = document.getElementById('file-preview-container');
+    const filePreview = document.getElementById('file-preview');
+
+    // Khi click vào nút "Thêm tệp"
+    fileButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        fileUpload.click();
+    });
+
+    // Khi chọn tệp
+    fileUpload.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            // Thêm các file mới vào DataTransfer
+            Array.from(this.files).forEach(file => {
+                selectedFiles.items.add(file);
+            });
+
+            // Hiển thị preview cho tất cả các file
+            updateFilePreview();
+        }
+    });
+
+    // Hàm cập nhật preview tệp
+    function updateFilePreview() {
+        // Xóa tất cả preview hiện tại
+        filePreview.innerHTML = '';
+
+        if (selectedFiles.files.length > 0) {
+            filePreviewContainer.style.display = 'block';
+
+            // Cập nhật số lượng tệp trên nút
+            const fileCount = document.querySelector('#file-button .file-count');
+            if (fileCount) {
+                fileCount.textContent = selectedFiles.files.length;
             } else {
-                tepDinhKemFilename.textContent = '';
+                const countSpan = document.createElement('span');
+                countSpan.className = 'file-count';
+                countSpan.textContent = selectedFiles.files.length;
+                fileButton.appendChild(countSpan);
             }
+
+            // Tạo preview cho từng tệp
+            Array.from(selectedFiles.files).forEach((file, index) => {
+                const previewItem = document.createElement('div');
+                previewItem.className = 'preview-item';
+
+                const fileIcon = document.createElement('div');
+                fileIcon.className = 'file-icon';
+                fileIcon.innerHTML = '<i data-lucide="file-text" style="width: 32px; height: 32px;"></i>';
+
+                const fileName = document.createElement('div');
+                fileName.className = 'file-name';
+                fileName.textContent = file.name;
+
+                const removeBtn = document.createElement('div');
+                removeBtn.className = 'remove-preview';
+                removeBtn.innerHTML = '×';
+                removeBtn.dataset.index = index;
+                removeBtn.dataset.type = 'file';
+
+                previewItem.appendChild(fileIcon);
+                previewItem.appendChild(fileName);
+                previewItem.appendChild(removeBtn);
+                filePreview.appendChild(previewItem);
+            });
+
+            // Khởi tạo lại icon Lucide
+            lucide.createIcons();
+
+            // Cập nhật lại input file
+            fileUpload.files = selectedFiles.files;
+        } else {
+            filePreviewContainer.style.display = 'none';
+
+            // Xóa số lượng tệp trên nút
+            const fileCount = document.querySelector('#file-button .file-count');
+            if (fileCount) {
+                fileButton.removeChild(fileCount);
+            }
+        }
+    }
+
+    // Xử lý xóa preview
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-preview')) {
+            const type = e.target.dataset.type;
+            const index = parseInt(e.target.dataset.index);
+
+            if (type === 'image') {
+                // Tạo DataTransfer mới không có file bị xóa
+                const newDataTransfer = new DataTransfer();
+
+                Array.from(selectedImages.files)
+                    .filter((_, i) => i !== index)
+                    .forEach(file => newDataTransfer.items.add(file));
+
+                // Cập nhật lại danh sách file
+                selectedImages = newDataTransfer;
+
+                // Cập nhật lại preview
+                updateImagePreview();
+            } else if (type === 'file') {
+                // Tạo DataTransfer mới không có file bị xóa
+                const newDataTransfer = new DataTransfer();
+
+                Array.from(selectedFiles.files)
+                    .filter((_, i) => i !== index)
+                    .forEach(file => newDataTransfer.items.add(file));
+
+                // Cập nhật lại danh sách file
+                selectedFiles = newDataTransfer;
+
+                // Cập nhật lại preview
+                updateFilePreview();
+            }
+        }
+    });
+
+    // Hiển thị loading khi submit form
+    const postForm = document.getElementById('post-form');
+    const loadingOverlay = document.getElementById('loading-overlay');
+
+    postForm.addEventListener('submit', function() {
+        loadingOverlay.classList.add('active');
+    });
+
+    // Thêm hiệu ứng focus cho textarea
+    const postTextarea = document.querySelector('.post-textarea');
+    if (postTextarea) {
+        postTextarea.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
         });
+
+        postTextarea.addEventListener('blur', function() {
+            this.parentElement.classList.remove('focused');
+        });
+    }
+
+    // Tự động resize textarea khi nhập
+    postTextarea.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
     });
 </script>
 {% endblock %}

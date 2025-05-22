@@ -1,0 +1,399 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Chỉnh sửa bình chọn - Mạng xã hội nội bộ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .edit-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .edit-card {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+    
+    .edit-header {
+        padding: 20px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .edit-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--dark-text);
+    }
+    
+    .edit-body {
+        padding: 20px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--dark-text);
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.2s;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(88, 88, 250, 0.2);
+    }
+    
+    textarea.form-control {
+        min-height: 100px;
+        resize: vertical;
+    }
+    
+    .option-list {
+        margin-top: 15px;
+    }
+    
+    .option-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .option-input {
+        flex: 1;
+        padding: 10px 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.2s;
+    }
+    
+    .option-input:focus {
+        outline: none;
+        border-color: var(--primary);
+    }
+    
+    .option-remove {
+        background: none;
+        border: none;
+        color: #e53935;
+        cursor: pointer;
+        padding: 5px 10px;
+        margin-left: 10px;
+    }
+    
+    .add-option {
+        display: flex;
+        align-items: center;
+        margin-top: 15px;
+    }
+    
+    .add-option-btn {
+        background-color: var(--secondary);
+        color: var(--primary);
+        border: none;
+        border-radius: 8px;
+        padding: 10px 15px;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        transition: background-color 0.2s;
+    }
+    
+    .add-option-btn:hover {
+        background-color: #e4e4ff;
+    }
+    
+    .add-option-btn i {
+        margin-right: 8px;
+    }
+    
+    .department-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    .department-item {
+        display: flex;
+        align-items: center;
+    }
+    
+    .department-checkbox {
+        margin-right: 8px;
+    }
+    
+    .department-label {
+        font-size: 14px;
+        color: var(--dark-text);
+    }
+    
+    .edit-footer {
+        padding: 20px;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: flex-end;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        border: none;
+        transition: background-color 0.2s;
+    }
+    
+    .btn-cancel {
+        background-color: #f1f1f1;
+        color: var(--dark-text);
+        margin-right: 10px;
+    }
+    
+    .btn-cancel:hover {
+        background-color: #e4e4e4;
+    }
+    
+    .btn-save {
+        background-color: var(--primary);
+        color: white;
+    }
+    
+    .btn-save:hover {
+        background-color: var(--primary-dark);
+    }
+    
+    /* Modal xác nhận */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 100;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .modal-container {
+        background-color: white;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 400px;
+        padding: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .modal-header {
+        margin-bottom: 15px;
+    }
+    
+    .modal-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--dark-text);
+    }
+    
+    .modal-body {
+        margin-bottom: 20px;
+        color: var(--light-text);
+    }
+    
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+    }
+    
+    .modal-btn {
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+        border: none;
+        margin-left: 10px;
+    }
+    
+    .modal-btn-cancel {
+        background-color: #f1f1f1;
+        color: var(--dark-text);
+    }
+    
+    .modal-btn-confirm {
+        background-color: var(--primary);
+        color: white;
+    }
+    
+    /* Hiển thị modal */
+    .modal-overlay.show {
+        display: flex;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-container">
+    <h1 class="mb-4">Chỉnh sửa bình chọn</h1>
+    
+    <div class="edit-card">
+        <div class="edit-header">
+            <div class="edit-title">Chỉnh sửa bình chọn</div>
+        </div>
+        
+        <form id="edit-form" method="post" action="{% url 'sua_binh_chon' binh_chon.id %}">
+            {% csrf_token %}
+            
+            <div class="edit-body">
+                <div class="form-group">
+                    <label for="tieu_de" class="form-label">Tiêu đề</label>
+                    <input type="text" id="tieu_de" name="TenTieuDe" class="form-control" value="{{ binh_chon.TenTieuDe }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="mo_ta" class="form-label">Mô tả</label>
+                    <textarea id="mo_ta" name="MoTa" class="form-control">{{ binh_chon.MoTa }}</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="thoi_gian_ket_thuc" class="form-label">Thời gian kết thúc</label>
+                    <input type="datetime-local" id="thoi_gian_ket_thuc" name="ThoiGianKetThucBC" class="form-control" value="{{ binh_chon.ThoiGianKetThucBC|date:'Y-m-d\TH:i' }}">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Phòng ban</label>
+                    <div class="department-list">
+                        {% for phong_ban in phong_ban_list %}
+                        <div class="department-item">
+                            <input type="checkbox" id="phong_ban_{{ phong_ban.id }}" name="phong_ban" value="{{ phong_ban.id }}" class="department-checkbox" {% if phong_ban in phong_ban_da_chon %}checked{% endif %}>
+                            <label for="phong_ban_{{ phong_ban.id }}" class="department-label">{{ phong_ban.TenPhong }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Các lựa chọn</label>
+                    <div class="option-list" id="option-list">
+                        {% for lua_chon in lua_chon_list %}
+                        <div class="option-item">
+                            <input type="text" name="lua_chon_{{ lua_chon.id }}" class="option-input" value="{{ lua_chon.noi_dung }}" required>
+                            <button type="button" class="option-remove" onclick="removeOption(this, {{ lua_chon.id }})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="add-option">
+                        <button type="button" class="add-option-btn" onclick="addOption()">
+                            <i class="fas fa-plus"></i> Thêm lựa chọn
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="edit-footer">
+                <a href="{% url 'trang_chu' %}" class="btn btn-cancel">Hủy</a>
+                <button type="button" class="btn btn-save" onclick="showSaveModal()">Lưu thay đổi</button>
+            </div>
+            
+            <!-- Container cho các lựa chọn đã xóa -->
+            <div id="removed-options-container" style="display: none;">
+                <!-- Sẽ được thêm bởi JavaScript -->
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal xác nhận lưu -->
+<div id="save-modal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3 class="modal-title">Xác nhận lưu thay đổi</h3>
+        </div>
+        <div class="modal-body">
+            <p>Bạn có chắc chắn muốn lưu những thay đổi này?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-cancel" onclick="hideSaveModal()">Hủy</button>
+            <button class="modal-btn modal-btn-confirm" onclick="submitForm()">Lưu thay đổi</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Thêm lựa chọn mới
+    function addOption() {
+        const optionList = document.getElementById('option-list');
+        const newOption = document.createElement('div');
+        newOption.className = 'option-item';
+        
+        newOption.innerHTML = `
+            <input type="text" name="lua_chon_moi" class="option-input" placeholder="Nhập lựa chọn mới" required>
+            <button type="button" class="option-remove" onclick="removeNewOption(this)">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        
+        optionList.appendChild(newOption);
+    }
+    
+    // Xóa lựa chọn hiện tại
+    function removeOption(button, optionId) {
+        // Thêm input hidden để đánh dấu lựa chọn cần xóa
+        const container = document.getElementById('removed-options-container');
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'lua_chon_xoa';
+        input.value = optionId;
+        container.appendChild(input);
+        
+        // Xóa phần tử hiển thị
+        const optionItem = button.closest('.option-item');
+        optionItem.remove();
+    }
+    
+    // Xóa lựa chọn mới (chưa lưu)
+    function removeNewOption(button) {
+        const optionItem = button.closest('.option-item');
+        optionItem.remove();
+    }
+    
+    // Hiển thị modal xác nhận lưu
+    function showSaveModal() {
+        document.getElementById('save-modal').classList.add('show');
+    }
+    
+    // Ẩn modal xác nhận lưu
+    function hideSaveModal() {
+        document.getElementById('save-modal').classList.remove('show');
+    }
+    
+    // Submit form
+    function submitForm() {
+        document.getElementById('edit-form').submit();
+    }
+</script>
+{% endblock %}

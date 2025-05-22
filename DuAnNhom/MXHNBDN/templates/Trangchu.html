@@ -362,14 +362,145 @@
             padding: 8px 5px;
         }
     }
+        .dropdown-menu {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-toggle {
+        background: none;
+        border: none;
+        color: var(--light-text);
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 50%;
+        transition: background-color 0.2s;
+    }
+
+    .dropdown-toggle:hover {
+        background-color: var(--secondary);
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        background-color: white;
+        min-width: 160px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        z-index: 10;
+        overflow: hidden;
+    }
+
+    .dropdown-content a {
+        color: var(--dark-text);
+        padding: 12px 16px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        transition: background-color 0.2s;
+    }
+
+    .dropdown-content a:hover {
+        background-color: var(--secondary);
+    }
+
+    .dropdown-content a i {
+        margin-right: 10px;
+        width: 16px;
+    }
+
+    .dropdown-content .delete {
+        color: #e53935;
+    }
+
+    .dropdown-content .edit {
+        color: var(--primary);
+    }
+
+    .show {
+        display: block;
+    }
+
+    /* Modal xác nhận */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 100;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-container {
+        background-color: white;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 400px;
+        padding: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .modal-header {
+        margin-bottom: 15px;
+    }
+
+    .modal-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--dark-text);
+    }
+
+    .modal-body {
+        margin-bottom: 20px;
+        color: var(--light-text);
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .modal-btn {
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+        border: none;
+        margin-left: 10px;
+    }
+
+    .modal-btn-cancel {
+        background-color: #f1f1f1;
+        color: var(--dark-text);
+    }
+
+    .modal-btn-confirm {
+        background-color: var(--primary);
+        color: white;
+    }
+
+    .modal-btn-delete {
+        background-color: #e53935;
+        color: white;
+    }
+
+    /* Hiển thị modal */
+    .modal-overlay.show {
+        display: flex;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-
 <div class="content-container">
     <h1 class="mb-4">Trang chủ</h1>
-
 
     <!-- Danh sách bình chọn -->
     {% for binh_chon in binh_chon_list %}
@@ -388,6 +519,23 @@
                     <div class="post-time">{{ binh_chon.ThoiGianKetThucBC|timesince }} trước</div>
                 </div>
             </div>
+
+            <!-- Menu 3 chấm cho bình chọn - chỉ hiển thị với người tạo -->
+            {% if binh_chon.MaNguoiDung.user.id == user.id %}
+            <div class="dropdown-menu">
+                <button class="dropdown-toggle" onclick="toggleDropdown('dropdown-binh-chon-{{ binh_chon.id }}')">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <div id="dropdown-binh-chon-{{ binh_chon.id }}" class="dropdown-content">
+                    <a href="{% url 'sua_binh_chon' binh_chon.id %}" class="edit">
+                        <i class="fas fa-edit"></i> Chỉnh sửa
+                    </a>
+                    <a href="javascript:void(0)" class="delete" onclick="showDeleteModal('binh-chon', {{ binh_chon.id }})">
+                        <i class="fas fa-trash-alt"></i> Xóa
+                    </a>
+                </div>
+            </div>
+            {% endif %}
         </div>
 
         <div class="card-body">
@@ -415,16 +563,6 @@
                 </div>
             </div>
 
-            <div class="post-actions">
-                <button class="action-btn">
-                    <i class="far fa-thumbs-up"></i>
-                    <span>Thích</span>
-                </button>
-                <button class="action-btn">
-                    <i class="far fa-comment"></i>
-                    <span>Bình luận</span>
-                </button>
-            </div>
         </div>
     </div>
     {% endfor %}
@@ -446,7 +584,23 @@
                     <div class="post-time">{{ bai_viet.ThoiGianTao|timesince }} trước</div>
                 </div>
             </div>
-            <div class="post-date">{{ bai_viet.ThoiGianTao|date:"d/m/Y" }}</div>
+
+            <!-- Menu 3 chấm cho bài viết - chỉ hiển thị với người tạo -->
+            {% if bai_viet.MaNguoiDung.user.id == user.id %}
+            <div class="dropdown-menu">
+                <button class="dropdown-toggle" onclick="toggleDropdown('dropdown-bai-viet-{{ bai_viet.id }}')">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <div id="dropdown-bai-viet-{{ bai_viet.id }}" class="dropdown-content">
+                    <a href="{% url 'sua_bai_viet' bai_viet.id %}" class="edit">
+                        <i class="fas fa-edit"></i> Chỉnh sửa
+                    </a>
+                    <a href="javascript:void(0)" class="delete" onclick="showDeleteModal('bai-viet', {{ bai_viet.id }})">
+                        <i class="fas fa-trash-alt"></i> Xóa
+                    </a>
+                </div>
+            </div>
+            {% endif %}
         </div>
 
         <div class="card-body">
@@ -558,6 +712,22 @@
     </div>
     {% endfor %}
 </div>
+
+<!-- Modal xác nhận xóa -->
+<div id="delete-modal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3 class="modal-title">Xác nhận xóa</h3>
+        </div>
+        <div class="modal-body">
+            <p>Bạn có chắc chắn muốn xóa? Hành động này không thể hoàn tác.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-cancel" onclick="hideDeleteModal()">Hủy</button>
+            <button id="confirm-delete-btn" class="modal-btn modal-btn-delete">Xóa</button>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -662,6 +832,46 @@
     function loadMoreComments(baiVietId) {
         // Implement AJAX để tải thêm bình luận
         console.log(`Tải thêm bình luận cho bài viết ${baiVietId}`);
+    }
+
+    // Hiển thị/ẩn dropdown menu
+    function toggleDropdown(dropdownId) {
+        // Đóng tất cả các dropdown khác
+        document.querySelectorAll('.dropdown-content').forEach(dropdown => {
+            if (dropdown.id !== dropdownId) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // Hiển thị/ẩn dropdown hiện tại
+        document.getElementById(dropdownId).classList.toggle('show');
+    }
+
+    // Đóng dropdown khi click ra ngoài
+    window.onclick = function(event) {
+        if (!event.target.matches('.dropdown-toggle') && !event.target.matches('.fa-ellipsis-v')) {
+            document.querySelectorAll('.dropdown-content').forEach(dropdown => {
+                dropdown.classList.remove('show');
+            });
+        }
+    }
+
+    // Hiển thị modal xác nhận xóa
+    function showDeleteModal(loai, id) {
+        const modal = document.getElementById('delete-modal');
+        const confirmBtn = document.getElementById('confirm-delete-btn');
+
+        modal.classList.add('show');
+
+        // Thiết lập hành động xóa
+        confirmBtn.onclick = function() {
+            window.location.href = `{% url 'trang_chu' %}${loai}/xoa/${id}/`;
+        };
+    }
+
+    // Ẩn modal xác nhận xóa
+    function hideDeleteModal() {
+        document.getElementById('delete-modal').classList.remove('show');
     }
 </script>
 {% endblock %}

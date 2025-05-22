@@ -41,7 +41,6 @@ class BaiViet(models.Model):
 
 class TepDinhKem(models.Model):
     Tep = models.FileField(upload_to='tepdinhkem/')
-    FileSize = models.IntegerField()
     MaBaiViet = models.ForeignKey(BaiViet, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -50,7 +49,6 @@ class TepDinhKem(models.Model):
 
 class HinhAnh(models.Model):
     Anh = models.ImageField(upload_to='hinhanh/')
-    ImgSize = models.IntegerField()
     MaBaiViet = models.ForeignKey(BaiViet, on_delete=models.CASCADE)
 
     def __str__(self):

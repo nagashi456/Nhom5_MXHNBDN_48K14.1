@@ -20,12 +20,12 @@ class BaiVietAdmin(admin.ModelAdmin):
 
 @admin.register(models.TepDinhKem)
 class TepDinhKemAdmin(admin.ModelAdmin):
-    list_display = ('id', 'Tep', 'FileSize', 'MaBaiViet')
+    list_display = ('id', 'Tep', 'MaBaiViet')
     list_filter = ('MaBaiViet',)
 
 @admin.register(models.HinhAnh)
 class HinhAnhAdmin(admin.ModelAdmin):
-    list_display = ('id', 'Anh', 'ImgSize', 'MaBaiViet')
+    list_display = ('id', 'Anh', 'MaBaiViet')
     list_filter = ('MaBaiViet',)
 
 @admin.register(models.BinhLuan)

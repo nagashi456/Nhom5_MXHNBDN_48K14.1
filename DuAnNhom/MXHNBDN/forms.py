@@ -4,9 +4,9 @@ from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory
 from .models import BinhChon, LuaChonBinhChon
 from django.contrib.auth import authenticate, get_user_model
-
-# forms.py
-
+from django import forms
+from .models import BaiViet, HinhAnh, TepDinhKem
+from django.utils import timezone
 from django import forms
 from django.contrib.auth.models import User
 from .models import NguoiDung
@@ -37,7 +37,6 @@ class NguoiDungForm(forms.ModelForm):
     class Meta:
         model = NguoiDung
         fields = ['HoTen', 'SoDienThoai', 'Email', 'MaPhong', 'Avatar', 'AnhBia']
-        # Hoặc các field mà bạn thực sự cần lưu trong NguoiDung
 
 class LoginForm(forms.Form):
     username_or_email = forms.CharField(
@@ -164,7 +163,6 @@ class UsernameChangeForm(forms.ModelForm):
         }
 
 class CustomPasswordChangeForm(PasswordChangeForm):
-    """Form tùy chỉnh cho việc thay đổi mật khẩu"""
     old_password = forms.CharField(
         label="Mật khẩu cũ",
         strip=False,
@@ -245,3 +243,32 @@ LuaChonBinhChonFormSet = inlineformset_factory(
     validate_min=True,  # Bắt buộc phải có ít nhất min_num form
     can_delete=True
 )
+from django import forms
+from .models import BaiViet
+from django.utils import timezone
+
+
+class BaiVietForm(forms.ModelForm):
+    noi_dung = forms.CharField(
+        label='',
+        widget=forms.Textarea(
+            attrs={
+                'class': 'form-control post-textarea',
+                'placeholder': 'Bạn đang nghĩ gì?',
+                'rows': 5
+            }
+        )
+    )
+
+    class Meta:
+        model = BaiViet
+        fields = ['noi_dung']
+
+    def save(self, commit=True, nguoi_dung=None):
+        bai_viet = super().save(commit=False)
+        bai_viet.MaNguoiDung = nguoi_dung
+        bai_viet.NgayTao = timezone.now()
+
+        if commit:
+            bai_viet.save()
+        return bai_viet

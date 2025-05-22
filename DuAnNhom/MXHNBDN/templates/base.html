@@ -358,7 +358,7 @@
                     <li><a href="{% url 'nhantin' %}" class="nav-item {% if request.resolver_match.url_name == 'nhantin' %}active{% endif %}">
                         <i data-lucide="message-square" class="nav-icon"></i><span>Tin nhắn</span>
                     </a></li>
-                    <li><a href="#" class="nav-item {% if request.resolver_match.url_name == 'tao_bai_viet' %}active{% endif %}">
+                    <li><a href="{% url 'tao_bai_viet' %}" class="nav-item {% if request.resolver_match.url_name == 'tao_bai_viet' %}active{% endif %}">
                         <i data-lucide="file-text" class="nav-icon"></i><span>Tạo bài viết</span>
                     </a></li>
                     <li><a href="#" class="nav-item {% if request.resolver_match.url_name == 'hoi_dap' %}active{% endif %}">
