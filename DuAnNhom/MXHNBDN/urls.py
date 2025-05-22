@@ -29,9 +29,15 @@ path('chat/', views.index, name='nhantin'),
     path('xu-ly-binh-chon/', views.xu_ly_binh_chon, name='xu_ly_binh_chon'),
     path('login/',views.login_view,name='dang_nhap'),
     path('logout/', views.logout_view, name='logout'),
-    # path('',views.Trangchu,name='trang_chu'),
-    path('quen_pass/',views.Quenpass,name='Quenpass')
-
+    path('quen_pass/',views.Quenpass,name='Quenpass'),
+    path('hoi-dap/', views.danh_sach_cau_hoi, name='danh_sach_cau_hoi'),
+    path('cau-hoi/<int:cau_hoi_id>/', views.chi_tiet_cau_hoi, name='chi_tiet_cau_hoi'),
+    path('tao-cau-hoi/', views.tao_cau_hoi, name='tao_cau_hoi'),
+    path('sua-cau-hoi/<int:cau_hoi_id>/', views.sua_cau_hoi, name='sua_cau_hoi'),
+    path('xoa-cau-hoi/<int:cau_hoi_id>/', views.xoa_cau_hoi, name='xoa_cau_hoi'),
+    path('them-cau-tra-loi/<int:cau_hoi_id>/', views.them_cau_tra_loi, name='them_cau_tra_loi'),
+    path('sua-cau-tra-loi/<int:cau_tra_loi_id>/', views.sua_cau_tra_loi, name='sua_cau_tra_loi'),
+    path('xoa-cau-tra-loi/<int:cau_tra_loi_id>/', views.xoa_cau_tra_loi, name='xoa_cau_tra_loi'),
 ]
 
 if settings.DEBUG:

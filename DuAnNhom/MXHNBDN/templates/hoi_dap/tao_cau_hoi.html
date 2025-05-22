@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Đặt câu hỏi - Hỏi đáp{% endblock %}
+
+{% block extra_css %}
+<style>
+    .qa-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .qa-breadcrumb {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+    
+    .qa-breadcrumb a {
+        color: var(--light-text);
+        text-decoration: none;
+    }
+    
+    .qa-breadcrumb a:hover {
+        color: var(--primary);
+    }
+    
+    .qa-breadcrumb-separator {
+        margin: 0 8px;
+        color: var(--light-text);
+    }
+    
+    .qa-form-card {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        padding: 20px;
+    }
+    
+    .qa-form-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--dark-text);
+        margin-bottom: 20px;
+    }
+    
+    .qa-form-group {
+        margin-bottom: 20px;
+    }
+    
+    .qa-form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--dark-text);
+    }
+    
+    .qa-form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.2s;
+    }
+    
+    .qa-form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(88, 88, 250, 0.1);
+    }
+    
+    textarea.qa-form-control {
+        min-height: 200px;
+        resize: vertical;
+    }
+    
+    .qa-form-help {
+        font-size: 13px;
+        color: var(--light-text);
+        margin-top: 6px;
+    }
+    
+    .qa-form-footer {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+    
+    .qa-btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .qa-btn-primary {
+        background-color: var(--primary);
+        color: white;
+    }
+    
+    .qa-btn-primary:hover {
+        background-color: var(--primary-dark);
+    }
+    
+    .qa-btn-outline {
+        background-color: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--light-text);
+        margin-right: 10px;
+    }
+    
+    .qa-btn-outline:hover {
+        background-color: var(--secondary);
+    }
+    
+    .qa-guidelines {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 16px;
+        margin-bottom: 20px;
+    }
+    
+    .qa-guidelines-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--dark-text);
+        margin-bottom: 10px;
+    }
+    
+    .qa-guidelines-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .qa-guidelines-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: var(--light-text);
+    }
+    
+    .qa-guidelines-item i {
+        color: var(--primary);
+        margin-right: 8px;
+        margin-top: 3px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="qa-container">
+    <div class="qa-breadcrumb">
+        <a href="{% url 'danh_sach_cau_hoi' %}">Hỏi đáp</a>
+        <span class="qa-breadcrumb-separator">/</span>
+        <span>Đặt câu hỏi</span>
+    </div>
+    
+    <div class="qa-guidelines">
+        <h3 class="qa-guidelines-title">Hướng dẫn đặt câu hỏi</h3>
+        <ul class="qa-guidelines-list">
+            <li class="qa-guidelines-item">
+                <i class="fas fa-check-circle"></i>
+                <span>Mô tả rõ vấn đề của bạn</span>
+            </li>
+            <li class="qa-guidelines-item">
+                <i class="fas fa-check-circle"></i>
+                <span>Cung cấp đầy đủ thông tin và chi tiết trong nội dung câu hỏi</span>
+            </li>
+            <li class="qa-guidelines-item">
+                <i class="fas fa-check-circle"></i>
+                <span>Kiểm tra lỗi chính tả và định dạng trước khi đăng</span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="qa-form-card">
+        <h1 class="qa-form-title">Đặt câu hỏi mới</h1>
+
+        <form action="{% url 'tao_cau_hoi' %}" method="post">
+            {% csrf_token %}
+
+            <div class="qa-form-group">
+                <label for="noi_dung" class="qa-form-label">Nội dung câu hỏi</label>
+                <textarea id="noi_dung" name="NoiDung" class="qa-form-control" required placeholder="Mô tả chi tiết câu hỏi của bạn"></textarea>
+                <div class="qa-form-help">Cung cấp đầy đủ thông tin để người khác có thể hiểu và trả lời câu hỏi của bạn</div>
+            </div>
+            
+            <div class="qa-form-footer">
+                <a href="{% url 'danh_sach_cau_hoi' %}" class="qa-btn qa-btn-outline">
+                    <i class="fas fa-times"></i> Hủy
+                </a>
+                <button type="submit" class="qa-btn qa-btn-primary">
+                    <i class="fas fa-paper-plane"></i> Đăng câu hỏi
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

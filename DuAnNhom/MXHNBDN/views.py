@@ -90,13 +90,10 @@ def tao_bai_viet(request):
                 # Xử lý hình ảnh
                 if 'hinh_anh[]' in request.FILES:
                     for anh in request.FILES.getlist('hinh_anh[]'):
-                        # Tính kích thước file
-                        img_size = anh.size
 
                         # Lưu hình ảnh
                         hinh_anh = HinhAnh(
                             Anh=anh,
-                            ImgSize=img_size,
                             MaBaiViet=bai_viet
                         )
                         hinh_anh.save()
@@ -104,13 +101,10 @@ def tao_bai_viet(request):
                 # Xử lý tệp đính kèm
                 if 'tep_dinh_kem[]' in request.FILES:
                     for tep in request.FILES.getlist('tep_dinh_kem[]'):
-                        # Tính kích thước file
-                        file_size = tep.size
 
                         # Lưu tệp
                         tep_dinh_kem = TepDinhKem(
                             Tep=tep,
-                            FileSize=file_size,
                             MaBaiViet=bai_viet
                         )
                         tep_dinh_kem.save()
@@ -129,7 +123,7 @@ def tao_bai_viet(request):
             'nguoidung': nguoi_dung,
         }
 
-        return render(request, 'TaoBaiViet.html', context)
+        return render(request, 'BaiViet/TaoBaiViet.html', context)
     except Exception as e:
         # In ra lỗi để debug
         print(f"Lỗi: {e}")
@@ -606,7 +600,7 @@ def sua_bai_viet(request, bai_viet_id):
         'nguoidung': nguoi_dung,
     }
 
-    return render(request, 'SuaBaiViet.html', context)
+    return render(request, 'BaiViet/SuaBaiViet.html', context)
 
 
 @login_required
@@ -692,7 +686,7 @@ def sua_binh_chon(request, binh_chon_id):
         'nguoidung': nguoi_dung,
     }
 
-    return render(request, 'BinhChon/sua_binh_chon.html', context)
+    return render(request,  'BinhChon/sua_binh_chon.html', context)
 
 
 @login_required
@@ -710,7 +704,178 @@ def xoa_binh_chon(request, binh_chon_id):
     return redirect('trang_chu')
 
 
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.utils import timezone
+from django.db.models import Count
+from .models import BangHoi, BangTL
 
+
+
+@login_required
+def danh_sach_cau_hoi(request):
+    # Lấy tất cả câu hỏi, sắp xếp theo thời gian tạo mới nhất
+    cau_hoi_list = BangHoi.objects.all().order_by('-NgayTao')
+
+    # Lấy người dùng hiện tại
+    nguoi_dung = get_object_or_404(NguoiDung, user=request.user)
+
+    # Đếm số câu trả lời cho mỗi câu hỏi
+    for cau_hoi in cau_hoi_list:
+        cau_hoi.so_cau_tra_loi = BangTL.objects.filter(MaHoi=cau_hoi).count()
+
+    context = {
+        'cau_hoi_list': cau_hoi_list,
+        'nguoi_dung': nguoi_dung,
+    }
+
+    return render(request, 'hoi_dap/danh_sach_cau_hoi.html', context)
+
+
+@login_required
+def chi_tiet_cau_hoi(request, cau_hoi_id):
+    # Lấy chi tiết câu hỏi
+    cau_hoi = get_object_or_404(BangHoi, id=cau_hoi_id)
+
+    # Lấy danh sách câu trả lời
+    cau_tra_loi_list = BangTL.objects.filter(MaHoi=cau_hoi).order_by('NgayTao')
+
+    # Lấy người dùng hiện tại
+    nguoi_dung = get_object_or_404(NguoiDung, user=request.user)
+
+    # Lấy các câu hỏi liên quan (5 câu hỏi mới nhất khác)
+    cau_hoi_lien_quan = BangHoi.objects.exclude(id=cau_hoi_id).order_by('-NgayTao')[:5]
+
+    context = {
+        'cau_hoi': cau_hoi,
+        'cau_tra_loi_list': cau_tra_loi_list,
+        'nguoi_dung': nguoi_dung,
+        'cau_hoi_lien_quan': cau_hoi_lien_quan,
+    }
+
+    return render(request, 'hoi_dap/chi_tiet_cau_hoi.html', context)
+
+
+@login_required
+def tao_cau_hoi(request):
+    if request.method == 'POST':
+        noi_dung = request.POST.get('NoiDung')
+
+        # Lấy người dùng hiện tại
+        nguoi_dung = get_object_or_404(NguoiDung, user=request.user)
+
+        # Tạo câu hỏi mới
+        cau_hoi = BangHoi(
+            NoiDung=noi_dung,
+            NgayTao=timezone.now(),
+            MaNguoiDung=nguoi_dung
+        )
+        cau_hoi.save()
+
+        return redirect('chi_tiet_cau_hoi', cau_hoi_id=cau_hoi.id)
+
+    return render(request, 'hoi_dap/tao_cau_hoi.html')
+
+
+@login_required
+def sua_cau_hoi(request, cau_hoi_id):
+    # Lấy câu hỏi cần sửa
+    cau_hoi = get_object_or_404(BangHoi, id=cau_hoi_id)
+
+    # Kiểm tra quyền sửa (chỉ người tạo mới được sửa)
+    if cau_hoi.MaNguoiDung.user != request.user:
+        return redirect('chi_tiet_cau_hoi', cau_hoi_id=cau_hoi.id)
+
+    if request.method == 'POST':
+        noi_dung = request.POST.get('NoiDung')
+
+        # Cập nhật câu hỏi
+        cau_hoi.NoiDung = noi_dung
+        cau_hoi.save()
+
+        return redirect('chi_tiet_cau_hoi', cau_hoi_id=cau_hoi.id)
+
+    context = {
+        'cau_hoi': cau_hoi
+    }
+
+    return render(request, 'hoi_dap/sua_cau_hoi.html', context)
+
+
+@login_required
+def xoa_cau_hoi(request, cau_hoi_id):
+    # Lấy câu hỏi cần xóa
+    cau_hoi = get_object_or_404(BangHoi, id=cau_hoi_id)
+
+    # Kiểm tra quyền xóa (chỉ người tạo mới được xóa)
+    if cau_hoi.MaNguoiDung.user != request.user:
+        return redirect('chi_tiet_cau_hoi', cau_hoi_id=cau_hoi.id)
+
+    # Xóa câu hỏi
+    cau_hoi.delete()
+
+    return redirect('danh_sach_cau_hoi')
+
+
+@login_required
+def them_cau_tra_loi(request, cau_hoi_id):
+    if request.method == 'POST':
+        noi_dung = request.POST.get('NoiDung')
+
+        # Lấy câu hỏi
+        cau_hoi = get_object_or_404(BangHoi, id=cau_hoi_id)
+
+        # Lấy người dùng hiện tại
+        nguoi_dung = get_object_or_404(NguoiDung, user=request.user)
+
+        # Tạo câu trả lời mới
+        cau_tra_loi = BangTL(
+            NoiDung=noi_dung,
+            NgayTao=timezone.now(),
+            MaHoi=cau_hoi,
+            MaNguoiDung=nguoi_dung
+        )
+        cau_tra_loi.save()
+
+    return redirect('chi_tiet_cau_hoi', cau_hoi_id=cau_hoi_id)
+
+
+@login_required
+def sua_cau_tra_loi(request, cau_tra_loi_id):
+    # Lấy câu trả lời cần sửa
+    cau_tra_loi = get_object_or_404(BangTL, id=cau_tra_loi_id)
+
+    # Kiểm tra quyền sửa (chỉ người tạo mới được sửa)
+    if cau_tra_loi.MaNguoiDung.user != request.user:
+        return redirect('chi_tiet_cau_hoi', cau_hoi_id=cau_tra_loi.MaHoi.id)
+
+    if request.method == 'POST':
+        noi_dung = request.POST.get('NoiDung')
+
+        # Cập nhật câu trả lời
+        cau_tra_loi.NoiDung = noi_dung
+        cau_tra_loi.save()
+
+    return redirect('chi_tiet_cau_hoi', cau_hoi_id=cau_tra_loi.MaHoi.id)
+
+
+@login_required
+def xoa_cau_tra_loi(request, cau_tra_loi_id):
+    # Lấy câu trả lời cần xóa
+    cau_tra_loi = get_object_or_404(BangTL, id=cau_tra_loi_id)
+
+    # Lưu lại id câu hỏi để redirect sau khi xóa
+    cau_hoi_id = cau_tra_loi.MaHoi.id
+
+    # Kiểm tra quyền xóa (chỉ người tạo mới được xóa)
+    if cau_tra_loi.MaNguoiDung.user != request.user:
+        return redirect('chi_tiet_cau_hoi', cau_hoi_id=cau_hoi_id)
+
+    # Xóa câu trả lời
+    cau_tra_loi.delete()
+
+    return redirect('chi_tiet_cau_hoi', cau_hoi_id=cau_hoi_id)
 import json
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse

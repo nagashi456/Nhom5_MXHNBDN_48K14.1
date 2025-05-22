@@ -361,7 +361,7 @@
                     <li><a href="{% url 'tao_bai_viet' %}" class="nav-item {% if request.resolver_match.url_name == 'tao_bai_viet' %}active{% endif %}">
                         <i data-lucide="file-text" class="nav-icon"></i><span>Tạo bài viết</span>
                     </a></li>
-                    <li><a href="#" class="nav-item {% if request.resolver_match.url_name == 'hoi_dap' %}active{% endif %}">
+                    <li><a href="{% url 'danh_sach_cau_hoi' %}" class="nav-item {% if request.resolver_match.url_name == 'danh_sach_cau_hoi' %}active{% endif %}">
                         <i data-lucide="help-circle" class="nav-icon"></i><span>Hỏi đáp</span>
                     </a></li>
                     <li><a href="{% url 'profile_view' %}" class="nav-item {% if request.resolver_match.url_name == 'profile_detail' %}active{% endif %}">

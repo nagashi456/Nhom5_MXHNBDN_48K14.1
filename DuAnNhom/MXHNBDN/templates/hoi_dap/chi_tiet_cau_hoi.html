@@ -1,0 +1,711 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Chi tiết câu hỏi - Hỏi đáp{% endblock %}
+
+{% block extra_css %}
+<style>
+/* CSS cho trang chi tiết câu hỏi */
+.qa-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.qa-breadcrumb {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.qa-breadcrumb a {
+    color: var(--light-text);
+    text-decoration: none;
+}
+
+.qa-breadcrumb a:hover {
+    color: var(--primary);
+}
+
+.qa-breadcrumb-separator {
+    margin: 0 8px;
+    color: var(--light-text);
+}
+
+.qa-content {
+    display: flex;
+    gap: 20px;
+}
+
+.qa-main {
+    flex: 1;
+}
+
+.qa-sidebar {
+    width: 300px;
+    flex-shrink: 0;
+}
+
+.qa-question {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+    padding: 20px;
+    position: relative;
+}
+
+.qa-question-header {
+    margin-bottom: 16px;
+}
+
+.qa-question-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: var(--light-text);
+}
+
+.qa-question-stats {
+    display: flex;
+    gap: 16px;
+}
+
+.qa-question-stat {
+    display: flex;
+    align-items: center;
+}
+
+.qa-question-stat i {
+    margin-right: 6px;
+}
+
+.qa-question-user {
+    display: flex;
+    align-items: center;
+}
+
+.qa-question-user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 10px;
+    overflow: hidden;
+}
+
+.qa-question-user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.qa-question-user-name {
+    font-weight: 500;
+}
+
+.qa-question-content {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--dark-text);
+    margin-bottom: 20px;
+}
+
+.qa-question-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.qa-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.qa-btn-primary {
+    background-color: var(--primary);
+    color: white;
+}
+
+.qa-btn-primary:hover {
+    background-color: var(--primary-dark);
+}
+
+.qa-btn-outline {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--light-text);
+}
+
+.qa-btn-outline:hover {
+    background-color: var(--secondary);
+}
+
+.qa-btn-danger {
+    background-color: #f44336;
+    color: white;
+}
+
+.qa-btn-danger:hover {
+    background-color: #d32f2f;
+}
+
+.qa-answers-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.qa-answers-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--dark-text);
+}
+
+.qa-answers-count {
+    font-size: 14px;
+    color: var(--light-text);
+}
+
+.qa-answer {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom: 16px;
+    padding: 20px;
+    position: relative;
+}
+
+.qa-answer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.qa-answer-user {
+    display: flex;
+    align-items: center;
+}
+
+.qa-answer-user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 10px;
+    overflow: hidden;
+}
+
+.qa-answer-user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.qa-answer-user-info {
+    font-size: 14px;
+}
+
+.qa-answer-user-name {
+    font-weight: 500;
+    color: var(--dark-text);
+}
+
+.qa-answer-time {
+    color: var(--light-text);
+    font-size: 12px;
+}
+
+.qa-answer-content {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--dark-text);
+    margin-bottom: 16px;
+}
+
+.qa-answer-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.qa-answer-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.qa-reply-form {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.qa-reply-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--dark-text);
+    margin-bottom: 16px;
+}
+
+.qa-form-group {
+    margin-bottom: 16px;
+}
+
+.qa-form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--dark-text);
+}
+
+.qa-form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.qa-form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(88, 88, 250, 0.1);
+}
+
+textarea.qa-form-control {
+    min-height: 150px;
+    resize: vertical;
+}
+
+.qa-sidebar-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+    padding: 16px;
+}
+
+.qa-sidebar-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--dark-text);
+    margin-bottom: 12px;
+}
+
+.qa-related-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.qa-related-item {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.qa-related-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.qa-related-link {
+    display: block;
+    text-decoration: none;
+    color: var(--dark-text);
+    font-size: 14px;
+    line-height: 1.4;
+    margin-bottom: 4px;
+    transition: color 0.2s;
+}
+
+.qa-related-link:hover {
+    color: var(--primary);
+}
+
+.qa-related-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--light-text);
+}
+
+/* Modal xác nhận */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-container {
+    background-color: white;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    padding: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.modal-header {
+    margin-bottom: 15px;
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--dark-text);
+}
+
+.modal-body {
+    margin-bottom: 20px;
+    color: var(--light-text);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.modal-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    margin-left: 10px;
+}
+
+.modal-btn-cancel {
+    background-color: #f1f1f1;
+    color: var(--dark-text);
+}
+
+.modal-btn-confirm {
+    background-color: var(--primary);
+    color: white;
+}
+
+.modal-btn-delete {
+    background-color: #e53935;
+    color: white;
+}
+
+/* Hiển thị modal */
+.modal-overlay.show {
+    display: flex;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .qa-content {
+        flex-direction: column;
+    }
+
+    .qa-sidebar {
+        width: 100%;
+        order: 2;
+    }
+
+    .qa-main {
+        order: 1;
+    }
+
+    .qa-question-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .qa-answer-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .qa-answer-actions {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="qa-container">
+    <div class="qa-breadcrumb">
+        <a href="{% url 'danh_sach_cau_hoi' %}">Hỏi đáp</a>
+        <span class="qa-breadcrumb-separator">/</span>
+        <span>Chi tiết câu hỏi</span>
+    </div>
+
+    <div class="qa-content">
+        <div class="qa-main">
+            <div class="qa-question">
+                <div class="qa-question-header">
+                    <div class="qa-question-meta">
+                        <div class="qa-question-stats">
+                            <div class="qa-question-stat">
+                                <i class="far fa-comment"></i>
+                                <span>{{ cau_tra_loi_list.count }} câu trả lời</span>
+                            </div>
+                            <div class="qa-question-stat">
+                                <i class="far fa-clock"></i>
+                                <span>Đã hỏi {{ cau_hoi.NgayTao|timesince }} trước</span>
+                            </div>
+                        </div>
+                        <div class="qa-question-user">
+                            <div class="qa-question-user-avatar">
+                                {% if cau_hoi.MaNguoiDung.Avatar %}
+                                <img src="{{ cau_hoi.MaNguoiDung.Avatar.url }}" alt="Avatar">
+                                {% else %}
+                                <i class="fa fa-user"></i>
+                                {% endif %}
+                            </div>
+                            <div class="qa-question-user-name">{{ cau_hoi.MaNguoiDung.HoTen }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="qa-question-content">
+                    {{ cau_hoi.NoiDung|linebreaks }}
+                </div>
+
+                {% if cau_hoi.MaNguoiDung.user.id == user.id %}
+                <div class="qa-question-actions">
+                    <a href="{% url 'sua_cau_hoi' cau_hoi.id %}" class="qa-btn qa-btn-outline">
+                        <i class="fas fa-edit"></i> Chỉnh sửa
+                    </a>
+                    <button onclick="showDeleteModal('cau-hoi', {{ cau_hoi.id }})" class="qa-btn qa-btn-danger">
+                        <i class="fas fa-trash"></i> Xóa
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="qa-answers-header">
+                <h2 class="qa-answers-title">Câu trả lời</h2>
+                <div class="qa-answers-count">{{ cau_tra_loi_list.count }} câu trả lời</div>
+            </div>
+
+            {% if cau_tra_loi_list %}
+                {% for cau_tra_loi in cau_tra_loi_list %}
+                <div class="qa-answer">
+                    <div class="qa-answer-header">
+                        <div class="qa-answer-user">
+                            <div class="qa-answer-user-avatar">
+                                {% if cau_tra_loi.MaNguoiDung.Avatar %}
+                                <img src="{{ cau_tra_loi.MaNguoiDung.Avatar.url }}" alt="Avatar">
+                                {% else %}
+                                <i class="fa fa-user"></i>
+                                {% endif %}
+                            </div>
+                            <div class="qa-answer-user-info">
+                                <div class="qa-answer-user-name">{{ cau_tra_loi.MaNguoiDung.HoTen }}</div>
+                                <div class="qa-answer-time">Trả lời {{ cau_tra_loi.NgayTao|timesince }} trước</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="qa-answer-content">
+                        {{ cau_tra_loi.NoiDung|linebreaks }}
+                    </div>
+
+                    {% if cau_tra_loi.MaNguoiDung.user.id == user.id %}
+                    <div class="qa-answer-actions">
+                        <div class="qa-answer-buttons">
+                            <button onclick="showEditAnswerModal({{ cau_tra_loi.id }}, '{{ cau_tra_loi.NoiDung|escapejs }}')" class="qa-btn qa-btn-outline">
+                                <i class="fas fa-edit"></i> Sửa
+                            </button>
+                            <button onclick="showDeleteAnswerModal({{ cau_tra_loi.id }})" class="qa-btn qa-btn-danger">
+                                <i class="fas fa-trash"></i> Xóa
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="qa-answer">
+                    <div class="qa-answer-content" style="text-align: center; color: var(--light-text);">
+                        Chưa có câu trả lời nào. Hãy là người đầu tiên trả lời!
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="qa-reply-form">
+                <h3 class="qa-reply-title">Trả lời câu hỏi này</h3>
+                <form action="{% url 'them_cau_tra_loi' cau_hoi.id %}" method="post">
+                    {% csrf_token %}
+                    <div class="qa-form-group">
+                        <label for="noi_dung" class="qa-form-label">Nội dung</label>
+                        <textarea id="noi_dung" name="NoiDung" class="qa-form-control" required></textarea>
+                    </div>
+                    <button type="submit" class="qa-btn qa-btn-primary">
+                        <i class="fas fa-paper-plane"></i> Gửi câu trả lời
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="qa-sidebar">
+            {% if cau_hoi_lien_quan %}
+            <div class="qa-sidebar-card">
+                <h3 class="qa-sidebar-title">Một số câu hỏi khác</h3>
+                <ul class="qa-related-list">
+                    {% for cau_hoi_lq in cau_hoi_lien_quan %}
+                    <li class="qa-related-item">
+                        <a href="{% url 'chi_tiet_cau_hoi' cau_hoi_lq.id %}" class="qa-related-link">
+                            {{ cau_hoi_lq.NoiDung|truncatechars:100 }}
+                        </a>
+                        <div class="qa-related-meta">
+                            <span>{{ cau_hoi_lq.MaNguoiDung.HoTen }}</span>
+                            <span>{{ cau_hoi_lq.NgayTao|timesince }} trước</span>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <div class="qa-sidebar-card">
+                <h3 class="qa-sidebar-title">Hướng dẫn</h3>
+                <div style="font-size: 14px; color: var(--light-text);">
+                    <p><i class="fas fa-check-circle" style="color: #4caf50;"></i> Viết câu trả lời rõ ràng, ngắn gọn</p>
+                    <p><i class="fas fa-check-circle" style="color: #4caf50;"></i> Cung cấp thông tin chính xác</p>
+                    <p><i class="fas fa-check-circle" style="color: #4caf50;"></i> Tôn trọng người hỏi và người trả lời khác</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal xác nhận xóa câu hỏi -->
+<div id="delete-question-modal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3 class="modal-title">Xác nhận xóa câu hỏi</h3>
+        </div>
+        <div class="modal-body">
+            <p>Bạn có chắc chắn muốn xóa câu hỏi này? Hành động này không thể hoàn tác.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-cancel" onclick="hideDeleteModal()">Hủy</button>
+            <a id="confirm-delete-question" href="#" class="modal-btn modal-btn-delete">Xóa</a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal xác nhận xóa câu trả lời -->
+<div id="delete-answer-modal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3 class="modal-title">Xác nhận xóa câu trả lời</h3>
+        </div>
+        <div class="modal-body">
+            <p>Bạn có chắc chắn muốn xóa câu trả lời này? Hành động này không thể hoàn tác.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-cancel" onclick="hideDeleteAnswerModal()">Hủy</button>
+            <a id="confirm-delete-answer" href="#" class="modal-btn modal-btn-delete">Xóa</a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal sửa câu trả lời -->
+<div id="edit-answer-modal" class="modal-overlay">
+    <div class="modal-container" style="max-width: 600px;">
+        <div class="modal-header">
+            <h3 class="modal-title">Chỉnh sửa câu trả lời</h3>
+        </div>
+        <div class="modal-body">
+            <form id="edit-answer-form" method="post" action="">
+                {% csrf_token %}
+                <div class="qa-form-group">
+                    <textarea id="edit-answer-content" name="NoiDung" class="qa-form-control" required></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-cancel" onclick="hideEditAnswerModal()">Hủy</button>
+            <button class="modal-btn modal-btn-confirm" onclick="submitEditAnswerForm()">Lưu thay đổi</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+    // Hiển thị modal xác nhận xóa câu hỏi
+    function showDeleteModal(loai, id) {
+        const modal = document.getElementById('delete-question-modal');
+        const confirmBtn = document.getElementById('confirm-delete-question');
+
+        modal.classList.add('show');
+        // Vì đây là xóa câu hỏi, URL pattern: xoa-cau-hoi/<int:id>/
+        confirmBtn.href = `/xoa-cau-hoi/${id}/`;
+    }
+
+    // Ẩn modal xác nhận xóa câu hỏi
+    function hideDeleteModal() {
+        document.getElementById('delete-question-modal').classList.remove('show');
+    }
+
+    // Hiển thị modal xác nhận xóa câu trả lời
+    function showDeleteAnswerModal(id) {
+        const modal = document.getElementById('delete-answer-modal');
+        const confirmBtn = document.getElementById('confirm-delete-answer');
+
+        modal.classList.add('show');
+        // URL pattern: xoa-cau-tra-loi/<int:cau_tra_loi_id>/
+        confirmBtn.href = `/xoa-cau-tra-loi/${id}/`;
+    }
+
+    // Ẩn modal xác nhận xóa câu trả lời
+    function hideDeleteAnswerModal() {
+        document.getElementById('delete-answer-modal').classList.remove('show');
+    }
+
+    // Hiển thị modal sửa câu trả lời
+    function showEditAnswerModal(id, content) {
+        const modal = document.getElementById('edit-answer-modal');
+        const form = document.getElementById('edit-answer-form');
+        const textarea = document.getElementById('edit-answer-content');
+
+        modal.classList.add('show');
+        // URL pattern: sua-cau-tra-loi/<int:cau_tra_loi_id>/
+        form.action = `/sua-cau-tra-loi/${id}/`;
+        textarea.value = content;
+    }
+
+    // Ẩn modal sửa câu trả lời
+    function hideEditAnswerModal() {
+        document.getElementById('edit-answer-modal').classList.remove('show');
+    }
+
+    // Submit form sửa câu trả lời
+    function submitEditAnswerForm() {
+        document.getElementById('edit-answer-form').submit();
+    }
+</script>
+{% endblock %}
