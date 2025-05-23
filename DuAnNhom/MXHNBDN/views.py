@@ -885,7 +885,12 @@ from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.utils import timezone
 from django.db.models import Q, Subquery, OuterRef
 from django.contrib.auth.models import User
-
+import os
+import uuid
+from django.conf import settings
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from django.views.decorators.http import require_POST
 from .models import CuocTroChuyen, TinNhanChiTiet
 
 
@@ -906,24 +911,54 @@ def index(request):
     return render(request, 'chat/index.html', {
         'chats': chats
     })
-# @ensure_csrf_cookie
-# def login_view(request):
-#     if request.method == 'POST':
-#         try:
-#             data = json.loads(request.body)
-#             username = data.get('username', '')
-#             password = data.get('password', '')
-#             user = authenticate(request, username=username, password=password)
-#             if user is not None:
-#                 login(request, user)
-#                 return JsonResponse({'success': True, 'user_id': user.id})
-#             else:
-#                 return JsonResponse({'error': 'Tên đăng nhập hoặc mật khẩu không đúng'}, status=400)
-#         except Exception as e:
-#             return JsonResponse({'error': str(e)}, status=400)
-#     return render(request, 'login.html')
 
 
+@login_required
+@csrf_exempt
+@require_POST
+def upload_file(request):
+    """
+    Nhận file từ FormData key='file', lưu vào thư mục MEDIA/uploads/files/,
+    và trả về { id, name, url }.
+    """
+    upload = request.FILES.get('file')
+    if not upload:
+        return JsonResponse({'error': 'No file provided'}, status=400)
+
+    # Tạo đường dẫn lưu: MEDIA_ROOT/uploads/files/<uuid>_<filename>
+    filename = f"{uuid.uuid4().hex}_{upload.name}"
+    save_path = os.path.join('uploads', 'files', filename)
+    path = default_storage.save(save_path, ContentFile(upload.read()))
+
+    url = default_storage.url(path)
+    return JsonResponse({
+        'id': path,         # dùng làm attachment_id
+        'name': upload.name,
+        'url': url
+    })
+
+
+@login_required
+@csrf_exempt
+@require_POST
+def upload_image(request):
+    """
+    Nhận ảnh từ FormData key='image', lưu vào MEDIA/uploads/images/,
+    và trả về { id, url }.
+    """
+    upload = request.FILES.get('image')
+    if not upload:
+        return JsonResponse({'error': 'No image provided'}, status=400)
+
+    filename = f"{uuid.uuid4().hex}_{upload.name}"
+    save_path = os.path.join('uploads', 'images', filename)
+    path = default_storage.save(save_path, ContentFile(upload.read()))
+
+    url = default_storage.url(path)
+    return JsonResponse({
+        'id': path,     # dùng làm image_id
+        'url': url
+    })
 @login_required
 def room_list(request):
     # Lấy tất cả phòng chat mà user là thành viên

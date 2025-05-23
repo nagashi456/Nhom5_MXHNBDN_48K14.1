@@ -96,14 +96,32 @@ class ThanhVienCuocTroChuyen(models.Model):
 
 class TinNhanChiTiet(models.Model):
     NgayTao = models.DateTimeField()
-    NoiDung = models.TextField()
+    NoiDung = models.TextField(blank=True, null=True)
     TepDinhKem = models.FileField(upload_to='uploads/attachments/', blank=True, null=True)
     HinhAnh = models.ImageField(upload_to='uploads/images/', blank=True, null=True)
     MaCuocTroChuyen = models.ForeignKey(CuocTroChuyen, on_delete=models.CASCADE)
     NguoiDung = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.NguoiDung.username}: {self.NoiDung[:30]}'
+        username = self.NguoiDung.username
+
+        if self.HinhAnh or getattr(self, 'image_url', None):
+            return f'{username}: Ảnh'
+
+        # Trả về file nếu có file đính kèm
+        if self.TepDinhKem or getattr(self, 'attachment_url', None):
+            return f'{username} : File '
+        if self.TepDinhKem or getattr(self, 'attachment_url', None) and self.NoiDung:
+            return f'{username} : File + {self.NoiDung[:30]}'
+        if self.HinhAnh or getattr(self, 'image_url', None) and self.NoiDung:
+            return f'{username}: Ảnh + {self.NoiDung[:30]}'
+
+        # Trả về nội dung text nếu có
+        if self.NoiDung:
+            return f'{username}: {self.NoiDung[:30]}'
+
+        # Nếu không có gì thì trả về mặc định
+        return f'Tin nhắn từ {username}'
 
 
 class BangHoi(models.Model):
