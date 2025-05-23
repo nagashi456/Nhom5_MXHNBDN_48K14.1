@@ -272,7 +272,7 @@ def danh_sach_binh_chon(request):
         'binh_chons': binh_chons,
         'nguoidung': nguoi_dung,  # Thêm thông tin người dùng cho template
     }
-    return render(request, 'TaoBinhChon/danh_sach_binh_chon.html', context)
+    return render(request, 'BinhChon/danh_sach_binh_chon.html', context)
 
 def current_profile(request):
     """
