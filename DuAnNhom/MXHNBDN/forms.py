@@ -126,7 +126,15 @@ class CustomPasswordChangeForm(PasswordChangeForm):
         widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Xác nhận mật khẩu mới'}),
     )
 
-
+class SearchForm(forms.Form):
+    q = forms.CharField(
+        label='Từ khóa',
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'class': 'border rounded px-3 py-2 w-full',
+            'placeholder': 'Nhập từ khóa tìm kiếm...'
+        })
+    )
 
 
 

@@ -51,8 +51,7 @@ def logout_view(request):
     return redirect('dang_nhap')
 
 
-def ProfileDetail(request):
-    return render(request,"Edit_profile/profile_details.html")
+
 
 
 from django.shortcuts import render, redirect
@@ -309,8 +308,62 @@ def profile_view(request):
         'profile_user': profile_user,
         'posts': posts
     })
+@login_required
+def ProfileDetail(request):
+    # Lấy profile
+    try:
+        nguoi_dung = NguoiDung.objects.get(user=request.user)
+    except NguoiDung.DoesNotExist:
+        return HttpResponse("Không tìm thấy hồ sơ người dùng", status=404)
 
+    # BÀI VIẾT
+    bai_viet_list = BaiViet.objects.filter(MaNguoiDung=nguoi_dung).order_by('-ThoiGianTao')
+    # map trạng thái like/dislike của user
+    cx_map = {
+        cx.MaBaiViet.id: cx.is_like
+        for cx in LuotCamXuc.objects.filter(MaNguoiDung=nguoi_dung)
+    }
+    for bv in bai_viet_list:
+        bv.so_thich = LuotCamXuc.objects.filter(MaBaiViet=bv, is_like=True).count()
+        bv.so_khong_thich = LuotCamXuc.objects.filter(MaBaiViet=bv, is_like=False).count()
+        bv.da_thich = cx_map.get(bv.id)  # True / False / None
+        bv.binh_luan_list = BinhLuan.objects.filter(MaBaiViet=bv).order_by('-NgayTao')
+        bv.so_binh_luan = bv.binh_luan_list.count()
+        bv.anh_list = HinhAnh.objects.filter(MaBaiViet=bv)
+        bv.file_list = TepDinhKem.objects.filter(MaBaiViet=bv)
 
+    # BÌNH CHỌN
+    binh_chon_list = BinhChon.objects.filter(MaNguoiDung=nguoi_dung).order_by('-ThoiGianKetThucBC')
+    # map lựa chọn user đã bình chọn
+    bc_map = {
+        bcnd.lua_chon.binh_chon.id: bcnd.lua_chon.id
+        for bcnd in BinhChonNguoiDung.objects.filter(nguoi_dung=nguoi_dung)
+    }
+    for bc in binh_chon_list:
+        # list các lựa chọn và số vote
+        bc.lua_chon_list = LuaChonBinhChon.objects.filter(binh_chon=bc)
+        bc.tong_vote = 0
+        for lc in bc.lua_chon_list:
+            lc.so_vote = BinhChonNguoiDung.objects.filter(lua_chon=lc).count()
+            bc.tong_vote += lc.so_vote
+        # thời gian còn lại
+        if bc.ThoiGianKetThucBC > timezone.now():
+            delta = bc.ThoiGianKetThucBC - timezone.now()
+            bc.thoi_gian_con_lai = f"{delta.days}d {delta.seconds // 3600}h"
+        else:
+            bc.thoi_gian_con_lai = "Đã kết thúc"
+        # user đã chọn
+        bc.da_chon = bc_map.get(bc.id)
+
+    # Chọn tab
+    tab = request.GET.get('tab', 'baiviet')
+
+    return render(request, 'Edit_profile/profile_details.html', {
+        'nguoi_dung': nguoi_dung,
+        'bai_viet_list': bai_viet_list,
+        'binh_chon_list': binh_chon_list,
+        'tab': tab,
+    })
 
 @login_required
 def trang_chu(request):
@@ -1111,4 +1164,31 @@ def current_user(request):
     return JsonResponse({
         'id': request.user.id,
         'username': request.user.username
+    })
+
+from .forms import SearchForm
+
+
+@login_required
+def tim_kiem(request):
+    form = SearchForm(request.GET or None)
+    ket_qua = []
+    if form.is_valid():
+        q = form.cleaned_data['q']
+        # Lọc bài viết theo nội dung chứa từ khóa
+        ket_qua = BaiViet.objects.filter(NoiDung__icontains=q).order_by('-ThoiGianTao')
+        # Thu thập tương tác và attachments cho mỗi bài
+        # Map cảm xúc user hiện tại
+        cx_map = {cx.MaBaiViet.id: cx.is_like for cx in LuotCamXuc.objects.filter(MaNguoiDung__user=request.user)}
+        for post in ket_qua:
+            post.anh_list = HinhAnh.objects.filter(MaBaiViet=post)
+            post.file_list = TepDinhKem.objects.filter(MaBaiViet=post)
+            post.so_thich = LuotCamXuc.objects.filter(MaBaiViet=post, is_like=True).count()
+            post.so_khong_thich = LuotCamXuc.objects.filter(MaBaiViet=post, is_like=False).count()
+            post.da_thich = cx_map.get(post.id)
+            post.so_binh_luan = BinhLuan.objects.filter(MaBaiViet=post).count()
+            post.binh_luan_list = BinhLuan.objects.filter(MaBaiViet=post).order_by('-NgayTao')
+    return render(request, 'search.html', {
+        'form': form,
+        'ket_qua': ket_qua,
     })

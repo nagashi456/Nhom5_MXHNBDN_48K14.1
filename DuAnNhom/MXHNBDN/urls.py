@@ -40,6 +40,8 @@ path('chat/', views.index, name='nhantin'),
     path('them-cau-tra-loi/<int:cau_hoi_id>/', views.them_cau_tra_loi, name='them_cau_tra_loi'),
     path('sua-cau-tra-loi/<int:cau_tra_loi_id>/', views.sua_cau_tra_loi, name='sua_cau_tra_loi'),
     path('xoa-cau-tra-loi/<int:cau_tra_loi_id>/', views.xoa_cau_tra_loi, name='xoa_cau_tra_loi'),
+    path('tim-kiem/', views.tim_kiem, name='tim_kiem'),
+
 ]
 
 if settings.DEBUG:
