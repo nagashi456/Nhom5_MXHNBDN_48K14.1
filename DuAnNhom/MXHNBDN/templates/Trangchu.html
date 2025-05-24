@@ -675,7 +675,7 @@
 
                 {% if bai_viet.binh_luan_list %}
                 <div class="comments">
-                    {% for binh_luan in bai_viet.binh_luan_list|slice:":3" %}
+                    {% for binh_luan in bai_viet.binh_luan_list %}
                     <div class="comment">
                         <div class="comment-avatar">
                             {% if binh_luan.MaNguoiDung.Avatar %}
@@ -692,13 +692,6 @@
                     </div>
                     {% endfor %}
 
-                    {% if bai_viet.binh_luan_list.count > 3 %}
-                    <div class="text-center">
-                        <button class="action-btn" onclick="loadMoreComments('{{ bai_viet.id }}')">
-                            Xem thêm bình luận
-                        </button>
-                    </div>
-                    {% endif %}
                 </div>
                 {% endif %}
             </div>
@@ -829,10 +822,7 @@
     }
 
     // Tải thêm bình luận
-    function loadMoreComments(baiVietId) {
-        // Implement AJAX để tải thêm bình luận
-        console.log(`Tải thêm bình luận cho bài viết ${baiVietId}`);
-    }
+
 
     // Hiển thị/ẩn dropdown menu
     function toggleDropdown(dropdownId) {

@@ -937,26 +937,49 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.views.decorators.http import require_POST
-from .models import CuocTroChuyen, TinNhanChiTiet
 
 
 @login_required
 def index(request):
-    # Get all chats the user is a member of
     chats = CuocTroChuyen.objects.filter(ThanhVien=request.user)
-
-    # Add last message and unread count to each chat
+    rooms = []
     for chat in chats:
-        # Get last message
-        last_message = TinNhanChiTiet.objects.filter(MaCuocTroChuyen=chat).order_by('-NgayTao').first()
-        chat.last_message = last_message
+        last_message = TinNhanChiTiet.objects.filter(
+            MaCuocTroChuyen=chat
+        ).order_by('-NgayTao').first()
 
-        # Get unread count (in a real implementation, you would count unread messages)
-        chat.unread_count = 0
+        other_users = chat.ThanhVien.exclude(id=request.user.id)
+        participants = [{
+            'id': u.id,
+            'username': u.username,
+            'avatar_url': getattr(u.nguoidung, 'Avatar').url if hasattr(u, 'nguoidung') and u.nguoidung.Avatar else ''
+        } for u in other_users]
 
-    return render(request, 'chat/index.html', {
-        'chats': chats
-    })
+        rooms.append({
+            'id': chat.id,
+            'name': other_users.first().username if chat.LoaiRiengTu else chat.TenNhom,
+            # DÙNG chat.LoaiRiengTu (BooleanField), không phải chat.is_private
+            'is_private': chat.LoaiRiengTu,
+            'last_message': last_message.NoiDung if last_message else '',
+            'last_message_time': last_message.NgayTao.strftime('%H:%M') if last_message else '',
+            'participants': participants,
+        })
+
+    context = {
+        'rooms_json': json.dumps(rooms, ensure_ascii=False),
+        'current_user_json': json.dumps({
+            'id': request.user.id,
+            'username': request.user.username,
+        })
+    }
+    return render(request, 'chat/index.html', context)
+
+
+
+
+
+
+
 
 
 @login_required
