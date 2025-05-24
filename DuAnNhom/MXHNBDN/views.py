@@ -515,7 +515,7 @@ def xu_ly_cam_xuc(request):
         so_luot_khong_thich = LuotCamXuc.objects.filter(
             MaBaiViet=bai_viet, is_like=False
         ).count()
-
+        # JSON này dùng để cập nhật giao diện mà không cần load lại trang.
         return JsonResponse({
             'success': True,
             'action': action,

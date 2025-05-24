@@ -53,8 +53,9 @@
 
             <div class="ml-3">
                 <div class="font-semibold text-gray-800">{{ post.MaNguoiDung.HoTen }}</div>
-                <div class="text-gray-500 text-sm">@{{ post.MaNguoiDung.user.username }} • {{
-                    post.ThoiGianTao|date:"d/m/Y H:i" }}
+                <div class="text-gray-500 text-sm">
+                    @{{ post.MaNguoiDung.user.username }} •
+                    {{ post.ThoiGianTao|date:"H:i" }} - {{ post.ThoiGianTao|date:"d/m/Y" }}
                 </div>
             </div>
         </div>
