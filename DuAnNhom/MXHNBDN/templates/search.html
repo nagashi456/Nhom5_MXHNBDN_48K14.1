@@ -2,188 +2,205 @@
 {% load static %}
 {% block content %}
 <style>
-  .action-btn {
-        display: flex;
-        align-items: center;
-        background: none;
-        border: none;
-        padding: 8px 12px;
-        margin-right: 15px;
-        cursor: pointer;
-        color: var(--light-text);
-        font-size: 14px;
-        border-radius: 4px;
-        transition: background-color 0.2s;
-    }
+    .action-btn {
+          display: flex;
+          align-items: center;
+          background: none;
+          border: none;
+          padding: 8px 12px;
+          margin-right: 15px;
+          cursor: pointer;
+          color: var(--light-text);
+          font-size: 14px;
+          border-radius: 4px;
+          transition: background-color 0.2s;
+      }
 
-    .action-btn:hover {
-        background-color: var(--secondary);
-    }
+      .action-btn:hover {
+          background-color: var(--secondary);
+      }
 
-    .action-btn.active {
-        color: var(--primary);
-    }
+      .action-btn.active {
+          color: var(--primary);
+      }
 
-    .action-btn i {
-        margin-right: 5px;
-    }
+      .action-btn i {
+          margin-right: 5px;
+      }
 </style>
 <div class="max-w-3xl mx-auto p-6">
-  <h2 class="text-2xl font-semibold mb-4">Tìm kiếm bài viết</h2>
+    <h2 class="text-2xl font-semibold mb-4">Tìm kiếm bài viết</h2>
 
-  <form method="get" action="" class="mb-6 flex space-x-2">
-    {{ form.q }}
-    <button type="submit" class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 transition-colors duration-200">
-      <i class="fas fa-search mr-1"></i> Tìm
-    </button>
-  </form>
+    <form method="get" action="" class="mb-6 flex space-x-2">
+        {{ form.q }}
+        <button type="submit"
+                class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 transition-colors duration-200">
+            <i class="fas fa-search mr-1"></i> Tìm
+        </button>
+    </form>
 
-  {% if ket_qua %}
+    {% if ket_qua %}
     <h3 class="text-xl mb-4">Kết quả ({{ ket_qua|length }})</h3>
     {% for post in ket_qua %}
     <div class="border rounded-lg shadow-sm mb-4 hover:shadow-lg transition-shadow duration-200">
-      <!-- Header -->
-      <div class="flex items-center p-4 border-b hover:bg-gray-50 transition-colors duration-200">
-        <img src="{{ post.MaNguoiDung.Avatar.url }}" class="w-10 h-10 rounded-full" alt="avatar">
-        <div class="ml-3">
-          <div class="font-semibold text-gray-800">{{ post.MaNguoiDung.HoTen }}</div>
-          <div class="text-gray-500 text-sm">@{{ post.MaNguoiDung.user.username }} • {{ post.ThoiGianTao|date:"d/m/Y H:i" }}</div>
-        </div>
-      </div>
-      <!-- Body -->
-      <div class="p-4">
-        <p class="text-gray-700 whitespace-pre-line mb-4">{{ post.NoiDung }}</p>
-        {% if post.anh_list %}
-        <div class="grid grid-cols-3 gap-2 mb-4">
-          {% for img in post.anh_list %}
-          <div class="hover:scale-105 transform transition-transform duration-200">
-            <img src="{{ img.Anh.url }}" class="w-full h-auto rounded" alt="Hình ảnh">
-          </div>
-          {% endfor %}
-        </div>
-        {% endif %}
-        {% if post.file_list %}
-        <div class="space-y-2 mb-4">
-          {% for f in post.file_list %}
-          <div class="flex items-center hover:bg-gray-50 p-2 rounded transition-colors duration-200">
-            <i class="fas fa-file-alt mr-2 text-gray-500"></i>
-            <a href="{{ f.Tep.url }}" download class="text-indigo-600 hover:text-indigo-800 transition-colors duration-200">{{ f.Tep.name }}</a>
-          </div>
-          {% endfor %}
-        </div>
-        {% endif %}
-      </div>
-      <!-- Actions -->
-      <div class="px-4 py-2 border-t flex items-center">
-        <button id="like-btn-{{ post.id }}"
-                        class="action-btn {% if post.da_thich == True %}active{% endif %}"
-                        onclick="xuLyCamXuc('{{ post.id }}', true)">
-                    <i class="far fa-thumbs-up"></i>
-                    <span id="like-count-{{ post.id }}">{{ post.so_thich }}</span>
-          </button>
-          <button id="dislike-btn-{{ post.id }}"
-                  class="action-btn {% if post.da_thich == False %}active{% endif %}"
-                  onclick="xuLyCamXuc('{{ post.id }}', false)">
-              <i class="far fa-thumbs-down"></i>
-              <span id="dislike-count-{{ post.id }}">{{ post.so_khong_thich }}</span>
-          </button>
-
-          <button onclick="toggleComments('comments-{{ post.id }}')" class="ml-4 flex items-center text-gray-500 space-x-1 text-sm hover:text-indigo-600 transition-colors duration-200">
-            <i class="far fa-comment"></i><span>{{ post.so_binh_luan }}</span>
-          </button>
-      </div>
-      <!-- Comments Section -->
-        <div id="comments-{{ post.id }}" class="comments-section hidden p-4 border-t">
-          <form action="{% url 'them_binh_luan' post.id %}" method="post" class="mb-4 flex space-x-2">
-            {% csrf_token %}
-            <input type="text" name="NoiDung" class="flex-1 border border-gray-300 rounded px-3 py-1 focus:border-indigo-500 transition-colors duration-200" placeholder="Viết bình luận...">
-            <button type="submit" class="bg-indigo-600 text-white px-4 py-1 rounded hover:bg-indigo-700 transition-colors duration-200">Gửi</button>
-          </form>
-          {% for cm in post.binh_luan_list|slice:":3" %}
-          <div class="flex items-start mb-3 hover:bg-gray-50 p-2 rounded transition-colors duration-200">
-            {% if cm.MaNguoiDung.Avatar %}
-              <img src="{{ cm.MaNguoiDung.Avatar.url }}" class="w-8 h-8 rounded-full mr-2" alt="avatar">
+        <!-- Header -->
+        <div class="flex items-center p-4 border-b hover:bg-gray-50 transition-colors duration-200">
+            {% if nguoi_dung.Avatar %}
+            <img src="{{ nguoi_dung.Avatar.url }}" class="w-10 h-10 rounded-full" alt="avatar">
             {% else %}
-              <i class="fa fa-user" style="font-size:40px; color:#ccc;"></i>
+            <i class="fa fa-user" style="font-size:40px; color:#ccc;"></i>
             {% endif %}
 
-            <div>
-              <div class="font-semibold text-gray-800">{{ cm.MaNguoiDung.HoTen }}</div>
-              <div class="text-gray-700">{{ cm.NoiDung }}</div>
-              <div class="text-gray-400 text-xs">{{ cm.NgayTao|timesince }} trước</div>
+            <div class="ml-3">
+                <div class="font-semibold text-gray-800">{{ post.MaNguoiDung.HoTen }}</div>
+                <div class="text-gray-500 text-sm">@{{ post.MaNguoiDung.user.username }} • {{
+                    post.ThoiGianTao|date:"d/m/Y H:i" }}
+                </div>
             </div>
-          </div>
-          {% endfor %}
-          {% if post.so_binh_luan > 3 %}
-          <button onclick="loadMoreComments('{{ post.id }}')" class="text-indigo-600 text-sm hover:underline transition-colors duration-200">Xem thêm bình luận</button>
-          {% endif %}
+        </div>
+        <!-- Body -->
+        <div class="p-4">
+            <p class="text-gray-700 whitespace-pre-line mb-4">{{ post.NoiDung }}</p>
+            {% if post.anh_list %}
+            <div class="grid grid-cols-3 gap-2 mb-4">
+                {% for img in post.anh_list %}
+                <div class="hover:scale-105 transform transition-transform duration-200">
+                    <img src="{{ img.Anh.url }}" class="w-full h-auto rounded" alt="Hình ảnh">
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% if post.file_list %}
+            <div class="space-y-2 mb-4">
+                {% for f in post.file_list %}
+                <div class="flex items-center hover:bg-gray-50 p-2 rounded transition-colors duration-200">
+                    <i class="fas fa-file-alt mr-2 text-gray-500"></i>
+                    <a href="{{ f.Tep.url }}" download
+                       class="text-indigo-600 hover:text-indigo-800 transition-colors duration-200">{{ f.Tep.name }}</a>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        <!-- Actions -->
+        <div class="px-4 py-2 border-t flex items-center">
+            <button id="like-btn-{{ post.id }}"
+                    class="action-btn {% if post.da_thich == True %}active{% endif %}"
+                    onclick="xuLyCamXuc('{{ post.id }}', true)">
+                <i class="far fa-thumbs-up"></i>
+                <span id="like-count-{{ post.id }}">{{ post.so_thich }}</span>
+            </button>
+            <button id="dislike-btn-{{ post.id }}"
+                    class="action-btn {% if post.da_thich == False %}active{% endif %}"
+                    onclick="xuLyCamXuc('{{ post.id }}', false)">
+                <i class="far fa-thumbs-down"></i>
+                <span id="dislike-count-{{ post.id }}">{{ post.so_khong_thich }}</span>
+            </button>
+
+            <button onclick="toggleComments('comments-{{ post.id }}')"
+                    class="ml-4 flex items-center text-gray-500 space-x-1 text-sm hover:text-indigo-600 transition-colors duration-200">
+                <i class="far fa-comment"></i><span>{{ post.so_binh_luan }}</span>
+            </button>
+        </div>
+        <!-- Comments Section -->
+        <div id="comments-{{ post.id }}" class="comments-section hidden p-4 border-t">
+            <form action="{% url 'them_binh_luan' post.id %}" method="post" class="mb-4 flex space-x-2">
+                {% csrf_token %}
+                <input type="text" name="NoiDung"
+                       class="flex-1 border border-gray-300 rounded px-3 py-1 focus:border-indigo-500 transition-colors duration-200"
+                       placeholder="Viết bình luận...">
+                <button type="submit"
+                        class="bg-indigo-600 text-white px-4 py-1 rounded hover:bg-indigo-700 transition-colors duration-200">
+                    Gửi
+                </button>
+            </form>
+            {% for cm in post.binh_luan_list|slice:":3" %}
+            <div class="flex items-start mb-3 hover:bg-gray-50 p-2 rounded transition-colors duration-200">
+                {% if cm.MaNguoiDung.Avatar %}
+                <img src="{{ cm.MaNguoiDung.Avatar.url }}" class="w-8 h-8 rounded-full mr-2" alt="avatar">
+                {% else %}
+                <i class="fa fa-user" style="font-size:40px; color:#ccc;"></i>
+                {% endif %}
+
+                <div>
+                    <div class="font-semibold text-gray-800">{{ cm.MaNguoiDung.HoTen }}</div>
+                    <div class="text-gray-700">{{ cm.NoiDung }}</div>
+                    <div class="text-gray-400 text-xs">{{ cm.NgayTao|timesince }} trước</div>
+                </div>
+            </div>
+            {% endfor %}
+            {% if post.so_binh_luan > 3 %}
+            <button onclick="loadMoreComments('{{ post.id }}')"
+                    class="text-indigo-600 text-sm hover:underline transition-colors duration-200">Xem thêm bình luận
+            </button>
+            {% endif %}
         </div>
     </div>
     {% endfor %}
-  {% else %}
+    {% else %}
     {% if form.is_bound %}
-      <p class="text-gray-500">Không tìm thấy bài viết phù hợp.</p>
+    <p class="text-gray-500">Không tìm thấy bài viết phù hợp.</p>
     {% endif %}
-  {% endif %}
+    {% endif %}
 </div>
 <script>
-  function toggleComments(id) {
-    document.getElementById(id).classList.toggle('hidden');
-  }
-  function loadMoreComments(id) {
-    // AJAX load thêm
-  }
-function loadMoreComments(baiVietId) {
-        // Implement AJAX để tải thêm bình luận
-        console.log(`Tải thêm bình luận cho bài viết ${baiVietId}`);
+    function toggleComments(id) {
+      document.getElementById(id).classList.toggle('hidden');
     }
-  // Xử lý cảm xúc (like/dislike)
-    function xuLyCamXuc(baiVietId, loaiCamXuc) {
-        fetch('{% url "xu_ly_cam_xuc" %}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: `bai_viet_id=${baiVietId}&loai_cam_xuc=${loaiCamXuc}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Cập nhật số lượt thích và không thích
-                document.getElementById(`like-count-${baiVietId}`).textContent = data.so_luot_thich;
-                document.getElementById(`dislike-count-${baiVietId}`).textContent = data.so_luot_khong_thich;
-
-                // Cập nhật trạng thái nút
-                const likeBtn = document.getElementById(`like-btn-${baiVietId}`);
-                const dislikeBtn = document.getElementById(`dislike-btn-${baiVietId}`);
-
-                if (data.action === 'removed') {
-                    if (loaiCamXuc) {
-                        likeBtn.classList.remove('active');
-                    } else {
-                        dislikeBtn.classList.remove('active');
-                    }
-                } else if (data.action === 'added') {
-                    if (loaiCamXuc) {
-                        likeBtn.classList.add('active');
-                        dislikeBtn.classList.remove('active');
-                    } else {
-                        dislikeBtn.classList.add('active');
-                        likeBtn.classList.remove('active');
-                    }
-                } else if (data.action === 'changed') {
-                    if (loaiCamXuc) {
-                        likeBtn.classList.add('active');
-                        dislikeBtn.classList.remove('active');
-                    } else {
-                        dislikeBtn.classList.add('active');
-                        likeBtn.classList.remove('active');
-                    }
-                }
-            }
-        })
-        .catch(error => console.error('Error:', error));
+    function loadMoreComments(id) {
+      // AJAX load thêm
     }
+  function loadMoreComments(baiVietId) {
+          // Implement AJAX để tải thêm bình luận
+          console.log(`Tải thêm bình luận cho bài viết ${baiVietId}`);
+      }
+    // Xử lý cảm xúc (like/dislike)
+      function xuLyCamXuc(baiVietId, loaiCamXuc) {
+          fetch('{% url "xu_ly_cam_xuc" %}', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded',
+                  'X-CSRFToken': '{{ csrf_token }}'
+              },
+              body: `bai_viet_id=${baiVietId}&loai_cam_xuc=${loaiCamXuc}`
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  // Cập nhật số lượt thích và không thích
+                  document.getElementById(`like-count-${baiVietId}`).textContent = data.so_luot_thich;
+                  document.getElementById(`dislike-count-${baiVietId}`).textContent = data.so_luot_khong_thich;
+
+                  // Cập nhật trạng thái nút
+                  const likeBtn = document.getElementById(`like-btn-${baiVietId}`);
+                  const dislikeBtn = document.getElementById(`dislike-btn-${baiVietId}`);
+
+                  if (data.action === 'removed') {
+                      if (loaiCamXuc) {
+                          likeBtn.classList.remove('active');
+                      } else {
+                          dislikeBtn.classList.remove('active');
+                      }
+                  } else if (data.action === 'added') {
+                      if (loaiCamXuc) {
+                          likeBtn.classList.add('active');
+                          dislikeBtn.classList.remove('active');
+                      } else {
+                          dislikeBtn.classList.add('active');
+                          likeBtn.classList.remove('active');
+                      }
+                  } else if (data.action === 'changed') {
+                      if (loaiCamXuc) {
+                          likeBtn.classList.add('active');
+                          dislikeBtn.classList.remove('active');
+                      } else {
+                          dislikeBtn.classList.add('active');
+                          likeBtn.classList.remove('active');
+                      }
+                  }
+              }
+          })
+          .catch(error => console.error('Error:', error));
+      }
 </script>
 {% endblock %}
