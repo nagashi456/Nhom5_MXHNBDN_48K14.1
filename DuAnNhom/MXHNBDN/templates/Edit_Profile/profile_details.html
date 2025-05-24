@@ -2,35 +2,35 @@
 {% load static %}
 {% block content %}
 <style>
-    .action-btn {
-          display: flex;
-          align-items: center;
-          background: none;
-          border: none;
-          padding: 8px 12px;
-          margin-right: 15px;
-          cursor: pointer;
-          color: var(--light-text);
-          font-size: 14px;
-          border-radius: 4px;
-          transition: background-color 0.2s;
-      }
+  .action-btn {
+        display: flex;
+        align-items: center;
+        background: none;
+        border: none;
+        padding: 8px 12px;
+        margin-right: 15px;
+        cursor: pointer;
+        color: var(--light-text);
+        font-size: 14px;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+    }
 
-      .action-btn:hover {
-          background-color: var(--secondary);
-      }
+    .action-btn:hover {
+        background-color: var(--secondary);
+    }
 
-      .action-btn.active {
-          color: var(--primary);
-      }
+    .action-btn.active {
+        color: var(--primary);
+    }
 
-      .action-btn i {
-          margin-right: 5px;
-      }
+    .action-btn i {
+        margin-right: 5px;
+    }
 </style>
 <div class="max-w-3xl mx-auto bg-white shadow rounded-xl overflow-hidden">
 
-    <!-- Header: Cover + Info -->
+  <!-- Header: Cover + Info -->
 <div class="relative bg-indigo-100 h-40 flex items-center justify-center overflow-hidden rounded-lg">
   {% if nguoi_dung.AnhBia %}
     <img
@@ -40,244 +40,231 @@
     />
   {% endif %}
 </div>
-
-    <div class="flex items-center px-6 py-7 border-b hover:bg-gray-50 transition-colors duration-200">
-        {% if nguoi_dung.Avatar %}
-        <img src="{{ nguoi_dung.Avatar.url }}" class="w-10 h-10 rounded-full" alt="avatar">
-        {% else %}
-        <i class="fa fa-user" style="font-size:40px; color:#ccc;"></i>
-        {% endif %}
-        <div class="ml-4">
-            <h2 class="text-2xl font-semibold text-indigo-700">{{ nguoi_dung.HoTen }}</h2>
-            <p class="text-gray-600">@{{ nguoi_dung.user.username }}</p>
-        </div>
-        <div class="ml-auto">
-            <a href="{% url 'edit_profile' %}"
-               class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 transition-colors duration-200 text-sm">
-                <i class="fas fa-edit mr-1"></i>Chỉnh sửa
-            </a>
-        </div>
+  <div class="flex items-center px-6 py-7 border-b hover:bg-gray-50 transition-colors duration-200">
+    {% if nguoi_dung.Avatar %}
+  <img src="{{ nguoi_dung.Avatar.url }}" class="w-10 h-10 rounded-full" alt="avatar">
+{% else %}
+    <i class="fa fa-user" style="font-size:40px; color:#ccc;"></i>
+{% endif %}
+    <div class="ml-4">
+      <h2 class="text-2xl font-semibold text-indigo-700">{{ nguoi_dung.HoTen }}</h2>
+      <p class="text-gray-600">@{{ nguoi_dung.user.username }}</p>
     </div>
-
-    <!-- Tabs -->
-    <div class="flex border-b px-6">
-        <a href="?tab=baiviet"
-           class="py-2 px-4 hover:text-indigo-600 hover:border-indigo-600 transition-colors duration-200 {% if tab == 'baiviet' %}border-b-2 border-indigo-500 text-indigo-600 font-semibold{% else %}text-gray-600{% endif %}">
-            Bài viết
-        </a>
-        <a href="?tab=thongtin"
-           class="py-2 px-4 hover:text-indigo-600 hover:border-indigo-600 transition-colors duration-200 {% if tab == 'thongtin' %}border-b-2 border-indigo-500 text-indigo-600 font-semibold{% else %}text-gray-600{% endif %}">
-            Thông tin cá nhân
-        </a>
+    <div class="ml-auto">
+      <a href="{% url 'edit_profile' %}" class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 transition-colors duration-200 text-sm">
+        <i class="fas fa-edit mr-1"></i>Chỉnh sửa
+      </a>
     </div>
+  </div>
 
-    <!-- Tab Content -->
-    <div class="p-6">
-        {% if tab == 'baiviet' %}
-        {% for post in bai_viet_list %}
-        <div class="border rounded-lg shadow-sm mb-6 bg-white hover:shadow-lg transition-shadow duration-200">
-            <!-- Post Header -->
-            <div class="flex items-center p-4 border-b hover:bg-gray-50 transition-colors duration-200">
+  <!-- Tabs -->
+  <div class="flex border-b px-6">
+    <a href="?tab=baiviet" class="py-2 px-4 hover:text-indigo-600 hover:border-indigo-600 transition-colors duration-200 {% if tab == 'baiviet' %}border-b-2 border-indigo-500 text-indigo-600 font-semibold{% else %}text-gray-600{% endif %}">
+      Bài viết
+    </a>
+    <a href="?tab=thongtin" class="py-2 px-4 hover:text-indigo-600 hover:border-indigo-600 transition-colors duration-200 {% if tab == 'thongtin' %}border-b-2 border-indigo-500 text-indigo-600 font-semibold{% else %}text-gray-600{% endif %}">
+      Thông tin cá nhân
+    </a>
+  </div>
 
-                {% if nguoi_dung.Avatar %}
-                <img src="{{ nguoi_dung.Avatar.url }}" class="w-10 h-10 rounded-full" alt="avatar">
-                {% else %}
-                <i class="fa fa-user" style="font-size:40px; color:#ccc;"></i>
-                {% endif %}
-                <div class="ml-3">
-                    <div class="font-semibold text-gray-800">{{ nguoi_dung.HoTen }}</div>
-                    <div class="text-gray-500 text-sm">@{{ nguoi_dung.user.username }}</div>
-                </div>
-                <div class="ml-auto text-gray-400 text-sm">
-                    {{ post.ThoiGianTao|date:"F d, Y" }}
-                </div>
+  <!-- Tab Content -->
+  <div class="p-6">
+    {% if tab == 'baiviet' %}
+      {% for post in bai_viet_list %}
+      <div class="border rounded-lg shadow-sm mb-6 bg-white hover:shadow-lg transition-shadow duration-200">
+        <!-- Post Header -->
+        <div class="flex items-center p-4 border-b hover:bg-gray-50 transition-colors duration-200">
+          {% if nguoi_dung.Avatar %}
+            <img src="{{ nguoi_dung.Avatar.url }}" class="w-10 h-10 rounded-full" alt="avatar">
+          {% else %}
+            <i class="fa fa-user" style="font-size:40px; color:#ccc;"></i>
+          {% endif %}
+          <div class="ml-3">
+            <div class="font-semibold text-gray-800">{{ nguoi_dung.HoTen }}</div>
+            <div class="text-gray-500 text-sm">@{{ nguoi_dung.user.username }}</div>
+          </div>
+          <div class="ml-auto text-gray-400 text-sm">
+            {{ post.ThoiGianTao|date:"F d, Y" }}
+          </div>
+        </div>
+        <!-- Post Body -->
+        <div class="p-4">
+          <p class="text-gray-700 whitespace-pre-line">{{ post.NoiDung }}</p>
+
+          {% if post.anh_list %}
+          <div class="grid grid-cols-3 gap-2 mt-4">
+            {% for img in post.anh_list %}
+            <div class="post-image-container hover:scale-105 transform transition-transform duration-200">
+              <img src="{{ img.Anh.url }}" class="w-full h-auto rounded" alt="Hình ảnh">
             </div>
-            <!-- Post Body -->
-            <div class="p-4">
-                <p class="text-gray-700 whitespace-pre-line">{{ post.NoiDung }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
 
-                {% if post.anh_list %}
-                <div class="grid grid-cols-3 gap-2 mt-4">
-                    {% for img in post.anh_list %}
-                    <div class="post-image-container hover:scale-105 transform transition-transform duration-200">
-                        <img src="{{ img.Anh.url }}" class="w-full h-auto rounded" alt="Hình ảnh">
-                    </div>
-                    {% endfor %}
-                </div>
-                {% endif %}
-
-                {% if post.file_list %}
-                <div class="mt-4 space-y-2">
-                    {% for f in post.file_list %}
-                    <div class="flex items-center hover:bg-gray-50 transition-colors duration-200 p-1 rounded">
-                        <i class="fas fa-file-alt text-gray-500 mr-2"></i>
-                        <a href="{{ f.Tep.url }}" download
-                           class="text-indigo-600 underline hover:text-indigo-800 transition-colors duration-200">{{
-                            f.Tep.name|slice:"-30:" }}</a>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% endif %}
+          {% if post.file_list %}
+          <div class="mt-4 space-y-2">
+            {% for f in post.file_list %}
+            <div class="flex items-center hover:bg-gray-50 transition-colors duration-200 p-1 rounded">
+              <i class="fas fa-file-alt text-gray-500 mr-2"></i>
+              <a href="{{ f.Tep.url }}" download class="text-indigo-600 underline hover:text-indigo-800 transition-colors duration-200">{{ f.Tep.name|slice:"-30:" }}</a>
             </div>
-            <!-- Post Actions -->
-            <!-- Post Actions -->
-            <div class="flex items-center px-4 py-2">
-                <button id="like-btn-{{ post.id }}"
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        <!-- Post Actions -->
+        <!-- Post Actions -->
+        <div class="flex items-center px-4 py-2">
+          <button id="like-btn-{{ post.id }}"
                         class="action-btn {% if post.da_thich == True %}active{% endif %}"
                         onclick="xuLyCamXuc('{{ post.id }}', true)">
                     <i class="far fa-thumbs-up"></i>
                     <span id="like-count-{{ post.id }}">{{ post.so_thich }}</span>
-                </button>
-                <button id="dislike-btn-{{ post.id }}"
-                        class="action-btn {% if post.da_thich == False %}active{% endif %}"
-                        onclick="xuLyCamXuc('{{ post.id }}', false)">
-                    <i class="far fa-thumbs-down"></i>
-                    <span id="dislike-count-{{ post.id }}">{{ post.so_khong_thich }}</span>
-                </button>
+          </button>
+          <button id="dislike-btn-{{ post.id }}"
+                  class="action-btn {% if post.da_thich == False %}active{% endif %}"
+                  onclick="xuLyCamXuc('{{ post.id }}', false)">
+              <i class="far fa-thumbs-down"></i>
+              <span id="dislike-count-{{ post.id }}">{{ post.so_khong_thich }}</span>
+          </button>
 
-                <button onclick="toggleComments('comments-{{ post.id }}')"
-                        class="ml-4 flex items-center text-gray-500 space-x-1 text-sm hover:text-indigo-600 transition-colors duration-200">
-                    <i class="far fa-comment"></i><span>{{ post.so_binh_luan }}</span>
-                </button>
-            </div>
-
-            <!-- Comments Section -->
-            <div id="comments-{{ post.id }}" class="comments-section hidden p-4 border-t">
-                <form action="{% url 'them_binh_luan' post.id %}" method="post" class="mb-4 flex space-x-2">
-                    {% csrf_token %}
-                    <input type="text" name="NoiDung"
-                           class="flex-1 border border-gray-300 rounded px-3 py-1 focus:border-indigo-500 transition-colors duration-200"
-                           placeholder="Viết bình luận...">
-                    <button type="submit"
-                            class="bg-indigo-600 text-white px-4 py-1 rounded hover:bg-indigo-700 transition-colors duration-200">
-                        Gửi
-                    </button>
-                </form>
-                {% for cm in post.binh_luan_list|slice:":3" %}
-                <div class="flex items-start mb-3 hover:bg-gray-50 p-2 rounded transition-colors duration-200">
-                    {% if cm.MaNguoiDung.Avatar %}
-                    <img src="{{ cm.MaNguoiDung.Avatar.url }}" class="w-8 h-8 rounded-full mr-2" alt="avatar">
-                    {% else %}
-                    <i class="fa fa-user" style="font-size:40px; color:#ccc;"></i>
-                    {% endif %}
-
-                    <div>
-                        <div class="font-semibold text-gray-800">{{ cm.MaNguoiDung.HoTen }}</div>
-                        <div class="text-gray-700">{{ cm.NoiDung }}</div>
-                        <div class="text-gray-400 text-xs">{{ cm.NgayTao|timesince }} trước</div>
-                    </div>
-                </div>
-                {% endfor %}
-                {% if post.so_binh_luan > 3 %}
-                <button onclick="loadMoreComments('{{ post.id }}')"
-                        class="text-indigo-600 text-sm hover:underline transition-colors duration-200">Xem thêm bình
-                    luận
-                </button>
-                {% endif %}
-            </div>
+          <button onclick="toggleComments('comments-{{ post.id }}')" class="ml-4 flex items-center text-gray-500 space-x-1 text-sm hover:text-indigo-600 transition-colors duration-200">
+            <i class="far fa-comment"></i><span>{{ post.so_binh_luan }}</span>
+          </button>
         </div>
-        {% empty %}
-        <p class="text-center text-gray-500">Bạn chưa có bài viết nào.</p>
-        {% endfor %}
 
-        {% else %}
-        <!-- Thông tin cá nhân -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
-            <div class="flex items-center bg-gray-50 p-4 rounded-lg hover:bg-white shadow transition-colors duration-200">
-                <i class="fas fa-envelope mr-3 text-indigo-500"></i>
-                <div>
-                    <p class="text-gray-600 text-sm">Email</p>
-                    <p class="font-medium text-gray-800">{{ nguoi_dung.Email }}</p>
-                </div>
-            </div>
-            <div class="flex items-center bg-gray-50 p-4 rounded-lg hover:bg-white shadow transition-colors duration-200">
-                <i class="fas fa-phone mr-3 text-indigo-500"></i>
-                <div>
-                    <p class="text-gray-600 text-sm">Số điện thoại</p>
-                    <p class="font-medium text-gray-800">{{ nguoi_dung.SoDienThoai }}</p>
-                </div>
-            </div>
-            <div class="flex items-center bg-gray-50 p-4 rounded-lg hover:bg-white shadow transition-colors duration-200">
-                <i class="fas fa-building mr-3 text-indigo-500"></i>
-                <div>
-                    <p class="text-gray-600 text-sm">Phòng ban</p>
-                    <p class="font-medium text-gray-800">{{ nguoi_dung.MaPhong.TenPhong }}</p>
-                </div>
-            </div>
+        <!-- Comments Section -->
+        <div id="comments-{{ post.id }}" class="comments-section hidden p-4 border-t">
+          <form action="{% url 'them_binh_luan' post.id %}" method="post" class="mb-4 flex space-x-2">
+            {% csrf_token %}
+            <input type="text" name="NoiDung" class="flex-1 border border-gray-300 rounded px-3 py-1 focus:border-indigo-500 transition-colors duration-200" placeholder="Viết bình luận...">
+            <button type="submit" class="bg-indigo-600 text-white px-4 py-1 rounded hover:bg-indigo-700 transition-colors duration-200">Gửi</button>
+          </form>
+          {% for cm in post.binh_luan_list|slice:":3" %}
+          <div class="flex items-start mb-3 hover:bg-gray-50 p-2 rounded transition-colors duration-200">
+            {% if cm.MaNguoiDung.Avatar %}
+              <img src="{{ cm.MaNguoiDung.Avatar.url }}" class="w-8 h-8 rounded-full mr-2" alt="avatar">
+            {% else %}
+              <i class="fa fa-user" style="font-size:40px; color:#ccc;"></i>
+            {% endif %}
 
-            <div class="flex items-center bg-gray-50 p-4 rounded-lg hover:bg-white shadow transition-colors duration-200">
-                <i class="fas fa-calendar-alt mr-3 text-indigo-500"></i>
-                <div>
-                    <p class="text-gray-600 text-sm">Ngày tham gia</p>
-                    <p class="font-medium text-gray-800">
-                        {{ nguoi_dung.user.date_joined|date:"d/m/Y" }}
-                    </p>
-                </div>
+            <div>
+              <div class="font-semibold text-gray-800">{{ cm.MaNguoiDung.HoTen }}</div>
+              <div class="text-gray-700">{{ cm.NoiDung }}</div>
+              <div class="text-gray-400 text-xs">{{ cm.NgayTao|timesince }} trước</div>
             </div>
-
+          </div>
+          {% endfor %}
+          {% if post.so_binh_luan > 3 %}
+          <button onclick="loadMoreComments('{{ post.id }}')" class="text-indigo-600 text-sm hover:underline transition-colors duration-200">Xem thêm bình luận</button>
+          {% endif %}
         </div>
-        {% endif %}
-    </div>
+      </div>
+      {% empty %}
+      <p class="text-center text-gray-500">Bạn chưa có bài viết nào.</p>
+      {% endfor %}
+
+    {% else %}
+            <!-- Thông tin cá nhân -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
+        <div class="flex items-center bg-gray-50 p-4 rounded-lg hover:bg-white shadow transition-colors duration-200">
+          <i class="fas fa-envelope mr-3 text-indigo-500"></i>
+          <div>
+            <p class="text-gray-600 text-sm">Email</p>
+            <p class="font-medium text-gray-800">{{ nguoi_dung.Email }}</p>
+          </div>
+        </div>
+        <div class="flex items-center bg-gray-50 p-4 rounded-lg hover:bg-white shadow transition-colors duration-200">
+          <i class="fas fa-phone mr-3 text-indigo-500"></i>
+          <div>
+            <p class="text-gray-600 text-sm">Số điện thoại</p>
+            <p class="font-medium text-gray-800">{{ nguoi_dung.SoDienThoai }}</p>
+          </div>
+        </div>
+        <div class="flex items-center bg-gray-50 p-4 rounded-lg hover:bg-white shadow transition-colors duration-200">
+          <i class="fas fa-building mr-3 text-indigo-500"></i>
+          <div>
+            <p class="text-gray-600 text-sm">Phòng ban</p>
+            <p class="font-medium text-gray-800">{{ nguoi_dung.MaPhong.TenPhong }}</p>
+          </div>
+        </div>
+        <div class="flex items-center bg-gray-50 p-4 rounded-lg hover:bg-white shadow transition-colors duration-200">
+          <i class="fas fa-birthday-cake mr-3 text-indigo-500"></i>
+          <div>
+            <p class="text-gray-600 text-sm">Ngày sinh</p>
+            <p class="font-medium text-gray-800">{{ nguoi_dung.NgaySinh }}</p>
+          </div>
+        </div>
+        <div class="flex items-center bg-gray-50 p-4 rounded-lg hover:bg-white shadow transition-colors duration-200">
+          <i class="fas fa-calendar-alt mr-3 text-indigo-500"></i>
+          <div>
+            <p class="text-gray-600 text-sm">Ngày bắt đầu</p>
+            <p class="font-medium text-gray-800">{{ nguoi_dung.NgayBatDauLamViec }}</p>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
 </div>
 
 <script>
-    function toggleComments(id) {
-      document.getElementById(id).classList.toggle('hidden');
+  function toggleComments(id) {
+    document.getElementById(id).classList.toggle('hidden');
+  }
+  function loadMoreComments(id) {
+    // AJAX load thêm
+  }
+function loadMoreComments(baiVietId) {
+        // Implement AJAX để tải thêm bình luận
+        console.log(`Tải thêm bình luận cho bài viết ${baiVietId}`);
     }
-    function loadMoreComments(id) {
-      // AJAX load thêm
+  // Xử lý cảm xúc (like/dislike)
+    function xuLyCamXuc(baiVietId, loaiCamXuc) {
+        fetch('{% url "xu_ly_cam_xuc" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: `bai_viet_id=${baiVietId}&loai_cam_xuc=${loaiCamXuc}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Cập nhật số lượt thích và không thích
+                document.getElementById(`like-count-${baiVietId}`).textContent = data.so_luot_thich;
+                document.getElementById(`dislike-count-${baiVietId}`).textContent = data.so_luot_khong_thich;
+
+                // Cập nhật trạng thái nút
+                const likeBtn = document.getElementById(`like-btn-${baiVietId}`);
+                const dislikeBtn = document.getElementById(`dislike-btn-${baiVietId}`);
+
+                if (data.action === 'removed') {
+                    if (loaiCamXuc) {
+                        likeBtn.classList.remove('active');
+                    } else {
+                        dislikeBtn.classList.remove('active');
+                    }
+                } else if (data.action === 'added') {
+                    if (loaiCamXuc) {
+                        likeBtn.classList.add('active');
+                        dislikeBtn.classList.remove('active');
+                    } else {
+                        dislikeBtn.classList.add('active');
+                        likeBtn.classList.remove('active');
+                    }
+                } else if (data.action === 'changed') {
+                    if (loaiCamXuc) {
+                        likeBtn.classList.add('active');
+                        dislikeBtn.classList.remove('active');
+                    } else {
+                        dislikeBtn.classList.add('active');
+                        likeBtn.classList.remove('active');
+                    }
+                }
+            }
+        })
+        .catch(error => console.error('Error:', error));
     }
-  function loadMoreComments(baiVietId) {
-          // Implement AJAX để tải thêm bình luận
-          console.log(`Tải thêm bình luận cho bài viết ${baiVietId}`);
-      }
-    // Xử lý cảm xúc (like/dislike)
-      function xuLyCamXuc(baiVietId, loaiCamXuc) {
-          fetch('{% url "xu_ly_cam_xuc" %}', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded',
-                  'X-CSRFToken': '{{ csrf_token }}'
-              },
-              body: `bai_viet_id=${baiVietId}&loai_cam_xuc=${loaiCamXuc}`
-          })
-          .then(response => response.json())
-          .then(data => {
-              if (data.success) {
-                  // Cập nhật số lượt thích và không thích
-                  document.getElementById(`like-count-${baiVietId}`).textContent = data.so_luot_thich;
-                  document.getElementById(`dislike-count-${baiVietId}`).textContent = data.so_luot_khong_thich;
-
-                  // Cập nhật trạng thái nút
-                  const likeBtn = document.getElementById(`like-btn-${baiVietId}`);
-                  const dislikeBtn = document.getElementById(`dislike-btn-${baiVietId}`);
-
-                  if (data.action === 'removed') {
-                      if (loaiCamXuc) {
-                          likeBtn.classList.remove('active');
-                      } else {
-                          dislikeBtn.classList.remove('active');
-                      }
-                  } else if (data.action === 'added') {
-                      if (loaiCamXuc) {
-                          likeBtn.classList.add('active');
-                          dislikeBtn.classList.remove('active');
-                      } else {
-                          dislikeBtn.classList.add('active');
-                          likeBtn.classList.remove('active');
-                      }
-                  } else if (data.action === 'changed') {
-                      if (loaiCamXuc) {
-                          likeBtn.classList.add('active');
-                          dislikeBtn.classList.remove('active');
-                      } else {
-                          dislikeBtn.classList.add('active');
-                          likeBtn.classList.remove('active');
-                      }
-                  }
-              }
-          })
-          .catch(error => console.error('Error:', error));
-      }
 </script>
 {% endblock %}
