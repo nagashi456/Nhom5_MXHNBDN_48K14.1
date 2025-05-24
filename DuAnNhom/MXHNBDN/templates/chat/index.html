@@ -421,7 +421,7 @@
 
     .search-icon {
         position: absolute;
-        left: 10px;
+        left: 30px;
         top: 50%;
         transform: translateY(-50%);
         color: #9ca3af;
@@ -770,9 +770,10 @@
       const el = document.createElement('div');
       el.className = `room-item ${selectedRoom?.id===r.id?'active':''}`;
       el.dataset.roomId = r.id;
+
       let avatar = r.is_private
         ? `<span class="avatar-text">${r.participants.find(p=>p.id!==currentUser.id)?.username?.charAt(0)||r.name.charAt(0)}</span>`
-        : `<svg><!-- ... --></svg>`;
+        : `<span class="avatar-text">${r.participants.find(p=>p.id!==currentUser.id)?.username?.charAt(0)||r.name.charAt(0)}</span>`;
       el.innerHTML = `
         <div class="avatar">${avatar}</div>
         <div class="room-info">
@@ -839,12 +840,14 @@
   }
 
   function renderChatHeader() {
+
     const other = selectedRoom.is_private
       ? selectedRoom.participants.find(p=>p.id!==currentUser.id)
-      : null;
+      : selectedRoom.participants.find(p=>p.id!==currentUser.id)
+
     const avatar = other
       ? `<span class="avatar-text">${other.username.charAt(0)}</span>`
-      : `<svg><!-- ... --></svg>`;
+      : `<span class="avatar-text">${other.username.charAt(0)}</span>`
     chatHeader.innerHTML = `
       <div class="avatar">${avatar}</div>
       <div class="chat-header-info">
