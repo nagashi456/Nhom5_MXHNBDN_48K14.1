@@ -287,7 +287,7 @@ def current_profile(request):
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
 from django.db.models import Count, Q
 from .models import (
@@ -586,74 +586,67 @@ from .models import (
     LuotCamXuc, BinhChon, LuaChonBinhChon, BinhChonNguoiDung
 )
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponseForbidden
+from django.contrib import messages
+from .models import BaiViet, HinhAnh, TepDinhKem
 
-# Các view hiện tại giữ nguyên
 
 @login_required
 def sua_bai_viet(request, bai_viet_id):
     bai_viet = get_object_or_404(BaiViet, id=bai_viet_id)
-    nguoi_dung = get_object_or_404(NguoiDung, user=request.user)
-
     # Kiểm tra quyền sửa bài viết
-    if bai_viet.MaNguoiDung.user.id != request.user.id:
+    if bai_viet.MaNguoiDung.user != request.user:
         return HttpResponseForbidden("Bạn không có quyền sửa bài viết này.")
 
+    # Lấy danh sách ảnh/file hiện tại
     hinh_anh_list = HinhAnh.objects.filter(MaBaiViet=bai_viet)
     tep_dinh_kem_list = TepDinhKem.objects.filter(MaBaiViet=bai_viet)
 
     if request.method == 'POST':
-        # Cập nhật nội dung bài viết
-        noi_dung = request.POST.get('NoiDung')
-        bai_viet.NoiDung = noi_dung
+        # Cập nhật nội dung
+        bai_viet.NoiDung = request.POST.get('NoiDung', '')
         bai_viet.save()
 
-        # Xử lý xóa hình ảnh
-        hinh_anh_xoa = request.POST.getlist('hinh_anh_xoa')
-        for hinh_anh_id in hinh_anh_xoa:
-            try:
-                hinh_anh = HinhAnh.objects.get(id=hinh_anh_id, MaBaiViet=bai_viet)
-                hinh_anh.delete()
-            except HinhAnh.DoesNotExist:
-                pass
+        # DANH SÁCH GIỮ LẠI (hidden inputs)
+        id_hinh_anh_giu = request.POST.getlist('hinh_anh_giu_lai')
+        id_tep_giu       = request.POST.getlist('tep_giu_lai')
 
-        # Xử lý xóa tệp đính kèm
-        tep_xoa = request.POST.getlist('tep_xoa')
-        for tep_id in tep_xoa:
-            try:
-                tep = TepDinhKem.objects.get(id=tep_id, MaBaiViet=bai_viet)
-                tep.delete()
-            except TepDinhKem.DoesNotExist:
-                pass
+        # XÓA những ảnh không có trong id_hinh_anh_giu
+        for h in hinh_anh_list:
+            if str(h.id) not in id_hinh_anh_giu:
+                h.delete()
 
-        # Xử lý thêm hình ảnh mới
-        hinh_anh_moi = request.FILES.getlist('hinh_anh_moi')
-        for hinh_anh in hinh_anh_moi:
-            if hinh_anh:
-                HinhAnh.objects.create(
-                    Anh=hinh_anh,
-                    MaBaiViet=bai_viet
-                )
+        # XÓA những file không có trong id_tep_giu
+        for t in tep_dinh_kem_list:
+            if str(t.id) not in id_tep_giu:
+                t.delete()
 
-        # Xử lý thêm tệp đính kèm mới
-        tep_dinh_kem_moi = request.FILES.getlist('tep_dinh_kem_moi')
-        for tep in tep_dinh_kem_moi:
-            if tep:
-                TepDinhKem.objects.create(
-                    Tep=tep,
-                    MaBaiViet=bai_viet
-                )
+        # Thêm ảnh mới
+        for f in request.FILES.getlist('hinh_anh_moi'):
+            HinhAnh.objects.create(
+                MaBaiViet=bai_viet,
+                Anh=f
+            )
+
+        # Thêm file đính kèm mới
+        for f in request.FILES.getlist('tep_dinh_kem_moi'):
+            TepDinhKem.objects.create(
+                MaBaiViet=bai_viet,
+                Tep=f
+            )
 
         messages.success(request, "Bài viết đã được cập nhật thành công.")
         return redirect('trang_chu')
 
-    context = {
+    # GET hoặc form không hợp lệ thì render lại
+    return render(request, 'BaiViet/SuaBaiViet.html', {
         'bai_viet': bai_viet,
         'hinh_anh_list': hinh_anh_list,
         'tep_dinh_kem_list': tep_dinh_kem_list,
-        'nguoidung': nguoi_dung,
-    }
+    })
 
-    return render(request, 'BaiViet/SuaBaiViet.html', context)
 
 
 @login_required
